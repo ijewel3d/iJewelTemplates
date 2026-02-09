@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Ring Builder Doc Example</title>
+    <style> body {font-family: sans-serif;display: flex;height: 100vh;margin: 0 }#viewer {flex: 2 }#controls {flex: 1;padding: 20px;overflow-y: auto }.group {margin-bottom: 20px;border-bottom: 1px solid #ccc;padding-bottom: 10px }button {margin: 5px;padding: 8px;cursor: pointer }active {background: #000;color: #fff }</style>
+</head>
+
+<body>
+    <div id="viewer"></div>
+    <div id="controls">
+        <h2>Controls</h2>
+    </div>
+    <script src="https://releases.ijewel3d.com/libs/mini-viewer/0.5.10-dev.3/bundle.iife.js"></script>
+    <script>
+        const CONFIG = { fileId: 'M0BEKF9qSDiF_Mk3t0NGsA', instance: 'dev-2' };
+        let viewer, builder, matPlugin;
+        let currentShape = null; // Track selected shape
+        const ui = document.getElementById('controls');
+
+        // Parse shape and size from variation tags
+        function parseTags(variation) {
+            const tags = variation.tags || [];
+            let shape = null, size = null;
+            tags.forEach(tag => {
+                if (tag.startsWith('shape:')) shape = tag.split(':')[1];
+                if (tag.startsWith('size:')) size = tag.split(':')[1];
+            });
+            return { shape, size };
+        }
+
+        // Group variations by shape
+        function groupByShape(variations) {
+            const groups = {};
+            variations.forEach((v, idx) => {
+                const { shape, size } = parseTags(v);
+                if (!shape) return;
+                if (!groups[shape]) groups[shape] = { shape, icon: v.icon, variations: [] };
+                groups[shape].variations.push({ variation: v, idx, size, icon: v.icon });
+            });
+            return groups;
+        }
+
+        // Initialize viewer
+        ijewelViewer.loadModelById(CONFIG.fileId, CONFIG.instance, document.getElementById('viewer'), {
+            showConfigurator: false,
+            showCard: false,
+        });
+
+        window.addEventListener('ijewel-viewer-ready', ({ detail }) => {
+            viewer = detail.viewer;
+            builder = viewer.getPluginByType('RingBuilder');
+            matPlugin = viewer.getPluginByType('MaterialConfiguratorPlugin');
+
+            if (builder) builder.addEventListener('componentProcessed', renderUI);
+            if (matPlugin) matPlugin.addEventListener('refreshUi', renderUI);
+
+            renderUI();
+        });
+
+        function renderUI() {
+            ui.innerHTML = '<h2>Controls</h2>';
+
+            if (builder?.components) {
+                builder.components.forEach((component, cIdx) => {
+                    if (!component.visible) return;
+
+                    const isHeads = component.name.toLowerCase() === 'heads';
+                    const hasShapeTags = component.variations.some(v => parseTags(v).shape);
+
+                    // Use shape/size classification for Heads with shape tags
+                    if (isHeads && hasShapeTags) {
+                        renderHeadsWithShapeSize(component);
+                    } else {
+                        renderStandardComponent(component);
+                    }
+                });
+            }
+
+            // Render Materials
+            if (matPlugin?.variations) {
+                matPlugin.variations.forEach((grp) => {
+                    if (!grp.materials) return;
+                    const div = document.createElement('div');
+                    div.className = 'group';
+                    div.innerHTML = `<h3>${grp.title}</h3>`;
+
+                    grp.materials.forEach((mat, mIdx) => {
+                        const btn = document.createElement('button');
+                        btn.textContent = mat.userData?.label || mat.name || mat.uuid;
+                        if (grp.selectedIndex === mIdx) btn.className = 'active';
+                        btn.onclick = async () => {
+                            await matPlugin.applyVariation(grp, mat.uuid);
+                            renderUI();
+                        };
+                        div.appendChild(btn);
+                    });
+                    ui.appendChild(div);
+                });
+            }
+        }
+
+        // Render standard component (no shape/size classification)
+        function renderStandardComponent(component) {
+            const div = document.createElement('div');
+            div.className = 'group';
+            div.innerHTML = `<h3>${component.name}</h3>`;
+
+            component.variations.forEach((variation, vIdx) => {
+                const btn = document.createElement('button');
+                btn.textContent = variation.name || variation.title || `Var ${vIdx}`;
+                if (vIdx === component.selectedIndex) btn.className = 'active';
+                btn.onclick = async () => {
+                    btn.textContent = '...';
+                    await component.applyVariation(variation);
+                    renderUI();
+                };
+                div.appendChild(btn);
+            });
+            ui.appendChild(div);
+        }
+
+        // Render Heads component with shape and size classification
+        function renderHeadsWithShapeSize(component) {
+            const groups = groupByShape(component.variations);
+            const selectedVar = component.variations[component.selectedIndex];
+            const { shape: selectedShape } = parseTags(selectedVar);
+
+            // Set current shape if not set
+            if (!currentShape || !groups[currentShape]) {
+                currentShape = selectedShape || Object.keys(groups)[0];
+            }
+
+            const div = document.createElement('div');
+            div.className = 'group';
+            div.innerHTML = `<h3>${component.name}</h3>`;
+
+            // Shape selector
+            const shapeLabel = document.createElement('p');
+            shapeLabel.innerHTML = `<strong>Shape:</strong>`;
+            div.appendChild(shapeLabel);
+
+            const shapeContainer = document.createElement('div');
+            Object.keys(groups).forEach(shape => {
+                const btn = document.createElement('button');
+                btn.textContent = shape.charAt(0).toUpperCase() + shape.slice(1);
+                if (shape === currentShape) btn.className = 'active';
+                btn.onclick = async () => {
+                    currentShape = shape;
+                    // Apply first variation of this shape
+                    const firstVar = groups[shape].variations[0];
+                    await component.applyVariation(firstVar.variation);
+                    renderUI();
+                };
+                shapeContainer.appendChild(btn);
+            });
+            div.appendChild(shapeContainer);
+
+            // Size selector for current shape
+            const sizeLabel = document.createElement('p');
+            sizeLabel.innerHTML = `<strong>Carat Size:</strong>`;
+            sizeLabel.style.marginTop = '15px';
+            div.appendChild(sizeLabel);
+
+            const sizeContainer = document.createElement('div');
+            const currentGroup = groups[currentShape];
+
+            if (currentGroup) {
+                // Sort by size
+                const sorted = [...currentGroup.variations].sort((a, b) =>
+                    parseFloat(a.size?.replace('ct', '') || 0) - parseFloat(b.size?.replace('ct', '') || 0)
+                );
+
+                sorted.forEach(item => {
+                    const btn = document.createElement('button');
+                    btn.textContent = item.size || 'N/A';
+                    if (item.idx === component.selectedIndex) btn.className = 'active';
+                    btn.onclick = async () => {
+                        btn.textContent = '...';
+                        await component.applyVariation(item.variation);
+                        renderUI();
+                    };
+                    sizeContainer.appendChild(btn);
+                });
+            }
+            div.appendChild(sizeContainer);
+            ui.appendChild(div);
+        }
+    </script>
+</body>
+
+</html>
