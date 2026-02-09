@@ -1,0 +1,87 @@
+{
+  "type": "RingBuilder",
+  "components": [
+    {
+      "name": "Head",
+      "title": "",
+      "selectedIndex": 3,
+      "visible": true,
+      "variations": [
+        {
+          "name": "HD-HH-RB-05",
+          "title": "HD-HH-RB-05",
+          "modelUrl": "https://dev-2.ijewel3d.com/files/hd_hh_rb_05_ed2fb7236a.glb?h=dev-2.localhost:5173",
+          "icon": "https://dev-2.ijewel3d.com/files/hd_hh_rb_05_f82dbec70e.png?h=dev-2.localhost:5173",
+          "fileId": "WUYk0J5zQoCCW8g1eN5HDA",
+          "tags": []
+        },
+        {
+          "name": "HD-HH-OV-10",
+          "title": "HD-HH-OV-10",
+          "modelUrl": "https://dev-2.ijewel3d.com/files/hd_hh_ov_10_43d07b2a33.glb?h=dev-2.localhost:5173",
+          "icon": "https://dev-2.ijewel3d.com/files/hd_hh_ov_10_709de8b6ef.png?h=dev-2.localhost:5173",
+          "fileId": "ZtuSphPpRL69BwWViodafw",
+          "tags": []
+        },
+        {
+          "name": "HD-H-RB-05",
+          "title": "HD-H-RB-05",
+          "modelUrl": "https://dev-2.ijewel3d.com/files/hd_h_rb_05_2526ebde90.glb?h=dev-2.localhost:5173",
+          "icon": "https://dev-2.ijewel3d.com/files/hd_h_rb_05_fa0668ca3e.png?h=dev-2.localhost:5173",
+          "fileId": "K7BRvrp5QbuMAyyC2T7wrA",
+          "tags": []
+        },
+        {
+          "name": "HD-H-OV-10",
+          "title": "HD-H-OV-10",
+          "modelUrl": "https://dev-2.ijewel3d.com/files/hd_h_ov_10_2fca6d6827.glb?h=dev-2.localhost:5173",
+          "icon": "https://dev-2.ijewel3d.com/files/hd_h_ov_10_3e04a973e9.png?h=dev-2.localhost:5173",
+          "fileId": "LJ4Xah5fTkOi9nBNHRr38w",
+          "tags": []
+        }
+      ],
+      "fileId": "Fppza7qvQBWHO8fpoJtn9w"
+    },
+    {
+      "name": "Shank",
+      "title": "",
+      "selectedIndex": 2,
+      "visible": true,
+      "variations": [
+        {
+          "name": "SH4-PV",
+          "title": "SH4-PV",
+          "modelUrl": "https://dev-2.ijewel3d.com/files/sh4_pv_a2e357a9af.glb?h=dev-2.localhost:5173",
+          "icon": "https://dev-2.ijewel3d.com/files/sh4_pv_6107be197d.png?h=dev-2.localhost:5173",
+          "fileId": "Ubt2fIMdRyCNGULpuwFb0Q",
+          "tags": []
+        },
+        {
+          "name": "SH4-PL",
+          "title": "SH4-PL",
+          "modelUrl": "https://dev-2.ijewel3d.com/files/sh4_pl_3cb4bbbc40.glb?h=dev-2.localhost:5173",
+          "icon": "https://dev-2.ijewel3d.com/files/sh4_pl_552bf3df19.png?h=dev-2.localhost:5173",
+          "fileId": "cJYxHCR4TVu33BhQ_pjLjA",
+          "tags": []
+        },
+        {
+          "name": "SH1-PV",
+          "title": "SH1-PV",
+          "modelUrl": "https://dev-2.ijewel3d.com/files/sh1_pv_22d01a8d29.glb?h=dev-2.localhost:5173",
+          "icon": "https://dev-2.ijewel3d.com/files/sh1_pv_f5b5dc9312.png?h=dev-2.localhost:5173",
+          "fileId": "UzwUMjJtQ8SVsz3JaI2n7g",
+          "tags": []
+        },
+        {
+          "name": "SH1-PL",
+          "title": "SH1-PL",
+          "modelUrl": "https://dev-2.ijewel3d.com/files/sh1_pl_b74cf28c7d.glb?h=dev-2.localhost:5173",
+          "icon": "https://dev-2.ijewel3d.com/files/sh1_pl_67f30fd0bd.png?h=dev-2.localhost:5173",
+          "fileId": "OxuXo8DNTei9SJNMwtrKpQ",
+          "tags": []
+        }
+      ],
+      "fileId": "VImrPYeYQFmYrQhdItvGvg"
+    }
+  ]
+}

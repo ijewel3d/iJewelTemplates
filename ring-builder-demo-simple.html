@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ring Builder Template</title>
+    <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@300..900&display=swap" rel="stylesheet">
+    <style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Red Hat Display',-apple-system,sans-serif;color:#1f2937;line-height:1.5;height:100vh;overflow:hidden}header{padding:1rem;display:flex;justify-content:center;border-bottom:1px solid #e5e7eb}.brand-logo img{height:40px}.container{display:grid;grid-template-columns:2fr 1fr;height:calc(100vh - 72px);gap:2rem;padding:2rem}.viewer-section{background:#f3f4f6;border-radius:.5rem;display:flex;align-items:center;justify-content:center}#viewer-container{width:100%;height:100%}.sidebar{display:flex;flex-direction:column;gap:1.5rem;overflow-y:auto;padding-right:.5rem}.sidebar.disabled{pointer-events:none;opacity:.6}.product-title{font-size:2rem;font-weight:600;color:#000}.product-code{font-size:.875rem;color:#9ca3af;margin:.5rem 0}.product-price{font-size:1.5rem;font-weight:600;color:#000}.section-header{font-size:.875rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#000;padding-bottom:1rem;border-bottom:1px solid #e5e7eb;margin-bottom:1rem}.section-label{font-size:.875rem;color:#4b5563;margin-bottom:.75rem;display:block}.options-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:.5rem}.option-item{display:flex;flex-direction:column;align-items:center;gap:.5rem;cursor:pointer;padding-bottom:.25rem;border-bottom:2px solid #fff0;transition:all .2s}.option-item:hover{border-bottom-color:#d1d5db}.option-item.selected{border-bottom-color:#000}.option-swatch{width:3rem;height:3rem;display:flex;align-items:center;justify-content:center;transition:transform .2s}.option-item:hover .option-swatch{transform:scale(1.05)}.option-swatch img{width:100%;height:100%;object-fit:contain}.option-label{font-size:.75rem;color:#6b7280;text-align:center}.option-item.selected .option-label{color:#000;font-weight:600}.option-swatch.loading{opacity:.5;pointer-events:none;position:relative}.option-swatch.loading::after{content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:20px;height:20px;border:2px solid rgb(0 0 0 / .1);border-top-color:#000;border-radius:50%;animation:spin .8s linear infinite}@keyframes spin{to{transform:translate(-50%,-50%) rotate(360deg)}}.loading-message,.empty-message{color:#9ca3af;font-size:.875rem;text-align:center;padding:2rem}.component-section,.material-section{margin-bottom:1.5rem}@media(max-width:1024px){.container{grid-template-columns:1fr;height:auto;padding:0;gap:0}.sidebar{padding-left:.5rem;max-height:50vh;overflow-y:auto}.viewer-section{min-height:400px}}</style>
+</head>
+
+<body>
+    <header>
+        <div class="brand-logo"><img src="https://dev-2.ijewel3d.com/files/brand_1770202067744_8f42ec3857.png?h=staging-drive.ijewel3d.com" alt="Brand"></div>
+    </header>
+
+    <div class="container">
+        <div class="viewer-section">
+            <div id="viewer-container"></div>
+        </div>
+
+        <div class="sidebar">
+            <div class="product-info">
+                <h1 class="product-title">Ring Builder</h1>
+                <p class="product-code">RING-001</p>
+            </div>
+            <div id="components-container">
+                <div class="loading-message" style="border-top: 1px solid #d1d5db;">Loading...</div>
+            </div>
+            <div id="materials-container"></div>
+        </div>
+    </div>
+
+    <script type="module">
+        // ============ CONFIGURATION ============
+        const CONFIG = {
+            driveBasename: 'dev-2',
+            defaultFileId: 'M0BEKF9qSDiF_Mk3t0NGsA',
+            viewerScript: 'https://releases.ijewel3d.com/libs/mini-viewer/0.5.10-dev.3/bundle.iife.js'
+        };
+
+        // ============ STATE ============
+        let viewer, ringBuilder, materialPlugin, currentShape;
+
+        // ============ DOM HELPERS ============
+        const querySelector = (selector, container = document) => container.querySelector(selector);
+        const querySelectorAll = (selector, container = document) => container.querySelectorAll(selector);
+
+        function createElement(tag, className = '', text = '') {
+            const el = document.createElement(tag);
+            if (className) el.className = className;
+            if (text) el.textContent = text;
+            return el;
+        }
+
+        function capitalize(str) {
+            return str ? str[0].toUpperCase() + str.slice(1) : '';
+        }
+
+        function toPresentableName(name) {
+            if (!name) return '';
+            let n = name.split('/').pop().split('.')[0].split(';')[0];
+            const lastUnderscore = n.lastIndexOf('_');
+            if (lastUnderscore > 0) n = n.substring(0, lastUnderscore);
+            n = n.split(/[-_]/).map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+            return n.replace(/^(Gradient\s?Radial\s?|Gradient\s?Linear\s?|Env\s?Metal\s?|Env\s?Gem\s?|Env\s?|Metal\s?)/i, '')
+                .replace(/([a-z])gold/gi, '$1 Gold').trim() || name;
+        }
+
+        // ============ SCRIPT LOADER ============
+        function loadScript(src) {
+            return new Promise((resolve, reject) => {
+                if (querySelector(`script[src="${src}"]`)) return resolve();
+                const script = createElement('script');
+                script.src = src;
+                script.async = true;
+                script.onload = resolve;
+                script.onerror = () => reject(new Error(`Failed to load: ${src}`));
+                document.body.appendChild(script);
+            });
+        }
+
+        // ============ TAG PARSER ============
+        function parseVariationTags(variation) {
+            const tags = variation.tags || [];
+            let shape = null, size = null;
+            tags.forEach(tag => {
+                if (tag.startsWith('shape:')) shape = tag.split(':')[1];
+                if (tag.startsWith('size:')) size = tag.split(':')[1];
+            });
+            return { shape, size };
+        }
+
+        // ============ UI HELPERS ============
+        let isLoading = false;
+
+        function setLoading(element, loading) {
+            isLoading = loading;
+            element?.querySelector('.option-swatch')?.classList.toggle('loading', loading);
+            // Disable/enable all option items during loading
+            querySelector('.sidebar')?.classList.toggle('disabled', loading);
+        }
+
+        function updateSelection(grid, index) {
+            querySelectorAll('.option-item', grid).forEach((item, i) => {
+                item.classList.toggle('selected', i === index);
+            });
+        }
+
+        // ============ OPTION ELEMENT CREATOR ============
+        // Uses native variation.icon or option.icon only
+        function createOptionElement(item, isSelected, onClick) {
+            const option = createElement('div', `option-item${isSelected ? ' selected' : ''}`);
+            const swatch = createElement('div', 'option-swatch');
+
+            if (item.icon) {
+                const img = createElement('img');
+                img.src = item.icon;
+                img.alt = item.name || item.title || '';
+                img.onerror = () => img.style.display = 'none';
+                swatch.appendChild(img);
+            }
+
+            const label = createElement('span', 'option-label', toPresentableName(item.name) || item.title || item.size || '');
+            option.appendChild(swatch);
+            option.appendChild(label);
+            option.onclick = onClick;
+            return option;
+        }
+
+        // ============ GROUP BY SHAPE ============
+        function groupVariationsByShape(variations) {
+            const groups = {};
+            variations.forEach((v, i) => {
+                const { shape, size } = parseVariationTags(v);
+                if (!shape) return;
+                if (!groups[shape]) groups[shape] = { shape, icon: v.icon, vars: [] };
+                groups[shape].vars.push({ shape, size, name: v.name || v.title, orig: v, idx: i });
+            });
+            return groups;
+        }
+
+        // ============ RENDER STANDARD COMPONENT ============
+        function renderStandardComponent(component, index, container) {
+            const section = createElement('div', 'component-section');
+            section.appendChild(createElement('h2', 'section-header', component.name));
+
+            const selectedVar = component.variations[component.selectedIndex];
+            const label = createElement('label', 'section-label', selectedVar?.title || selectedVar?.name || 'Select');
+            label.id = `label-${index}`;
+            section.appendChild(label);
+
+            const grid = createElement('div', 'options-grid');
+            grid.id = `grid-${index}`;
+
+            component.variations.forEach((variation, vi) => {
+                const option = createOptionElement(variation, vi === component.selectedIndex, async () => {
+                    setLoading(option, true);
+                    await component.applyVariation(variation);
+                    updateSelection(grid, vi);
+                    label.textContent = variation.title || variation.name;
+                    setLoading(option, false);
+                });
+                grid.appendChild(option);
+            });
+
+            section.appendChild(grid);
+            container.appendChild(section);
+        }
+
+        // ============ RENDER HEADS COMPONENT ============
+        function renderHeadsComponent(component, index, container) {
+            const section = createElement('div', 'component-section');
+            section.appendChild(createElement('h2', 'section-header', component.name));
+
+            const groups = groupVariationsByShape(component.variations);
+            const { shape, size } = parseVariationTags(component.variations[component.selectedIndex]);
+            currentShape = shape;
+
+            // Shape selector
+            const shapeLabel = createElement('label', 'section-label', `Shape: ${capitalize(shape)}`);
+            shapeLabel.id = `shape-label-${index}`;
+            section.appendChild(shapeLabel);
+
+            const shapeGrid = createElement('div', 'options-grid');
+            shapeGrid.id = `shape-grid-${index}`;
+
+            Object.values(groups).forEach(group => {
+                const option = createOptionElement(group, group.shape === currentShape, async () => {
+                    currentShape = group.shape;
+                    shapeLabel.textContent = `Shape: ${capitalize(group.shape)}`;
+                    renderSizeOptions(querySelector(`#size-grid-${index}`), groups[group.shape], index);
+                    const first = group.vars[0];
+                    setLoading(option, true);
+                    await component.applyVariation(first.orig);
+                    updateSelection(shapeGrid, Object.keys(groups).indexOf(group.shape));
+                    querySelector(`#size-label-${index}`).textContent = `Carat Size: ${first.size}`;
+                    setLoading(option, false);
+                });
+                shapeGrid.appendChild(option);
+            });
+            section.appendChild(shapeGrid);
+
+            // Size selector
+            const sizeLabel = createElement('label', 'section-label', `Carat Size: ${size}`);
+            sizeLabel.id = `size-label-${index}`;
+            sizeLabel.style.marginTop = '1.5rem';
+            section.appendChild(sizeLabel);
+
+            const sizeGrid = createElement('div', 'options-grid');
+            sizeGrid.id = `size-grid-${index}`;
+            renderSizeOptions(sizeGrid, groups[currentShape], index);
+            section.appendChild(sizeGrid);
+
+            container.appendChild(section);
+        }
+
+        // ============ RENDER SIZE OPTIONS ============
+        function renderSizeOptions(grid, group, index) {
+            grid.innerHTML = '';
+            if (!group?.vars.length) return grid.appendChild(createElement('div', 'empty-message', 'No sizes'));
+
+            const sorted = [...group.vars].sort((a, b) =>
+                parseFloat(a.size?.replace('ct', '') || 0) - parseFloat(b.size?.replace('ct', '') || 0)
+            );
+
+            sorted.forEach((sv, i) => {
+                const comp = ringBuilder.components.find(c => c.name.toLowerCase() === 'heads');
+                // Create an object with icon from variation and size as title
+                const sizeItem = {
+                    icon: sv.orig.icon,
+                    title: sv.size
+                };
+                const option = createOptionElement(sizeItem, comp?.selectedIndex === sv.idx, async () => {
+                    setLoading(option, true);
+                    await comp.applyVariation(sv.orig);
+                    updateSelection(grid, i);
+                    querySelector(`#size-label-${index}`).textContent = `Carat Size: ${sv.size}`;
+                    setLoading(option, false);
+                });
+                grid.appendChild(option);
+            });
+        }
+
+        // ============ RENDER ALL COMPONENTS ============
+        function renderComponents(components) {
+            const container = querySelector('#components-container');
+            container.innerHTML = '';
+
+            components.forEach((comp, i) => {
+                if (!comp.visible) return;
+                const isHeads = comp.name.toLowerCase() === 'heads' &&
+                    comp.variations.some(v => parseVariationTags(v).shape);
+                isHeads ? renderHeadsComponent(comp, i, container) : renderStandardComponent(comp, i, container);
+            });
+        }
+
+        // ============ CHECK MATERIAL EXISTS ============
+        function materialExistsInScene(variation) {
+            if (!viewer) return false;
+            let found = false;
+            viewer.scene.traverse(obj => {
+                if (obj.isMesh && obj.material?.name) {
+                    try { if (new RegExp(variation.uuid).test(obj.material.name)) found = true; }
+                    catch { if (obj.material.name === variation.uuid) found = true; }
+                }
+            });
+            return found;
+        }
+
+        // ============ RENDER MATERIALS ============
+        // Uses native option.icon only
+        function renderMaterials() {
+            const container = querySelector('#materials-container');
+            container.innerHTML = '';
+            if (!materialPlugin?.variations) return;
+
+            // Clear previously appended material sections from component sections
+            querySelectorAll('.component-section .material-section').forEach(el => el.remove());
+
+            materialPlugin.variations.forEach((variation, vi) => {
+                if (!materialExistsInScene(variation)) return;
+                const options = materialPlugin.options[vi] || [];
+                if (!options.length) return;
+                const section = createElement('div', 'material-section');
+                const isSubLabel = ['head', 'shank'].some(k => variation.title.toLowerCase().includes(k));
+
+                if (isSubLabel) {
+                    const label = createElement('label', 'section-label', variation.title);
+                    label.style.marginTop = '1.8rem';
+                    section.appendChild(label);
+                } else {
+                    section.appendChild(createElement('h2', 'section-header', variation.title));
+                }
+
+                const grid = createElement('div', 'options-grid');
+                grid.id = `material-grid-${vi}`;
+
+                options.forEach((opt, oi) => {
+                    const option = createOptionElement(opt, variation.selectedIndex === oi, async () => {
+                        setLoading(option, true);
+                        await materialPlugin.applyVariation(variation, opt.uuid);
+                        updateSelection(grid, oi);
+                        setLoading(option, false);
+                    });
+                    grid.appendChild(option);
+                });
+
+                section.appendChild(grid);
+
+                // Find matching component section by name (handles Heads→Head, Shanks→Shank)
+                let targetContainer = container;
+                if (ringBuilder?.components) {
+                    for (const comp of ringBuilder.components) {
+                        const baseName = comp.name.toLowerCase().replace(/s$/, ''); // Remove trailing 's'
+                        if (comp.visible && variation.title.toLowerCase().includes(baseName)) {
+                            const compSection = [...querySelectorAll('.component-section')].find(sec =>
+                                sec.querySelector('.section-header')?.textContent.toLowerCase() === comp.name.toLowerCase()
+                            );
+                            if (compSection) {
+                                targetContainer = compSection;
+                                break;
+                            }
+                        }
+                    }
+                }
+                targetContainer.appendChild(section);
+            });
+        }
+
+        // ============ INITIALIZE ============
+        (async function init() {
+            await loadScript(CONFIG.viewerScript);
+            const fileId = new URLSearchParams(location.search).get('fileId') || CONFIG.defaultFileId;
+            const instanceName = new URLSearchParams(location.search).get('instanceName') || CONFIG.driveBasename
+
+            ijewelViewer.loadModelById(fileId, instanceName, querySelector('#viewer-container'), {
+                showCard: false, showSwitchNode: false, splitMaterialTabs: true, useIjewelLogo: false,
+                hideQuality: true, hideFullScreen: true, hideResetView: true, hideFitScene: true,
+                showLogo: true, hideRotateCamera: true, hideCameraViews: true, hideGltfAnimations: true,
+                transparentBg: false, runRotateCamera: false, showConfigurator: false, showShare: false,
+                brandingSettings: { enable: true, showLoadingScreenLogo: true }
+            });
+
+            window.addEventListener('ijewel-viewer-ready', e => {
+                viewer = e.detail.viewer;
+                ringBuilder = viewer.getPluginByType('RingBuilder');
+                materialPlugin = viewer.getPluginByType('MaterialConfiguratorPlugin');
+
+                if (materialPlugin) {
+                    renderMaterials();
+                    ['deserialize', 'refreshUi'].forEach(ev => materialPlugin.addEventListener(ev, renderMaterials));
+                    viewer.scene.addEventListener('addSceneObject', renderMaterials);
+                }
+
+                if (ringBuilder) {
+                    ringBuilder.addEventListener('componentProcessed', () => {
+                        if (ringBuilder.components?.length) {
+                            renderComponents(ringBuilder.components);
+                            renderMaterials();
+                        } else {
+                            querySelector('#components-container').innerHTML = '<div class="empty-message">No components</div>';
+                        }
+                    });
+                } else {
+                    querySelector('#components-container').innerHTML = '<div class="empty-message">Plugin not found</div>';
+                }
+            });
+        })();
+    </script>
+</body>
+
+</html>
