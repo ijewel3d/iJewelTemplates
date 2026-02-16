@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ring Builder Template</title>
+    <link rel="stylesheet" href="assets/style-complex.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@300..900&display=swap" rel="stylesheet">
+    <style>
+        /* Size Grid - Additional styles for carat size selector */
+        .size-grid-container {
+            width: 100%;
+        }
+
+        .size-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 0.25rem;
+            margin-top: 0.5rem;
+        }
+
+        .size-option-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            padding-bottom: 0.25rem;
+        }
+
+        .size-option-item:hover {
+            border-bottom-color: #ccc;
+        }
+
+        .size-option-item.selected {
+            border-bottom-color: #000;
+        }
+
+        .size-svg-container {
+            width: 3rem;
+            height: 3rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .size-svg-container svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        .size-svg-container svg path,
+        .size-svg-container svg rect,
+        .size-svg-container svg circle {
+            stroke: #b8b8b8;
+            transition: stroke 0.2s;
+        }
+
+        .size-svg-container.selected svg path,
+        .size-svg-container.selected svg rect,
+        .size-svg-container.selected svg circle {
+            stroke: #333;
+        }
+
+        .size-option-item:hover .size-svg-container svg path,
+        .size-option-item:hover .size-svg-container svg rect,
+        .size-option-item:hover .size-svg-container svg circle {
+            stroke: #888;
+        }
+
+        .size-option-label {
+            font-size: 0.75rem;
+            color: #4b5563;
+            text-align: center;
+        }
+
+        .size-option-item.selected .size-option-label {
+            color: #000;
+            font-weight: 600;
+        }
+
+        .size-svg-container.loading {
+            opacity: 0.5;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="brand-logo">
+            <img src="assets/brand.png" alt="Brand">
+        </div>
+    </header>
+    <div class="main-container">
+        <div class="grid-layout">
+            <div class="viewer-section">
+                <div id="viewer-container"></div>
+            </div>
+            <div class="sidebar">
+                <div class="product-info red-hat-display">
+                    <h1 class="product-title">Ring Configurator</h1>
+                    <p class="product-code">RING-001</p>
+                </div>
+                <div class="red-hat-display" id="ring-components-container">
+                    <div class="loading-message">Loading ring components...</div>
+                </div>
+                <div class="red-hat-display" id="material-configurators-container"></div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
+
+<script type="module">
+    // ═══════════════════════════════════════════════════════════════════════════
+    // CONFIGURATION - Edit these values to customize the ring builder
+    // ═══════════════════════════════════════════════════════════════════════════
+    const CONFIG = {
+        driveBasename: 'drive-weur-1',
+        defaultFileId: 'Jjlm8d2yQF-GhFIwwvysgw',
+        viewerScript: 'https://releases.ijewel3d.com/libs/mini-viewer/0.5.10-dev.5/bundle.iife.js'
+    };
+
+    // Icon paths for sizes (shape -> style -> size)
+    const ICONS = {
+        sizes: {
+            oval: {
+                accent: { '0.5ct': '../assets/sizes/oval-sizes/oval-accent-0.5ct.svg', '1.0ct': '../assets/sizes/oval-sizes/oval-accent-1.0ct.svg', '2.0ct': '../assets/sizes/oval-sizes/oval-accent-2.0ct.svg' },
+                'hidden-halo': { '0.5ct': '../assets/sizes/oval-sizes/oval-hidden-halo-0.5.svg', '1.0ct': '../assets/sizes/oval-sizes/oval-hidden-halo-1.0.svg', '2.0ct': '../assets/sizes/oval-sizes/oval-hidden-halo-2.0ct.svg' },
+                'diamond-halo': { '0.5ct': '../assets/sizes/oval-sizes/oval-diamond-halo-0.5ct.svg', '1.0ct': '../assets/sizes/oval-sizes/oval-diamond-halo-1.0ct.svg', '2.0ct': '../assets/sizes/oval-sizes/oval-diamond-halo-2.0.svg' }
+            },
+            round: {
+                accent: { '0.5ct': '../assets/sizes/round-sizes/round-accent-0.5ct.svg', '1.0ct': '../assets/sizes/round-sizes/round-accent-1.0ct.svg', '2.0ct': '../assets/sizes/round-sizes/round-accent-2.0ct.svg' },
+                'hidden-halo': { '0.5ct': '../assets/sizes/round-sizes/round-hidden-halo-0.5ct.svg', '1.0ct': '../assets/sizes/round-sizes/round-hidden-halo-1.0ct.svg', '2.0ct': '../assets/sizes/round-sizes/round-hidden-halo-2.0ct.svg' },
+                'diamond-halo': { '0.5ct': '../assets/sizes/round-sizes/round-diamond-halo-0.5ct.svg', '1.0ct': '../assets/sizes/round-sizes/round-diamond-halo-1.0ct.svg', '2.0ct': '../assets/sizes/round-sizes/round-diamond-halo-2.0ct.svg' }
+            }
+        }
+    };
+
+    // ═══════════════════════════════════════════════════════════════════════════
+    // HELPER UTILITIES
+    // ═══════════════════════════════════════════════════════════════════════════
+    const $ = (sel, ctx = document) => ctx.querySelector(sel);
+    const $$ = (sel, ctx = document) => ctx.querySelectorAll(sel);
+    const el = (tag, attrs = {}, children = []) => {
+        const e = document.createElement(tag);
+        Object.entries(attrs).forEach(([k, v]) => {
+            if (k === 'class') e.className = v;
+            else if (k.startsWith('data-')) e.setAttribute(k, v);
+            else if (k === 'text') e.textContent = v;
+            else e[k] = v;
+        });
+        children.forEach(c => typeof c === 'string' ? e.appendChild(document.createTextNode(c)) : e.appendChild(c));
+        return e;
+    };
+    const capitalize = s => s ? s.charAt(0).toUpperCase() + s.slice(1) : '';
+    const loadScript = src => new Promise((res, rej) => {
+        if ($(`script[src="${src}"]`)) return res();
+        const s = el('script', { src, async: true });
+        s.onload = res;
+        s.onerror = () => rej(new Error(`Failed: ${src}`));
+        document.body.appendChild(s);
+    });
+
+    // Parse tags from variation (shape:xxx, size:xxx)
+    const parseTags = v => {
+        const tags = v.tags || [];
+        let shape = null, size = null;
+        tags.forEach(t => {
+            if (t.startsWith('shape:')) shape = t.split(':')[1];
+            if (t.startsWith('size:')) size = t.split(':')[1];
+        });
+        return { shape, size };
+    };
+
+    // Get style from variation name
+    const getStyle = name => {
+        const n = (name || '').toLowerCase();
+        if (n.includes('hidden')) return 'hidden-halo';
+        if (n.includes('halo') || n.includes('diamond')) return 'diamond-halo';
+        return 'accent';
+    };
+
+    // Get size icon path
+    const getSizeIcon = (shape, size, name) => {
+        const sh = shape?.toLowerCase();
+        const sz = size?.toLowerCase();
+        return ICONS.sizes[sh]?.[getStyle(name)]?.[sz] || null;
+    };
+
+    // Load SVG inline for styling
+    const loadSvgInline = async (container, path, isSelected) => {
+        if (!path) { container.textContent = '?'; return; }
+        try {
+            const res = await fetch(path);
+            container.innerHTML = await res.text();
+            if (isSelected) container.classList.add('selected');
+        } catch { container.textContent = '?'; }
+    };
+
+    // ═══════════════════════════════════════════════════════════════════════════
+    // UI STATE & COMPONENTS
+    // ═══════════════════════════════════════════════════════════════════════════
+    let currentShape = null;
+    let materialPlugin = null;
+    let viewer = null;
+
+    // Set loading state on swatch
+    const setLoading = (el, loading) => {
+        const swatch = el?.querySelector('.option-swatch, .material-option-swatch, .size-svg-container');
+        swatch?.classList[loading ? 'add' : 'remove']('loading');
+    };
+
+    // Update selection in a grid
+    const updateSelection = (gridId, selectedIdx, itemClass = '.option-item') => {
+        const grid = $(`#${gridId}`);
+        console.log(grid, itemClass, selectedIdx, gridId);
+        if (!grid) return;
+        $$(itemClass, grid).forEach((item, i) => {
+            const idx = parseInt(item.dataset.variationIndex ?? i);
+            item.classList[idx === selectedIdx ? 'add' : 'remove']('selected');
+            const svg = $('.size-svg-container', item);
+            svg?.classList[idx === selectedIdx ? 'add' : 'remove']('selected');
+        });
+    };
+
+    // ═══════════════════════════════════════════════════════════════════════════
+    // RING COMPONENTS RENDERING
+    // ═══════════════════════════════════════════════════════════════════════════
+    const groupByShape = variations => {
+        const groups = {};
+        variations.forEach((v, i) => {
+            const { shape, size } = parseTags(v);
+            if (!shape) return;
+            if (!groups[shape]) groups[shape] = { shape, variations: [], icon: v.icon };
+            groups[shape].variations.push({ ...v, originalIndex: i, size });
+        });
+        return groups;
+    };
+
+    const isHeadsWithShapes = comp =>
+        comp.name.toLowerCase() === 'heads' && comp.variations.some(v => parseTags(v).shape);
+
+    const renderComponents = (components) => {
+        const container = $('#ring-components-container');
+        container.innerHTML = '';
+        components.forEach((comp, ci) => {
+            if (comp.visible) container.appendChild(createSection(comp, ci));
+        });
+    };
+
+    const createSection = (comp, ci) => {
+        const section = el('div', { class: 'component-section', id: `component-section-${ci}` });
+        section.appendChild(el('h2', { class: 'section-header', text: comp.name }));
+
+        if (isHeadsWithShapes(comp)) {
+            const groups = groupByShape(comp.variations);
+            const selected = comp.variations[comp.selectedIndex];
+            const info = parseTags(selected);
+            currentShape = info.shape;
+
+            // Shape selector
+            section.appendChild(el('label', { class: 'section-label', id: `shape-label-${ci}`, text: `Shape: ${capitalize(currentShape) || 'Select'}` }));
+            const shapesGrid = el('div', { class: 'variations-grid', id: `component-${ci}-shapes` });
+            Object.values(groups).forEach(g => shapesGrid.appendChild(createShapeOption(g, comp, ci, currentShape === g.shape, groups)));
+            section.appendChild(shapesGrid);
+
+            // Size selector
+            const sizeContainer = el('div', { class: 'size-grid-container', id: `size-container-${ci}` });
+            sizeContainer.style.marginTop = '1rem';
+            sizeContainer.appendChild(el('label', { class: 'section-label', id: `size-label-${ci}`, text: `Carat Size: ${info.size || 'Select'}` }));
+            const sizeGrid = el('div', { class: 'size-grid', id: `size-grid-${ci}` });
+            populateSizeGrid(sizeGrid, groups, currentShape, comp.selectedIndex, comp, ci);
+            sizeContainer.appendChild(sizeGrid);
+            section.appendChild(sizeContainer);
+        } else {
+            const selected = comp.variations[comp.selectedIndex];
+            section.appendChild(el('label', { class: 'section-label', text: `${comp.name}: ${(selected?.title || selected?.name || 'Style').replace('.glb', '')}` }));
+            const grid = el('div', { class: 'variations-grid', id: `component-${ci}-variations` });
+            comp.variations.forEach((v, vi) => grid.appendChild(createVariationOption(v, comp, ci, vi, comp.selectedIndex === vi)));
+            section.appendChild(grid);
+        }
+        return section;
+    };
+
+    const createShapeOption = (group, comp, ci, isSelected, allGroups) => {
+        const item = el('div', { class: `option-item${isSelected ? ' selected' : ''}`, 'data-shape': group.shape });
+        const swatch = el('div', { class: 'option-swatch' });
+        if (group.icon) {
+            const img = el('img', { src: group.icon, alt: group.shape });
+            img.onerror = () => img.style.display = 'none';
+            swatch.appendChild(img);
+        }
+        item.appendChild(swatch);
+        item.appendChild(el('span', { class: 'option-label', text: capitalize(group.shape) }));
+
+        item.onclick = async () => {
+            $$('.option-item', $(`#component-${ci}-shapes`)).forEach(i => i.classList.remove('selected'));
+            item.classList.add('selected');
+            currentShape = group.shape;
+            $(`#shape-label-${ci}`).textContent = `Shape: ${capitalize(group.shape)}`;
+
+            const sizeGrid = $(`#size-grid-${ci}`);
+            populateSizeGrid(sizeGrid, allGroups, group.shape, comp.selectedIndex, comp, ci);
+
+            if (group.variations.length) {
+                const first = group.variations[0];
+                setLoading(item, true);
+                await applyVariation(comp, comp.variations[first.originalIndex], ci, first.originalIndex);
+                $(`#size-label-${ci}`).textContent = `Carat Size: ${first.size || 'Select'}`;
+                updateSelection(`size-grid-${ci}`, first.originalIndex, '.size-option-item');
+                setLoading(item, false);
+            }
+        };
+        return item;
+    };
+
+    const populateSizeGrid = (grid, groups, shape, selectedIdx, comp, ci) => {
+        grid.innerHTML = '';
+        if (!shape || !groups[shape]) {
+            grid.appendChild(el('div', { class: 'empty-message', text: 'Select a shape first' }));
+            return;
+        }
+        const variations = groups[shape].variations.sort((a, b) =>
+            parseFloat(a.size?.replace('ct', '') || 0) - parseFloat(b.size?.replace('ct', '') || 0)
+        );
+        variations.forEach(v => grid.appendChild(createSizeOption(v, shape, comp, ci, v.originalIndex === selectedIdx)));
+    };
+
+    const createSizeOption = (v, shape, comp, ci, isSelected) => {
+        const item = el('div', { class: `size-option-item${isSelected ? ' selected' : ''}`, 'data-variationIndex': v.originalIndex });
+        const svgContainer = el('div', { class: `size-svg-container${isSelected ? ' selected' : ''}` });
+        loadSvgInline(svgContainer, getSizeIcon(shape, v.size, v.name || v.title), isSelected);
+        item.appendChild(svgContainer);
+        item.appendChild(el('span', { class: 'size-option-label', text: v.size || v.title || v.name }));
+
+        item.onclick = async () => {
+            updateSelection(`size-grid-${ci}`, v.originalIndex, '.size-option-item');
+            svgContainer.classList.add('loading');
+            await applyVariation(comp, comp.variations[v.originalIndex], ci, v.originalIndex);
+            $(`#size-label-${ci}`).textContent = `Carat Size: ${v.size || 'Select'}`;
+            svgContainer.classList.remove('loading');
+        };
+        return item;
+    };
+
+    const createVariationOption = (v, comp, ci, vi, isSelected) => {
+        const item = el('div', { class: `option-item${isSelected ? ' selected' : ''}`, 'data-componentIndex': ci, 'data-variationIndex': vi });
+        const swatch = el('div', { class: 'option-swatch' });
+        if (v.icon) {
+            const img = el('img', { src: v.icon, alt: v.title || v.name });
+            img.onerror = () => img.style.display = 'none';
+            swatch.appendChild(img);
+        }
+        item.appendChild(swatch);
+        item.appendChild(el('span', { class: 'option-label', text: (v.title || v.name).replace('.glb', '') }));
+
+        item.onclick = async () => {
+            setLoading(item, true);
+            await applyVariation(comp, v, ci, vi);
+            setLoading(item, false);
+        };
+        return item;
+    };
+
+    const applyVariation = async (comp, v, ci, vi) => {
+        if (comp?.applyVariation) await comp.applyVariation(v);
+        updateSelection(`component-${ci}-variations`, vi);
+    };
+
+    // ═══════════════════════════════════════════════════════════════════════════
+    // MATERIAL CONFIGURATOR
+    // ═══════════════════════════════════════════════════════════════════════════
+    const materialExists = variation => {
+        if (!viewer) return false;
+        let found = false;
+        viewer.scene.traverse(obj => {
+            if (obj.isMesh) {
+                const n = obj.material?.name;
+                try { if (n && new RegExp(variation.uuid).test(n)) found = true; }
+                catch { if (n === variation.uuid) found = true; }
+            }
+        });
+        return found;
+    };
+
+    const getSwatchClass = (opt, variation) => {
+        const n = (opt.title || opt.name || opt.uuid || '').toLowerCase();
+        const vn = (variation.title || variation.uuid || '').toLowerCase();
+        if (n.includes('white') && (n.includes('gold') || vn.includes('metal'))) return 'material-swatch-white-gold';
+        if (n.includes('rose') && (n.includes('gold') || vn.includes('metal'))) return 'material-swatch-rose-gold';
+        if ((n.includes('gold') || n.includes('yellow')) && vn.includes('metal')) return 'material-swatch-gold';
+        if (n.includes('diamond')) return 'gem-swatch-diamond';
+        if (n.includes('sapphire')) return 'gem-swatch-sapphire';
+        if (n.includes('ruby')) return 'gem-swatch-ruby';
+        if (n.includes('emerald')) return 'gem-swatch-emerald';
+        return '';
+    };
+
+    const renderMaterials = () => {
+        const container = $('#material-configurators-container');
+        container.innerHTML = '';
+        if (!materialPlugin?.variations) return;
+
+        materialPlugin.variations.forEach((v, vi) => {
+            if (!materialExists(v)) return;
+            const opts = materialPlugin.options[vi] || [];
+            if (!opts.length) return;
+
+            const isCustom = ['head', 'shank'].some(t => v.title.toLowerCase().includes(t));
+            const section = el('div', { class: 'material-section', id: `material-section-${vi}` });
+
+            if (isCustom) {
+                const label = el('label', { class: 'section-label', text: v.title || v.uuid });
+                label.style.marginTop = '1.8rem';
+                section.appendChild(label);
+            } else {
+                section.appendChild(el('h2', { class: 'section-header', text: v.title || v.uuid }));
+            }
+
+            const grid = el('div', { class: 'options-grid', id: `material-${vi}-options` });
+            opts.forEach((opt, oi) => grid.appendChild(createMaterialOption(opt, v, vi, oi, v.selectedIndex === oi)));
+            section.appendChild(grid);
+
+            // Place in appropriate component section
+            const existing = $(`.material-section#material-section-${vi}`);
+            if (!existing) {
+                const targetHeader = [...$$('.section-header')].find(h =>
+                    (v.title.includes('Shank') && h.textContent.toLowerCase().includes('shank')) ||
+                    (v.title.includes('Head') && h.textContent.toLowerCase().includes('head'))
+                );
+                (targetHeader?.parentElement || container).appendChild(section);
+            }
+        });
+    };
+
+    const createMaterialOption = (opt, v, vi, oi, isSelected) => {
+        const item = el('div', { class: `material-option-item${isSelected ? ' selected' : ''}`, 'data-variationIndex': vi, 'data-optionIndex': oi });
+        const cls = getSwatchClass(opt, v);
+        const swatch = el('div', { class: `material-option-swatch ${cls}` });
+
+        if (opt.icon) {
+            swatch.style.overflow = 'hidden';
+            const img = el('img', { src: opt.icon, alt: opt.title || opt.name || opt.uuid });
+            img.onerror = () => img.style.display = 'none';
+            swatch.appendChild(img);
+        } else if (opt.color && !cls) {
+            swatch.style.backgroundColor = opt.color;
+        }
+
+        item.appendChild(swatch);
+        item.appendChild(el('span', { class: 'material-option-label', text: opt.title || `${v.title}-${oi + 1}` }));
+
+        item.onclick = async () => {
+            setLoading(item, true);
+            if (materialPlugin?.applyVariation) {
+                await materialPlugin.applyVariation(v, opt.uuid);
+                updateSelection(`material-${vi}-options`, oi, '.material-option-item');
+            }
+            setLoading(item, false);
+        };
+        return item;
+    };
+
+    // ═══════════════════════════════════════════════════════════════════════════
+    // INITIALIZATION
+    // ═══════════════════════════════════════════════════════════════════════════
+    (async () => {
+        await loadScript(CONFIG.viewerScript);
+
+        const fileId = new URLSearchParams(location.search).get('fileId') || CONFIG.defaultFileId;
+
+        ijewelViewer.loadModelById(fileId, CONFIG.driveBasename, $('#viewer-container'), {
+            showCard: false, showSwitchNode: false, splitMaterialTabs: true, useIjewelLogo: false,
+            hideQuality: true, logoScale: 1, hideFullScreen: true, hideResetView: true,
+            hideFitScene: true, showLogo: false, hideRotateCamera: true, hideCameraViews: true,
+            hideGltfAnimations: true, transparentBg: false, runRotateCamera: false,
+            showConfigurator: false, showShare: false, brandingSettings: { enable: false, showLoadingScreenLogo: false }
+        });
+
+        window.addEventListener('ijewel-viewer-ready', e => {
+            viewer = e.detail.viewer;
+            materialPlugin = viewer.getPluginByType('MaterialConfiguratorPlugin');
+
+            if (materialPlugin) {
+                renderMaterials();
+                ['deserialize', 'refreshUi'].forEach(ev => materialPlugin.addEventListener(ev, renderMaterials));
+                viewer.scene.addEventListener('addSceneObject', renderMaterials);
+            }
+
+            const ringBuilder = viewer.getPluginByType('RingConfigurator');
+            if (ringBuilder) {
+                ringBuilder.addEventListener('componentProcessed', () => {
+                    if (ringBuilder.components?.length) {
+                        renderComponents(ringBuilder.components);
+                        renderMaterials();
+                    } else {
+                        $('#ring-components-container').innerHTML = '<div class="empty-message">No ring components available.</div>';
+                    }
+                });
+            } else {
+                $('#ring-components-container').innerHTML = '<div class="empty-message">Ring Builder plugin not found.</div>';
+            }
+        });
+    })();
+</script>
