@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ring Builder Temp V3</title>
+    <link rel="stylesheet" type="text/css" href="assets/style-v2.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:ital,wght@0,300..900;1,300..900&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <header>
+        <div class="brand-logo">
+            <img src="https://drive-weur-1.ijewel3d.com/files/brand_34ccdfb1fd.png?h=ijewel3d.com" alt="">
+        </div>
+    </header>
+
+    <div class="main-container">
+        <div class="grid-layout">
+            <div class="viewer-section">
+                <div id="viewer-container"></div>
+            </div>
+            <div class="sidebar" id="ring-components-container">
+                <!-- <button type="button" class="collapsible">Gem Shape</button>
+                <div class="content" id="gem-shape-content">
+                    
+                </div>
+                <button type="button" class="collapsible">Center Stone</button>
+                <div class="content" id="center-stone-content">
+                    
+                </div> -->
+                <button type="button" class="collapsible">Head</button>
+                <div class="content" id="head-content">
+                    
+                </div>
+                <button type="button" style="border-bottom: none;" class="collapsible">Shank</button>
+                <div class="content" id="shank-content">
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+<script>
+    var coll = document.getElementsByClassName("collapsible");
+    var i;
+
+    for (i = 0; i < coll.length; i++) {
+    coll[i].addEventListener("click", function() {
+        this.classList.toggle("active");
+        var content = this.nextElementSibling;
+        if (content.style.maxHeight){
+        content.style.maxHeight = null;
+        } else {
+        content.style.maxHeight = content.scrollHeight + "px";
+        }
+    });
+    }
+</script>
+<script type="module">
+    const loadScript = (src) => {
+        return new Promise((resolve, reject) => {
+            const existingScript = document.querySelector(`script[src="${src}"]`);
+            if (existingScript) {
+                resolve();
+                return;
+            }
+
+            const script = document.createElement('script');
+            script.src = src;
+            script.async = true;
+            script.onload = () => resolve();
+            script.onerror = () => reject(new Error(`Failed to load script: ${src}`));
+            document.body.appendChild(script);
+        });
+    };
+    (async () => {
+        loadScript("https://releases.ijewel3d.com/libs/mini-viewer/0.5.10-dev.5/bundle.iife.js").then(() => {
+            const driveBasename = 'drive-weur-1'; // for enterprise clients contact us to get your basename, otherwise keep it unchanged
+            const urlParams = new URLSearchParams(window.location.search);
+            const modelFileId = urlParams.get('fileId') || 'MZRVkhjkQWyjPR_NsOotig';
+            const containerElement = document.getElementById('viewer-container');
+            let ringBuilderPlugin = null;
+            let materialConfiguratorPlugin = null;
+            let currentViewer = null;
+
+            const Head = {
+                // "HD-HH-RB-05": "https://drive-weur-1.ijewel3d.com/files/baze_set_1f34dcffdc.png?h=ijewel3d.com",
+                // "HD-HH-OV-10": "https://drive-weur-1.ijewel3d.com/files/double_halo_ea3292090d.png?h=ijewel3d.com",
+                // "HD-H-RB-05": "https://drive-weur-1.ijewel3d.com/files/four_prong_6b1b641d82.png?h=ijewel3d.com",
+                // "HD-H-OV-10": "https://drive-weur-1.ijewel3d.com/files/pave_halo_b3a0e648ed.png?h=ijewel3d.com",
+                // "SH7-PL": "https://drive-weur-1.ijewel3d.com/files/six_prong_10bcefef9e.png?h=ijewel3d.com"
+            }
+
+            const Shank = {
+                // "SH5-PL": "https://drive-weur-1.ijewel3d.com/files/baguette_de10b76f9c.png?h=ijewel3d.com",
+                // "SH4-PV": "https://drive-weur-1.ijewel3d.com/files/fishtail_afce2abdde.png?h=ijewel3d.com",
+                // "SH1-PL": "https://drive-weur-1.ijewel3d.com/files/pave_1c46c45741.png?h=ijewel3d.com",
+                // "SH8-PL": "https://drive-weur-1.ijewel3d.com/files/solitaire_b8bdaaaf96.png?h=ijewel3d.com"
+            }
+
+            const Metal = {
+                // "Gold": "https://drive-weur-1.ijewel3d.com/files/gold_2a7ff7f924.png?h=ijewel3d.com",
+                // "RoseGold": "https://drive-weur-1.ijewel3d.com/files/rose_gold_848ccb14e6.png?h=ijewel3d.com",
+                // "WhiteGold": "https://drive-weur-1.ijewel3d.com/files/hite_gold_b1df8ec3ea.png?h=ijewel3d.com",
+            }
+
+            ijewelViewer.loadModelById(
+                modelFileId,
+                driveBasename,
+                containerElement,
+                {
+                    showCard: false,
+                    showSwitchNode: false,
+                    splitMaterialTabs: true,
+                    useIjewelLogo: false,
+                    hideQuality: true,
+                    logoScale: 1,
+                    hideFullScreen: true,
+                    hideResetView: true,
+                    hideFitScene: true,
+                    showLogo: false,
+                    hideRotateCamera: true,
+                    hideCameraViews: true,
+                    hideGltfAnimations: true,
+                    transparentBg: false,
+                    runRotateCamera: false,
+                    showConfigurator: false,
+                    showShare: false,
+                    brandingSettings: {
+                        enable: false,
+                        showLoadingScreenLogo: false,
+                    },
+                }
+            );
+            
+            function materialExists(viewer, variation) {
+                if (!viewer) return false;
+                let found = false;
+                viewer.scene.traverse((object) => {
+                    if (object.isMesh) {
+                        const n = object.material?.name;
+                        try {
+                            const re = new RegExp(variation.uuid);
+                            if (n && re.test(n)) {
+                                found = true;
+                            }
+                        } catch {
+                            if (n === variation.uuid) {
+                                found = true;
+                            }
+                        }
+                    }
+                });
+                return found;
+            }
+            
+            async function applyMaterialOption(variation, option, variationIndex, optionIndex, plugin) {
+                if (plugin && plugin.applyVariation) {
+                    await plugin.applyVariation(variation, option.uuid);
+                    updateMaterialSelectionUI(variationIndex, optionIndex);
+                }
+            }
+            function updateMaterialSelectionUI(variationIndex, optionIndex) {
+                const grid = document.getElementById(`material-${variationIndex}-options`);
+                if (!grid) return;
+
+                const options = grid.querySelectorAll('.material-option-item');
+                console.log(options)
+                options.forEach((option, index) => {
+                    const swatch = option.querySelector('.material-option-swatch');
+                    if (swatch) {
+                        if (index === optionIndex) {
+                            swatch.classList.add('selected');
+                        } else {
+                            swatch.classList.remove('selected');
+                        }
+                    }
+                    if (index === optionIndex) option.classList.add("selected")
+                    else option.classList.remove("selected")
+                });
+            }
+            
+            function createMaterialOption(option, variation, variationIndex, optionIndex, isSelected, plugin) {
+                const optionItem = document.createElement('div');
+                optionItem.className = 'material-option-item';
+                optionItem.dataset.variationIndex = variationIndex;
+                optionItem.dataset.optionIndex = optionIndex;
+                const swatch = document.createElement('div');
+                //const customClass = getSwatchClass(option, variation);
+                let className = `material-option-swatch`;
+                swatch.className = className;
+                if (option.icon) {
+                    function getIcon() {
+                        if (component.name === "Head") return Head[variation.name.replace(".glb", "")]
+                        if (component.name === "Shank") return Shank[variation.name.replace(".glb", "")]
+                    }
+                    swatch.style.overflow = 'hidden';
+                    const img = document.createElement('img');
+                    img.src = option.icon;
+                    img.alt = option.title || option.name || option.uuid;
+                    img.onerror = function () {
+                        this.style.display = 'none';
+                    };
+                    swatch.appendChild(img);
+                } else if (option.color && !customClass) {
+                    swatch.style.backgroundColor = option.color;
+                }
+                if (isSelected) swatch.classList.add("selected")
+                optionItem.appendChild(swatch);
+                const label = document.createElement('span');
+                label.className = `material-option-label`;
+                label.textContent = option.title || (variation.title + '-' + (optionIndex + 1));
+                optionItem.title = label.textContent;
+                optionItem.appendChild(label)
+                optionItem.addEventListener('click', async () => {
+                    setOptionLoading(optionItem, true);
+                    try {
+                        await applyMaterialOption(variation, option, variationIndex, optionIndex, plugin);
+                    } finally {
+                        setOptionLoading(optionItem, false);
+                    }
+                });
+
+                return optionItem;
+            }
+            
+            function createMaterialSection(variation, variationIndex, title, options, plugin, customSection) {
+                const section = document.createElement('div');
+                section.className = 'material-section';
+                section.id = `material-section-${variationIndex}`;
+                
+                const grid = document.createElement('div');
+                grid.className = 'options-grid';
+                grid.id = `material-${variationIndex}-options`;
+
+                options.forEach((option, optionIndex) => {
+                    const isSelected = variation.selectedIndex === optionIndex;
+                    const optionItem = createMaterialOption(
+                        option,
+                        variation,
+                        variationIndex,
+                        optionIndex,
+                        isSelected,
+                        plugin
+                    );
+                    grid.appendChild(optionItem);
+                });
+
+                section.appendChild(grid);
+                return section;
+            }
+            
+            function renderMaterialConfigurators(plugin, viewer) {
+                // const container = document.getElementById('material-configurators-container');
+                // container.innerHTML = '';
+
+                if (!plugin || !plugin.variations) {
+                    return;
+                }
+
+                plugin.variations.forEach((variation, variationIndex) => {
+                    if (!materialExists(viewer, variation)) return;
+
+                    const name = variation.uuid || variation.title;
+                    const title = variation.title || variation.uuid;
+                    const options = plugin.options[variationIndex] || [];
+
+                    if (options.length === 0) return;
+
+                    const section = createMaterialSection(variation, variationIndex, title, options, plugin, ["head", "shank"].some(term => variation.title.toLowerCase().includes(term)));
+                    const materialSections = document.getElementsByClassName("material-section");
+                    if (!Array.from(materialSections).find((msec) => msec.id === section.id)) {
+                        if (variation.title.includes("Shank")) {
+                            const shankContent = document.getElementById("shank-content")
+                            if (shankContent) {
+                                shankContent.appendChild(section)
+                            }
+                        }
+                        else if (variation.title.includes("Head")) {
+                            const headContent = document.getElementById("head-content")
+                            if (headContent) {
+                                headContent.appendChild(section)
+                            }
+                        }
+                        // else container.appendChild(section);
+                    }
+                });
+            }
+            
+            function initMaterialConfigurator(viewer) {
+                currentViewer = viewer;
+                const plugin = viewer.getPluginByType("MaterialConfiguratorPlugin");
+
+                if (!plugin) {
+                    console.log('MaterialConfiguratorPlugin not found');
+                    return;
+                }
+
+                materialConfiguratorPlugin = plugin;
+                renderMaterialConfigurators(plugin, viewer);
+                plugin.addEventListener("deserialize", () => {
+                    renderMaterialConfigurators(plugin, viewer);
+                });
+
+                plugin.addEventListener("refreshUi", () => {
+                    renderMaterialConfigurators(plugin, viewer);
+                });
+                viewer.scene.addEventListener("addSceneObject", () => {
+                    renderMaterialConfigurators(plugin, viewer);
+                });
+            }
+
+            async function applyVariation(component, variation, componentIndex, variationIndex) {
+                if (component && component.applyVariation) {
+                    await component.applyVariation(variation);
+                }
+                updateSelectionUI(componentIndex, variationIndex);
+            }
+            function updateSelectionUI(componentIndex, variationIndex) {
+                const grid = document.getElementById(`component-${componentIndex}-variations`);
+                if (!grid) return;
+
+                const options = grid.querySelectorAll('.option-item');
+                options.forEach((option, index) => {
+                    const label = option.querySelector('.option-label');
+                    if (index === variationIndex) option.classList.add("selected")
+                    else option.classList.remove("selected")
+                });
+            }
+            
+            function setOptionLoading(optionElement, isLoading) {
+                const swatch = optionElement.querySelector('.option-swatch, .material-option-swatch');
+                if (swatch) {
+                    if (isLoading) {
+                        swatch.classList.add('loading');
+                    } else {
+                        swatch.classList.remove('loading');
+                    }
+                }
+            }
+            
+            function createVariationOption(variation, component, componentIndex, variationIndex, isSelected) {
+                const optionItem = document.createElement('div');
+                optionItem.className = 'option-item';
+                if (isSelected) optionItem.classList.add("selected")
+                optionItem.dataset.componentIndex = componentIndex;
+                optionItem.dataset.variationIndex = variationIndex;
+                const swatch = document.createElement('div');
+                swatch.className = 'option-swatch';
+                if (variation.icon) {
+                    function getIcon() {
+                        if (component.name === "Head") return Head[variation.name.replace(".glb", "")]
+                        if (component.name === "Shank") return Shank[variation.name.replace(".glb", "")]
+                    }
+                    const img = document.createElement('img');
+                    img.src = getIcon() ?? variation.icon;
+                    img.alt = variation.title || variation.name;
+                    img.onerror = function () {
+                        this.style.display = 'none';
+                    };
+                    swatch.appendChild(img);
+                }
+
+                optionItem.appendChild(swatch);
+                const label = document.createElement('span');
+                label.className = `option-label`;
+                label.textContent = variation.title
+                    ? variation.title.replace('.glb', '')
+                    : variation.name.replace('.glb', '');
+                optionItem.title = label.textContent;
+                optionItem.addEventListener('click', async () => {
+                    setOptionLoading(optionItem, true);
+                    try {
+                        await applyVariation(component, variation, componentIndex, variationIndex);
+                    } finally {
+                        setOptionLoading(optionItem, false);
+                    }
+                });
+
+                return optionItem;
+            }
+            
+            function createComponentSection(component, componentIndex, plugin) {
+                const section = document.createElement('div');
+                section.className = 'component-section';
+                section.id = `component-section-${componentIndex}`;
+
+                // Variations grid
+                const grid = document.createElement('div');
+                grid.className = 'variations-grid';
+                grid.id = `component-${componentIndex}-variations`;
+
+                component.variations.forEach((variation, variationIndex) => {
+                    const optionItem = createVariationOption(
+                        variation,
+                        component,
+                        componentIndex,
+                        variationIndex,
+                        component.selectedIndex === variationIndex
+                    );
+                    grid.appendChild(optionItem);
+                });
+
+                section.appendChild(grid);
+                return section;
+            }
+            
+            function renderRingComponents(components, plugin) {
+                components.forEach((component, componentIndex) => {
+                    if (component.visible) {
+                        const section = createComponentSection(component, componentIndex, plugin);
+                        
+                        if (component.name.includes("Shank")) {
+                            const shankElement = document.getElementById("shank-content");
+                            
+                            if(shankElement){
+                                shankElement.innerHTML = ""
+                                shankElement.appendChild(section);
+                            }
+                        }
+                        else if (component.name.includes("Head")) {
+                            const headElement = document.getElementById("head-content");
+                            
+                            if(headElement){
+                                headElement.innerHTML = ""
+                                headElement.appendChild(section);
+                            }
+                        }
+                        // else component.appendChild(section);
+                    }
+                });
+            }
+            
+            window.addEventListener("ijewel-viewer-ready", (event) => {
+                const viewer = event.detail.viewer;
+                initMaterialConfigurator(viewer);
+                const RingBuilderPlugin = viewer.getPluginByType("RingConfigurator");
+
+                if (RingBuilderPlugin) {
+                    RingBuilderPlugin.addEventListener("componentProcessed", (ev) => {
+                        RingBuilderPlugin.setRootScale(0.1)
+
+                        ringBuilderPlugin = RingBuilderPlugin;
+                        const ringComponents = RingBuilderPlugin.components;
+
+                        if (ringComponents && ringComponents.length > 0) {
+                            renderRingComponents(ringComponents, RingBuilderPlugin);
+                            if (materialConfiguratorPlugin && currentViewer) {
+                                renderMaterialConfigurators(materialConfiguratorPlugin, currentViewer);
+                            }
+                        } else {
+                            document.getElementById('ring-components-container').innerHTML =
+                                '<div class="empty-message">No ring components available.</div>';
+                        }
+                    });
+                } else {
+                    document.getElementById('ring-components-container').innerHTML =
+                        '<div class="empty-message">Ring Builder plugin not found.</div>';
+                }
+            });
+        })
+    })()
+</script>
