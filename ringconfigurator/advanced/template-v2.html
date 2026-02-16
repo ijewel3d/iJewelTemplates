@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ring Builder Temp V3</title>
+    <title>Ring Builder Template v2</title>
     <link rel="stylesheet" type="text/css" href="assets/style-v2.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -25,22 +25,14 @@
                 <div id="viewer-container"></div>
             </div>
             <div class="sidebar" id="ring-components-container">
-                <!-- <button type="button" class="collapsible">Gem Shape</button>
-                <div class="content" id="gem-shape-content">
-                    
-                </div>
-                <button type="button" class="collapsible">Center Stone</button>
-                <div class="content" id="center-stone-content">
-                    
-                </div> -->
                 <button type="button" class="collapsible">Head</button>
                 <div class="content" id="head-content">
-                    
                 </div>
-                <button type="button" style="border-bottom: none;" class="collapsible">Shank</button>
+                <button type="button" class="collapsible">Shank</button>
                 <div class="content" id="shank-content">
-                    
                 </div>
+                <button type="button" style="border-bottom: none;" class="collapsible">Materials</button>
+                <div class="content" id="material-configurators-container" style="padding-top: 1rem;">
             </div>
         </div>
     </div>
@@ -192,7 +184,6 @@
                 optionItem.dataset.variationIndex = variationIndex;
                 optionItem.dataset.optionIndex = optionIndex;
                 const swatch = document.createElement('div');
-                //const customClass = getSwatchClass(option, variation);
                 let className = `material-option-swatch`;
                 swatch.className = className;
                 if (option.icon) {
@@ -208,8 +199,6 @@
                         this.style.display = 'none';
                     };
                     swatch.appendChild(img);
-                } else if (option.color && !customClass) {
-                    swatch.style.backgroundColor = option.color;
                 }
                 if (isSelected) swatch.classList.add("selected")
                 optionItem.appendChild(swatch);
@@ -257,8 +246,8 @@
             }
             
             function renderMaterialConfigurators(plugin, viewer) {
-                // const container = document.getElementById('material-configurators-container');
-                // container.innerHTML = '';
+                const container = document.getElementById('material-configurators-container');
+                container.innerHTML = '';
 
                 if (!plugin || !plugin.variations) {
                     return;
@@ -276,19 +265,7 @@
                     const section = createMaterialSection(variation, variationIndex, title, options, plugin, ["head", "shank"].some(term => variation.title.toLowerCase().includes(term)));
                     const materialSections = document.getElementsByClassName("material-section");
                     if (!Array.from(materialSections).find((msec) => msec.id === section.id)) {
-                        if (variation.title.includes("Shank")) {
-                            const shankContent = document.getElementById("shank-content")
-                            if (shankContent) {
-                                shankContent.appendChild(section)
-                            }
-                        }
-                        else if (variation.title.includes("Head")) {
-                            const headContent = document.getElementById("head-content")
-                            if (headContent) {
-                                headContent.appendChild(section)
-                            }
-                        }
-                        // else container.appendChild(section);
+                        container.appendChild(section);
                     }
                 });
             }
