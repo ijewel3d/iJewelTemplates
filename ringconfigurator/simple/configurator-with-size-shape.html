@@ -12,9 +12,9 @@
     <div id="controls">
         <h2>Controls</h2>
     </div>
-    <script src="https://releases.ijewel3d.com/libs/mini-viewer/0.5.10-dev.3/bundle.iife.js"></script>
+    <script src="https://releases.ijewel3d.com/libs/mini-viewer/0.5.10-dev.5/bundle.iife.js"></script>
     <script>
-        const CONFIG = { fileId: 'M0BEKF9qSDiF_Mk3t0NGsA', instance: 'dev-2' };
+        const CONFIG = { fileId: 'Jjlm8d2yQF-GhFIwwvysgw', instance: 'drive-weur-1' };
         let viewer, builder, matPlugin;
         let currentShape = null; // Track selected shape
         const ui = document.getElementById('controls');
@@ -50,7 +50,7 @@
 
         window.addEventListener('ijewel-viewer-ready', ({ detail }) => {
             viewer = detail.viewer;
-            builder = viewer.getPluginByType('RingBuilder');
+            builder = viewer.getPluginByType('RingConfigurator');
             matPlugin = viewer.getPluginByType('MaterialConfiguratorPlugin');
 
             if (builder) builder.addEventListener('componentProcessed', renderUI);
