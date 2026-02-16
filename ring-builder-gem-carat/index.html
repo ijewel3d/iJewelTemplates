@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ring Builder Template</title>
-    <link rel="stylesheet" href="../assets/styles.css">
+    <link rel="stylesheet" href="/assets/styles.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@300..900&display=swap" rel="stylesheet">
@@ -92,7 +92,7 @@
 <body>
     <header>
         <div class="brand-logo">
-            <img src="../assets/brand.png" alt="Brand">
+            <img src="https://drive-weur-1.ijewel3d.com/files/brand_34ccdfb1fd.png?h=ijewel3d.com" alt="Brand">
         </div>
     </header>
     <div class="main-container">
@@ -102,14 +102,13 @@
             </div>
             <div class="sidebar">
                 <div class="product-info red-hat-display">
-                    <h1 class="product-title">Ring Builder</h1>
+                    <h1 class="product-title">Ring Configurator</h1>
                     <p class="product-code">RING-001</p>
-                    <p class="product-price">$ 2,800</p>
                 </div>
-                <div id="ring-components-container">
+                <div class="red-hat-display" id="ring-components-container">
                     <div class="loading-message">Loading ring components...</div>
                 </div>
-                <div id="material-configurators-container"></div>
+                <div class="red-hat-display" id="material-configurators-container"></div>
             </div>
         </div>
     </div>
@@ -122,9 +121,9 @@
     // CONFIGURATION - Edit these values to customize the ring builder
     // ═══════════════════════════════════════════════════════════════════════════
     const CONFIG = {
-        driveBasename: 'dev-2',
-        defaultFileId: 'M0BEKF9qSDiF_Mk3t0NGsA',
-        viewerScript: 'https://releases.ijewel3d.com/libs/mini-viewer/0.5.10-dev.3/bundle.iife.js'
+        driveBasename: 'drive-weur-1',
+        defaultFileId: 'Jjlm8d2yQF-GhFIwwvysgw',
+        viewerScript: 'https://releases.ijewel3d.com/libs/mini-viewer/0.5.10-dev.5/bundle.iife.js'
     };
 
     // Icon paths for sizes (shape -> style -> size)
@@ -480,7 +479,7 @@
             showCard: false, showSwitchNode: false, splitMaterialTabs: true, useIjewelLogo: false,
             hideQuality: true, logoScale: 1, hideFullScreen: true, hideResetView: true,
             hideFitScene: true, showLogo: false, hideRotateCamera: true, hideCameraViews: true,
-            hideGltfAnimations: true, transparentBg: true, runRotateCamera: false,
+            hideGltfAnimations: true, transparentBg: false, runRotateCamera: false,
             showConfigurator: false, showShare: false, brandingSettings: { enable: false, showLoadingScreenLogo: false }
         });
 
@@ -494,7 +493,7 @@
                 viewer.scene.addEventListener('addSceneObject', renderMaterials);
             }
 
-            const ringBuilder = viewer.getPluginByType('RingBuilder');
+            const ringBuilder = viewer.getPluginByType('RingConfigurator');
             if (ringBuilder) {
                 ringBuilder.addEventListener('componentProcessed', () => {
                     if (ringBuilder.components?.length) {
