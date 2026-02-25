@@ -21,7 +21,9 @@
 
     <div class="main-container">
         <div class="grid-layout">
-            <div class="viewer-section">
+            <div class="viewer-section" style="position:relative">
+                <img src="../logo-ij-c.png" alt="iJewel3D"
+                    style="position:absolute;top:12px;left:12px;height:48px;z-index:10000;opacity:.85;pointer-events:none">
                 <div id="viewer-container"></div>
             </div>
             <div class="sidebar" id="ring-components-container">
@@ -72,7 +74,7 @@
         });
     };
     (async () => {
-        loadScript("https://releases.ijewel3d.com/libs/mini-viewer/0.5.10-dev.5/bundle.iife.js").then(() => {
+        loadScript("https://releases.ijewel3d.com/libs/mini-viewer/0.5.11-dev.1/bundle.iife.js").then(() => {
             const driveBasename = 'drive-weur-1'; // for enterprise clients contact us to get your basename, otherwise keep it unchanged
             const urlParams = new URLSearchParams(window.location.search);
             const modelFileId = urlParams.get('fileId') || 'MZRVkhjkQWyjPR_NsOotig';

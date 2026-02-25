@@ -4,15 +4,19 @@
 <head>
     <meta charset="UTF-8">
     <title>Ring Builder Doc Example</title>
-    <style> body {font-family: sans-serif;display: flex;height: 100vh;margin: 0 }#viewer {flex: 2 }#controls {flex: 1;padding: 20px;overflow-y: auto }.group {margin-bottom: 20px;border-bottom: 1px solid #ccc;padding-bottom: 10px }button {margin: 5px;padding: 8px;cursor: pointer }active {background: #000;color: #fff }</style>
+    <style> body {font-family: sans-serif;display: flex;height: 100vh;margin: 0 }.viewer{flex:2;height: 100%;}#viewer{height: 100%;}#controls {flex: 1;padding: 20px;overflow-y: auto }.group {margin-bottom: 20px;border-bottom: 1px solid #ccc;padding-bottom: 10px }button {margin: 5px;padding: 8px;cursor: pointer }active {background: #000;color: #fff }</style>
 </head>
 
 <body>
-    <div id="viewer"></div>
+    <div class="viewer" style="position:relative">
+        <img src="../logo-ij-c.png" alt="iJewel3D"
+            style="position:absolute;top:12px;left:12px;height:48px;z-index:10000;opacity:.85;pointer-events:none">
+        <div id="viewer"></div>
+    </div>
     <div id="controls">
         <h2>Controls</h2>
     </div>
-    <script src="https://releases.ijewel3d.com/libs/mini-viewer/0.5.10-dev.5/bundle.iife.js"></script>
+    <script src="https://releases.ijewel3d.com/libs/mini-viewer/0.5.11-dev.1/bundle.iife.js"></script>
     <script>
         const CONFIG = { fileId: 'Jjlm8d2yQF-GhFIwwvysgw', instance: 'drive-weur-1' };
         let viewer, builder, matPlugin;
