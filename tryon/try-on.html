@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://releases.ijewel3d.com/libs/mini-viewer/0.6.0/bundle.iife.js"></script>
+    <script src="https://releases.ijewel3d.com/libs/webgi-v0/bundle-0.19.0.js"></script>
+    <script>window.webgi = window;</script>
+    <script src="https://releases.ijewel3d.com/libs/web-vto/0.0.41/web-vto.js"></script>
+</head>
+
+<body>
+    <div style="display:flex;">
+        <div id="viewer" style="width: 90%; height: 100dvh;"></div>
+        <button style="width: 120px; height: 40px;" id="arviewButton">Enable Try On</button>
+    </div>
+
+    <script>
+        const CONFIG = { fileId: 'V_F5uknHREmYQZTrP9ZwDA', instance: 'drive-weur-1' };
+        let viewer;
+
+        //initialize viewer and load model
+        ijewelViewer.loadModelById(CONFIG.fileId, CONFIG.instance, document.getElementById('viewer'), {
+            showConfigurator: true,
+            showCard: false,
+        });
+
+        window.addEventListener('ijewel-viewer-ready', async ({ detail }) => {
+            viewer = detail.viewer;
+        });
+
+        window.addEventListener("ijewel-file-data", async (ev) => {
+            try {
+                if (!ev.detail?.iJewelFileData) return;
+
+                const fileConfig = JSON.parse(ev.detail.iJewelFileData.config);
+                if (!fileConfig?.tryonConfig?.enabled) return;
+
+                const arButton = document.getElementById("arviewButton");
+
+                window.ij_vto.RingTryonPlugin.preload();
+
+                arButton.addEventListener("click", async () => {
+
+                    const arPlugin = await viewer.getOrAddPlugin(window.ij_vto.RingTryonPlugin);
+
+                    if (arPlugin._running) {
+                        arPlugin.stop();
+                        arButton.innerText = "Enable Try On";
+                        return;
+                    } else {
+                        if (!window.ij_vto) {
+                            console.error("WebVTO is not loaded");
+                            return;
+                        }
+
+                        if (fileConfig.tryonConfig) {
+                            fileConfig.tryonConfig.type = "RingTryonPlugin";
+                            arPlugin.fromJSON(fileConfig.tryonConfig);
+                        }
+
+                        await arPlugin.start();
+
+                        arButton.innerText = "Disable Try On";
+                    }
+                })
+            } catch (error) {
+                console.error(error);
+            }
+        });
+    </script>
+</body>
+
+</html>

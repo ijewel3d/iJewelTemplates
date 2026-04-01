@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+     <script src="https://releases.ijewel3d.com/libs/mini-viewer/0.6.0/bundle.iife.js"></script>
+</head>
+<body>
+    <div id="viewer"></div>
+    <script>
+        const CONFIG = { fileId: 'L6C3y_3eTJ2AYoFpRM3y3g', instance: 'drive-weur-1' };
+        let viewer, matPlugin;
+
+        //initialize viewer and load model
+        ijewelViewer.loadModelById(CONFIG.fileId, CONFIG.instance, document.getElementById('viewer'), {
+        });
+
+        window.addEventListener('ijewel-viewer-ready', async ({ detail }) => {
+            viewer = detail.viewer;
+            matPlugin = viewer.getPluginByType('MaterialConfiguratorPlugin');
+            if(matPlugin) matPlugin.addEventListener('refreshUi', renderUI); // Re-render if materials change
+            renderUI();
+        });
+
+        function renderUI() {
+            if(matPlugin?.variations) {
+                matPlugin.variations.forEach((grp) => {
+                    if(!grp.materials) return; 
+
+                    grp.materials.forEach((mat, mIdx) => {
+
+                        console.log(mat)
+                        if(mat.name == "rose_gold"){
+                            matPlugin.applyVariation(grp, mat.uuid);
+                        }
+
+                        if(mat.name == "yellow_diamond"){
+                            matPlugin.applyVariation(grp, mat.uuid);
+                        }
+                    });
+                });
+            }
+        }
+    </script>
+</body>
+</html>
