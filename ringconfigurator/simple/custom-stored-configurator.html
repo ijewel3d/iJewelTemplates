@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"><title>Ring Configurator</title>
+    <style>
+        * { box-sizing: border-box; }
+        body { font-family: sans-serif; display: flex; height: 100vh; margin: 0; }
+        .viewer { flex: 2; height: 100%; position: relative; }
+        #viewer { height: 100%; }
+        #controls { flex: 1; padding: 20px; overflow-y: auto; background: #fafafa; border-left: 1px solid #e0e0e0; }
+        #controls h2 { margin-top: 0; }
+        .group { margin-bottom: 24px; border-bottom: 1px solid #ddd; padding-bottom: 16px; }
+        .group h3 { margin: 0 0 10px; font-size: 14px; text-transform: uppercase; color: #555; }
+        .variations { display: flex; flex-wrap: wrap; gap: 8px; }
+        button { padding: 8px 14px; cursor: pointer; border: 1px solid #ccc; background: #fff; border-radius: 4px; font-size: 13px; }
+        button.active { background: #111; color: #fff; border-color: #111; }
+        button:disabled { opacity: .5; cursor: wait; }
+        #status { position: absolute; bottom: 12px; left: 12px; font-size: 12px;background: rgba(0,0,0,.6); color: #fff; padding: 4px 10px;border-radius: 4px; pointer-events: none; display: none; z-index: 10; }
+    </style>
+</head>
+<body>
+<div class="viewer">
+    <img src="../logo-ij-c.png" alt="iJewel3D"
+        style="position:absolute;top:12px;left:12px;height:48px;z-index:10000;opacity:.85;pointer-events:none">
+    <div id="viewer"></div>
+    <div id="status"></div>
+</div>
+<div id="controls"><h2>Configure Ring</h2></div>
+<script src="https://releases.ijewel3d.com/libs/mini-viewer/0.6.0/bundle.iife.js"></script>
+<script>
+    let viewer, builder;
+    const ui     = document.getElementById('controls');
+    const status = document.getElementById('status');
+    const setStatus = msg => { status.textContent = msg; status.style.display = msg ? 'block' : 'none'; };
+    // You can use your custom links for Head and Shank from anywhere
+    const COMPONENTS = [
+            {
+                name: 'head',
+                variations: [
+                    { title: 'HD-HH-RB-05', link: 'https://demo-weur.ijewel3d.com/files/hd_hh_rb_05_636142403e.glb?h=ijewel3d.com' },
+                    { title: 'HD-HH-OV-10', link: 'https://demo-weur.ijewel3d.com/files/hd_hh_ov_10_f285ff7131.glb?h=ijewel3d.com' },
+                    { title: 'HD-H-RB-05',  link: 'https://demo-weur.ijewel3d.com/files/hd_h_rb_05_e7d6e7af9d.glb?h=ijewel3d.com'  },
+                    { title: 'HD-H-OV-10',  link: 'https://demo-weur.ijewel3d.com/files/hd_h_ov_10_216b8662c0.glb?h=ijewel3d.com'  },
+                ],
+            },
+            {
+                name: 'shank',
+                variations: [
+                    { title: 'SH8-PL', link: 'https://demo-weur.ijewel3d.com/files/sh8_pl_6c9f22df25.glb?h=ijewel3d.com' },
+                    { title: 'SH7-PL', link: 'https://demo-weur.ijewel3d.com/files/sh7_pl_2ff1f49902.glb?h=ijewel3d.com' },
+                    { title: 'SH6-PL', link: 'https://demo-weur.ijewel3d.com/files/sh6_pl_2326f84136.glb?h=ijewel3d.com' },
+                    { title: 'SH5-PL', link: 'https://demo-weur.ijewel3d.com/files/sh5_pl_9cf24dee07.glb?h=ijewel3d.com' },
+                    { title: 'SH4-PV', link: 'https://demo-weur.ijewel3d.com/files/sh4_pv_09ee645eaa.glb?h=ijewel3d.com', weight: 20 },
+                ],
+            },
+        ];
+
+
+    // ── Step 1: Start viewer with an empty scene ──────────────────────────────────
+    new ijewelViewer.Viewer(document.getElementById('viewer'), {}, { showConfigurator: false, showCard: false });
+    window.addEventListener('ijewel-viewer-ready', async ({ detail }) => {
+        viewer = detail.viewer;
+        await new Promise(r => setTimeout(r, 0));
+        viewer.renderEnabled = true;
+        const ls = viewer.getPluginByType('LoadingScreenPlugin');
+        if (ls) { await ls.hide(); ls.showOnFilesLoading = false; }
+
+        // Load environment maps directly
+        setStatus('Loading environment…');
+        await viewer.setEnvironmentMap('https://packs.ijewel3d.com/files/env_metal_016_f1a9277938.hdr');
+        const diamond = viewer.getPluginByType('DiamondPlugin');
+        if (diamond?.setEnvMap) await diamond.setEnvMap('https://packs.ijewel3d.com/files/env_gem_003_fe9cd312d2.hdr');
+    
+        // Get the RingConfiguratorPlugin
+        builder = viewer.getPluginByType('RingConfigurator');
+        
+        // Create each component and register its variations
+        COMPONENTS.forEach(def => {
+            const comp = builder.createComponent(def.name);
+            def.variations.forEach(v => comp.addVariation({ name: v.title, modelUrl: v.link, tag: [] }));
+        });
+
+        // Load the first variation of each component
+        setStatus('Loading models…');
+        for (const comp of builder.components) {
+            await comp.applyVariation(comp.variations[0], false);
+        }
+
+        builder.setRootScale(1);
+        viewer.fitToView(undefined, 1.5, 0.5);
+        viewer.setDirty();
+        setStatus('');
+        renderUI();
+    });
+
+    function renderUI() {
+        ui.innerHTML = '<h2>Configure Ring</h2>';
+        builder.components.forEach(component => {
+            const group = document.createElement('div');
+            group.className = 'group';
+            group.innerHTML = `<h3>${component.title || component.name}</h3>`;
+
+            const row = document.createElement('div');
+            row.className = 'variations';
+            component.variations.forEach((variation, idx) => {
+                const btn = document.createElement('button');
+                btn.textContent = variation.name;
+                if (idx === component.selectedIndex) btn.classList.add('active');
+                btn.onclick = async () => {
+                    group.querySelectorAll('button').forEach(b => b.disabled = true);
+                    setStatus(`Loading ${variation.name}…`);
+                    await component.applyVariation(variation, false);
+                    viewer.fitToView(undefined, 1.5, 0.5);
+                    viewer.setDirty();
+                    setStatus('');
+                    renderUI();
+                };
+                row.appendChild(btn);
+            });
+            group.appendChild(row);
+            ui.appendChild(group);
+        });
+    }
+</script>
+</body>
+</html>
