@@ -29,6 +29,9 @@
 <script src="https://releases.ijewel3d.com/libs/mini-viewer/0.6.0/bundle.iife.js"></script>
 <script>
     let viewer, builder;
+    const SCENE_VJSON = './scene.vjson';
+    // Tracks selected material uuid per MaterialConfigurator variation (keyed by variation.uuid)
+    const selectedMaterials = {};
     const ui     = document.getElementById('controls');
     const status = document.getElementById('status');
     const setStatus = msg => { status.textContent = msg; status.style.display = msg ? 'block' : 'none'; };
@@ -65,12 +68,17 @@
         const ls = viewer.getPluginByType('LoadingScreenPlugin');
         if (ls) { await ls.hide(); ls.showOnFilesLoading = false; }
 
-        // Load environment maps directly
-        setStatus('Loading environment…');
-        await viewer.setEnvironmentMap('https://packs.ijewel3d.com/files/env_metal_016_f1a9277938.hdr');
-        const diamond = viewer.getPluginByType('DiamondPlugin');
-        if (diamond?.setEnvMap) await diamond.setEnvMap('https://packs.ijewel3d.com/files/env_gem_003_fe9cd312d2.hdr');
-    
+        // Apply HDR + materials + MaterialConfigurator variations from the vjson
+        // Must happen BEFORE creating ring components, otherwise the vjson
+        // deserialization will rebuild RingConfigurator and detach loaded models.
+        setStatus('Loading scene…');
+        try {
+            await viewer.load(SCENE_VJSON);
+        } catch (e) {
+            console.error('Failed to load scene vjson', e);
+        }
+        viewer.setDirty();
+
         // Get the RingConfiguratorPlugin
         builder = viewer.getPluginByType('RingConfigurator');
         
@@ -93,6 +101,17 @@
         renderUI();
     });
 
+    async function reapplySelectedMaterials() {
+        const matPlugin = viewer.getPluginByType('MaterialConfiguratorPlugin');
+        if (!matPlugin || !matPlugin.variations) return;
+        for (const variation of matPlugin.variations) {
+            const uuid = selectedMaterials[variation.uuid];
+            if (uuid) {
+                try { await matPlugin.applyVariation(variation, uuid); } catch (e) {}
+            }
+        }
+    }
+
     function renderUI() {
         ui.innerHTML = '<h2>Configure Ring</h2>';
         builder.components.forEach(component => {
@@ -110,6 +129,8 @@
                     group.querySelectorAll('button').forEach(b => b.disabled = true);
                     setStatus(`Loading ${variation.name}…`);
                     await component.applyVariation(variation, false);
+                    // Re-apply any materials the user had already selected
+                    await reapplySelectedMaterials();
                     viewer.fitToView(undefined, 1.5, 0.5);
                     viewer.setDirty();
                     setStatus('');
@@ -120,6 +141,39 @@
             group.appendChild(row);
             ui.appendChild(group);
         });
+
+        // Material switcher from MaterialConfiguratorPlugin variations loaded from the vjson
+        const matPlugin = viewer.getPluginByType('MaterialConfiguratorPlugin');
+        if (matPlugin && matPlugin.variations && matPlugin.variations.length) {
+            matPlugin.variations.forEach((variation) => {
+                const group = document.createElement('div');
+                group.className = 'group';
+                group.innerHTML = `<h3>${variation.title || variation.name || 'Material'}</h3>`;
+                const row = document.createElement('div');
+                row.className = 'variations';
+                (variation.materials || []).forEach((mat) => {
+                    const btn = document.createElement('button');
+                    btn.textContent = (mat.userData && mat.userData.label) || mat.name || (mat.uuid || '').slice(0, 6);
+                    if (selectedMaterials[variation.uuid] === mat.uuid) btn.classList.add('active');
+                    btn.onclick = async () => {
+                        row.querySelectorAll('button').forEach(b => b.disabled = true);
+                        setStatus(`Applying ${btn.textContent}…`);
+                        try {
+                            await matPlugin.applyVariation(variation, mat.uuid);
+                            selectedMaterials[variation.uuid] = mat.uuid;
+                        } catch (e) {
+                            console.error('Failed to apply material', e);
+                        }
+                        viewer.setDirty();
+                        setStatus('');
+                        renderUI();
+                    };
+                    row.appendChild(btn);
+                });
+                group.appendChild(row);
+                ui.appendChild(group);
+            });
+        }
     }
 </script>
 </body>
