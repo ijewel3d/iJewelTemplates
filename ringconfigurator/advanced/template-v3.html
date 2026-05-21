@@ -1,0 +1,1427 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ring Builder - iJewel3D</title>
+    <link rel="stylesheet" href="assets/style-v3.css">
+    <link rel="stylesheet" href="assets/gem-size-dropdown.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@300..900&display=swap" rel="stylesheet">
+</head>
+
+<body class="app-loading">
+    <header>
+        <div class="brand-logo">
+            <img src="assets/brand.png" alt="">
+        </div>
+        <div class="theme-dropdown" data-role="theme-dropdown">
+            <button type="button" class="theme-dropdown-trigger" aria-haspopup="listbox" aria-expanded="false" aria-label="Choose theme">
+                <span class="theme-dot" data-role="theme-current-dot"></span>
+                <span class="theme-dropdown-label" data-role="theme-current-label">Light</span>
+                <svg class="theme-dropdown-chevron" viewBox="0 0 12 8" fill="none" stroke="currentColor"
+                     stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M1 1.5L6 6.5L11 1.5"></path>
+                </svg>
+            </button>
+            <ul class="theme-dropdown-menu" role="listbox" aria-label="Themes"></ul>
+        </div>
+    </header>
+
+    <div class="main-container">
+        <div class="grid-layout">
+            <div class="viewer-section">
+                <img src="../logo-ij-c.png" alt="iJewel3D"
+                    style="position:absolute;top:10px;left:10px;height:34px;z-index:10000;opacity:.85;pointer-events:none">
+                <div id="viewer-container"></div>
+            </div>
+
+            <aside class="sidebar">
+                <div class="product-info">
+                    <h1 class="product-title">Este Lalonde Ring</h1>
+                    <p class="product-code">ESL-ALE2243-0000</p>
+                </div>
+
+                <div class="config-scroll" id="config-root">
+                    <!-- 01 - Head -->
+                    <section class="group open" data-group="head">
+                        <button class="group-header" type="button" aria-expanded="true">
+                            <span class="group-header-left">
+                                <span class="group-step">01</span>
+                                <span class="group-title">Head</span>
+                            </span>
+                            <svg class="group-chevron" viewBox="0 0 12 8" fill="none" stroke="currentColor"
+                                stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M1 1.5L6 6.5L11 1.5"></path>
+                            </svg>
+                        </button>
+                        <div class="group-body">
+                            <div class="group-body-inner">
+                                <div class="field" data-field="head-type">
+                                    <div class="field-header">
+                                        <span class="field-label">Type</span>
+                                        <span class="field-value empty" data-role="value">-</span>
+                                    </div>
+                                    <div class="field-content"><div class="field-empty">Loading…</div></div>
+                                </div>
+                                <div class="field" data-field="shape">
+                                    <div class="field-header">
+                                        <span class="field-label">Shape</span>
+                                        <span class="field-value empty" data-role="value">-</span>
+                                    </div>
+                                    <div class="field-content"><div class="field-empty">Loading…</div></div>
+                                </div>
+                                <div class="field" data-field="size">
+                                    <div class="field-header">
+                                        <span class="field-label">Carat Size</span>
+                                        <span class="field-value empty" data-role="value">-</span>
+                                    </div>
+                                    <div class="field-content"><div class="field-empty">Loading…</div></div>
+                                </div>
+                                <div class="field" data-field="gem-type">
+                                    <div class="field-header">
+                                        <span class="field-label">Gem Type</span>
+                                        <span class="field-value empty" data-role="value">-</span>
+                                    </div>
+                                    <div class="field-content"><div class="field-empty">Loading…</div></div>
+                                </div>
+                                <div class="field" data-field="head-metal-02" style="display:none">
+                                    <div class="field-header">
+                                        <span class="field-label">Metal 02</span>
+                                        <span class="field-value empty" data-role="value">-</span>
+                                    </div>
+                                    <div class="field-content"><div class="field-empty">Loading…</div></div>
+                                </div>
+                                <div class="field" data-field="head-gem-02" style="display:none">
+                                    <div class="field-header">
+                                        <span class="field-label">Gem 02</span>
+                                        <span class="field-value empty" data-role="value">-</span>
+                                    </div>
+                                    <div class="field-content"><div class="field-empty">Loading…</div></div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- 02 - Shank -->
+                    <section class="group open" data-group="shank">
+                        <button class="group-header" type="button" aria-expanded="true">
+                            <span class="group-header-left">
+                                <span class="group-step">02</span>
+                                <span class="group-title">Shank</span>
+                            </span>
+                            <svg class="group-chevron" viewBox="0 0 12 8" fill="none" stroke="currentColor"
+                                stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M1 1.5L6 6.5L11 1.5"></path>
+                            </svg>
+                        </button>
+                        <div class="group-body">
+                            <div class="group-body-inner">
+                                <div class="field" data-field="shank-type">
+                                    <div class="field-header">
+                                        <span class="field-label">Shank Type</span>
+                                        <span class="field-value empty" data-role="value">-</span>
+                                    </div>
+                                    <div class="field-content"><div class="field-empty">Loading…</div></div>
+                                </div>
+                                <div class="field" data-field="shank-color">
+                                    <div class="field-header">
+                                        <span class="field-label">Shank Colour</span>
+                                        <span class="field-value empty" data-role="value">-</span>
+                                    </div>
+                                    <div class="field-content"><div class="field-empty">Loading…</div></div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- 03 - Band -->
+                    <section class="group open" data-group="band">
+                        <button class="group-header" type="button" aria-expanded="true">
+                            <span class="group-header-left">
+                                <span class="group-step">03</span>
+                                <span class="group-title">Band</span>
+                            </span>
+                            <span class="header-actions">
+                                <span class="visibility-toggle" role="button" tabindex="0"
+                                      data-role="band-visibility"
+                                      aria-pressed="true"
+                                      title="Hide band on ring">
+                                    <svg class="vt-icon vt-icon-on" viewBox="0 0 24 24" fill="none"
+                                         stroke="currentColor" stroke-width="1.8"
+                                         stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z"/>
+                                        <circle cx="12" cy="12" r="3"/>
+                                    </svg>
+                                    <svg class="vt-icon vt-icon-off" viewBox="0 0 24 24" fill="none"
+                                         stroke="currentColor" stroke-width="1.8"
+                                         stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M17.94 17.94A10.94 10.94 0 0 1 12 19c-7 0-11-7-11-7a19.77 19.77 0 0 1 5.06-5.94"/>
+                                        <path d="M9.9 4.24A10.94 10.94 0 0 1 12 4c7 0 11 7 11 7a19.86 19.86 0 0 1-3.17 4.19"/>
+                                        <path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/>
+                                        <line x1="1" y1="1" x2="23" y2="23"/>
+                                    </svg>
+                                </span>
+                                <svg class="group-chevron" viewBox="0 0 12 8" fill="none" stroke="currentColor"
+                                    stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M1 1.5L6 6.5L11 1.5"></path>
+                                </svg>
+                            </span>
+                        </button>
+                        <div class="group-body">
+                            <div class="group-body-inner">
+                                <div class="field" data-field="band-type">
+                                    <div class="field-header">
+                                        <span class="field-label">Band Type</span>
+                                        <span class="field-value empty" data-role="value">-</span>
+                                    </div>
+                                    <div class="field-content"><div class="field-empty">Loading…</div></div>
+                                </div>
+                                <div class="field" data-field="band-color">
+                                    <div class="field-header">
+                                        <span class="field-label">Band Colour</span>
+                                        <span class="field-value empty" data-role="value">-</span>
+                                    </div>
+                                    <div class="field-content"><div class="field-empty">Loading…</div></div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+
+                <div class="sidebar-footer">
+                    <div>
+                        <div class="summary-label">Configuration</div>
+                        <div class="summary-value" id="config-sku">-</div>
+                    </div>
+                </div>
+            </aside>
+        </div>
+    </div>
+
+    <!-- Gem size dropdown component (separate file) -->
+    <script src="assets/gem-size-dropdown.js"></script>
+
+    <script>
+    /* ===================================================================
+       Ring Builder - orchestrator
+       =================================================================== */
+    (function () {
+        'use strict';
+
+        // ── Theme switching ──────────────────────────────────────────
+        // Themes are CSS-only (`[data-theme="..."]` on <html>). The active
+        // theme is mirrored to `?theme=` so the choice survives reload and
+        // can be deep-linked. Default theme (`light`) is represented by the
+        // absence of the param to keep URLs clean.
+        const THEMES = [
+            { id: 'light',    label: 'Light'    },
+            { id: 'platinum', label: 'Platinum' },
+            { id: 'rose',     label: 'Rose'     },
+            { id: 'sage',     label: 'Sage'     },
+            { id: 'sand',     label: 'Sand'     },
+            { id: 'pearl',    label: 'Pearl'    }
+        ];
+        const DEFAULT_THEME = 'light';
+        const VALID_THEMES  = THEMES.map(t => t.id);
+
+        const themeDropdown   = document.querySelector('[data-role="theme-dropdown"]');
+        const themeTrigger    = themeDropdown?.querySelector('.theme-dropdown-trigger');
+        const themeMenu       = themeDropdown?.querySelector('.theme-dropdown-menu');
+        const themeCurrentDot = themeDropdown?.querySelector('[data-role="theme-current-dot"]');
+        const themeCurrentLbl = themeDropdown?.querySelector('[data-role="theme-current-label"]');
+
+        // Populate the menu once from THEMES.
+        if (themeMenu) {
+            themeMenu.innerHTML = '';
+            THEMES.forEach(t => {
+                const li = document.createElement('li');
+                li.className = 'theme-dropdown-item';
+                li.setAttribute('role', 'option');
+                li.dataset.theme = t.id;
+                li.innerHTML = `<span class="theme-dot theme-dot--${t.id}"></span><span>${t.label}</span>`;
+                li.addEventListener('click', () => {
+                    applyTheme(t.id);
+                    closeThemeMenu();
+                });
+                themeMenu.appendChild(li);
+            });
+        }
+
+        function openThemeMenu()  {
+            themeDropdown?.classList.add('open');
+            themeTrigger?.setAttribute('aria-expanded', 'true');
+        }
+        function closeThemeMenu() {
+            themeDropdown?.classList.remove('open');
+            themeTrigger?.setAttribute('aria-expanded', 'false');
+        }
+
+        themeTrigger?.addEventListener('click', (e) => {
+            e.stopPropagation();
+            themeDropdown.classList.contains('open') ? closeThemeMenu() : openThemeMenu();
+        });
+        // Click outside or Escape closes the menu.
+        document.addEventListener('click', (e) => {
+            if (!themeDropdown?.contains(e.target)) closeThemeMenu();
+        });
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeThemeMenu();
+        });
+
+        function applyTheme(theme) {
+            if (!VALID_THEMES.includes(theme)) theme = DEFAULT_THEME;
+            if (theme === DEFAULT_THEME) {
+                document.documentElement.removeAttribute('data-theme');
+            } else {
+                document.documentElement.setAttribute('data-theme', theme);
+            }
+            // Mirror to URL.
+            const u = new URL(window.location.href);
+            if (theme === DEFAULT_THEME) u.searchParams.delete('theme');
+            else                          u.searchParams.set('theme', theme);
+            window.history.replaceState({}, '', u.toString());
+            // Sync trigger display + active item.
+            const meta = THEMES.find(t => t.id === theme) || THEMES[0];
+            if (themeCurrentDot) themeCurrentDot.className = `theme-dot theme-dot--${meta.id}`;
+            if (themeCurrentLbl) themeCurrentLbl.textContent = meta.label;
+            themeMenu?.querySelectorAll('.theme-dropdown-item').forEach(item => {
+                item.classList.toggle('active', item.dataset.theme === theme);
+                item.setAttribute('aria-selected', item.dataset.theme === theme ? 'true' : 'false');
+            });
+        }
+
+        // Read the initial theme from the URL and apply before anything else
+        // paints, so there's no flash of the default palette.
+        applyTheme(new URLSearchParams(window.location.search).get('theme') || DEFAULT_THEME);
+
+        // ── DOM helpers ──────────────────────────────────────────────
+        const $  = (s, c = document) => c.querySelector(s);
+        const $$ = (s, c = document) => Array.from(c.querySelectorAll(s));
+        const el = (tag, attrs = {}, kids = []) => {
+            const n = document.createElement(tag);
+            for (const [k, v] of Object.entries(attrs)) {
+                if (k === 'class') n.className = v;
+                else if (k === 'text') n.textContent = v;
+                else if (k.startsWith('data-')) n.setAttribute(k, v);
+                else n[k] = v;
+            }
+            for (const c of [].concat(kids)) {
+                if (c == null) continue;
+                n.appendChild(typeof c === 'string' ? document.createTextNode(c) : c);
+            }
+            return n;
+        };
+
+        // ── Accordion ────────────────────────────────────────────────
+        $$('.group-header').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const group = btn.closest('.group');
+                const open  = group.classList.toggle('open');
+                btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+            });
+        });
+
+        // ── Field utilities ──────────────────────────────────────────
+        function getFieldEl(fieldName) {
+            return document.querySelector(`.field[data-field="${fieldName}"]`);
+        }
+        function setFieldValue(fieldName, text) {
+            const f = getFieldEl(fieldName);
+            if (!f) return;
+            const v = f.querySelector('[data-role="value"]');
+            if (!v) return;
+            const clean = (text == null || text === '') ? '-' : String(text);
+            v.textContent = clean;
+            v.classList.toggle('empty', clean === '-');
+        }
+        function setFieldContent(fieldName, contentEl) {
+            const f = getFieldEl(fieldName);
+            if (!f) return;
+            const c = f.querySelector('.field-content');
+            c.innerHTML = '';
+            if (contentEl) c.appendChild(contentEl);
+        }
+        function setFieldEmpty(fieldName, msg) {
+            setFieldContent(fieldName, el('div', { class: 'field-empty', text: msg }));
+            setFieldValue(fieldName, '-');
+        }
+        function setLoading(node, loading) {
+            if (!node) return;
+            node.classList.toggle('loading', !!loading);
+        }
+
+        // ── Tag parser ───────────────────────────────────────────────
+        const parseTags = (v) => {
+            const out = { type: null, shape: null, size: null };
+            (v.tags || []).forEach(t => {
+                if (t.startsWith('type:'))  out.type  = t.split(':')[1];
+                if (t.startsWith('shape:')) out.shape = t.split(':')[1];
+                if (t.startsWith('size:'))  out.size  = t.split(':')[1];
+            });
+            return out;
+        };
+        const parseCarat = (s) => parseFloat(String(s || '').replace(/[^\d.]/g, '')) || 0;
+        const capitalize = (s) => s ? s.charAt(0).toUpperCase() + s.slice(1) : '';
+        const cleanName  = (s) => (s || '').replace(/\.glb$/i, '');
+
+        const caratTier = (c) => {
+            if (!c) return '';
+            if (c <= 0.55) return 'Petite';
+            if (c <= 1.05) return 'Classic';
+            if (c <= 1.55) return 'Generous';
+            return 'Statement';
+        };
+
+        // ── Style class detection (for swatches w/o icons) ───────────
+        const colorSwatchClass = (label, variationTitle = '') => {
+            const n  = (label || '').toLowerCase();
+            const vn = (variationTitle || '').toLowerCase();
+            if (n.includes('platinum'))                             return 'material-swatch-platinum';
+            if (n.includes('white')  && (n.includes('gold') || vn.includes('metal'))) return 'material-swatch-white-gold';
+            if (n.includes('rose')   && (n.includes('gold') || vn.includes('metal'))) return 'material-swatch-rose-gold';
+            if ((n.includes('gold') || n.includes('yellow')))       return 'material-swatch-gold';
+            return '';
+        };
+        const gemSwatchClass = (label) => {
+            const n = (label || '').toLowerCase();
+            if (n.includes('diamond'))  return 'gem-swatch-diamond';
+            if (n.includes('sapphire')) return 'gem-swatch-sapphire';
+            if (n.includes('ruby'))     return 'gem-swatch-ruby';
+            if (n.includes('emerald'))  return 'gem-swatch-emerald';
+            return 'gem-swatch-diamond';
+        };
+
+        // ── Variation/material role classification ──────────────────
+        const ringCompRole = (name) => {
+            const n = (name || '').toLowerCase();
+            if (n.includes('head'))  return 'head';
+            if (n.includes('shank')) return 'shank';
+            if (n.includes('band'))  return 'band';
+            return null;
+        };
+        const materialRole = (title) => {
+            const t = (title || '').toLowerCase();
+            // Gem indicators
+            if (t.includes('gem') || t.includes('stone') || t.includes('center') ||
+                t.includes('diamond') || t.includes('sapphire') || t.includes('ruby') ||
+                t.includes('emerald')) return 'gem';
+            // Per-part metals
+            if (t.includes('head'))  return 'metal-head';
+            if (t.includes('shank')) return 'metal-shank';
+            if (t.includes('band'))  return 'metal-band';
+            if (t.includes('metal') || t.includes('gold')) return 'metal';
+            return 'other';
+        };
+
+        // ── Band positioning ─────────────────────────────────────────
+        // Delegate to the plugin's matchBaseHeight(shank, band). Optional
+        // ?gap=<number> URL param overrides the default separation (world-space).
+        const GAP_OVERRIDE = (() => {
+            const v = parseFloat(new URLSearchParams(window.location.search).get('gap'));
+            return Number.isFinite(v) && v >= 0 ? v : 5;
+        })();
+
+        function alignBands() {
+            const plugin = state.ringPlugin;
+            const shank  = state.comps.shank;
+
+            // 1. Reposition bands using the (possibly updated) rootScale.
+            //    Position ALL bands (even hidden ones) so they're ready to
+            //    reveal in the correct spot — no flash at origin when the
+            //    user re-enables a hidden band.
+            if (plugin && shank) {
+                const bands = state.ringComponents.filter(c => c && /band/i.test(c.name || ''));
+                bands.forEach((band, i) => {
+                    // Alternate sides: index 0 → +Z, 1 → −Z, 2 → +Z, …
+                    const side = i % 2 === 0 ? 1 : -1;
+                    try { plugin.matchBaseHeight(shank, band, GAP_OVERRIDE, side); }
+                    catch (e) { console.warn('matchBaseHeight failed for', band.name, e); }
+                });
+            }
+
+            // 2. If the plugin build is older and doesn't expose
+            //    refitRootScaleToBounds, fall back to a plain shadow refresh.
+            if (!plugin?.refitRootScaleToBounds) {
+                refreshShadow();
+                try { state.viewer?.fitToView?.(undefined, 1.5, 0.5); } catch (_) {}
+            }
+            try { state.viewer?.setDirty?.(); } catch (_) {}
+        }
+
+        // Re-fit the ground plane to current scene bounds so the contact
+        // shadow rebakes against the new geometry. Safe to call frequently —
+        // GroundPlugin internally debounces via _transformNeedRefresh.
+        function refreshShadow() {
+            try {
+                const v = state.viewer;
+                if (!v) return;
+                const ground = v.getPluginByType?.('Ground')
+                            ?? v.getPlugin?.('Ground');
+                ground?.refreshTransform?.();
+            } catch (e) {
+                console.warn('refreshShadow failed', e);
+            }
+        }
+
+        // Expose for devtools tuning, e.g. window.alignBands()
+        window.alignBands    = alignBands;
+        window.refreshShadow = refreshShadow;
+
+        /* ============================================================
+           STATE
+           ============================================================ */
+        const state = {
+            viewer:           null,
+            ringPlugin:       null,
+            materialPlugin:   null,
+            ringComponents:   [],
+            currentType:      null,
+            currentShape:     null,
+            sizeDropdown:     null,
+            // Mapping of section → { component, role }
+            comps: { head: null, shank: null, band: null },
+            mats:  { gem: null, metalHead: null, metalShank: null, metalBand: null, metalGeneric: null },
+            // Current selections (for SKU display)
+            sel:   { head: null, headType: null, size: null, shape: null, gemType: null,
+                     shankType: null, shankColor: null,
+                     bandType: null, bandColor: null,
+                     headMetal02: null, headGem02: null }
+        };
+        // Expose internal state for devtools debugging
+        window.__ringBuilder = state;
+
+        function updateSku() {
+            const parts = [
+                state.sel.headType,
+                state.sel.shape,
+                state.sel.size,
+                state.sel.gemType,
+                state.sel.headGem02,
+                state.sel.headMetal02,
+                state.sel.shankType,
+                state.sel.bandType,
+                state.sel.shankColor,
+                state.sel.bandColor
+            ].filter(Boolean);
+            $('#config-sku').textContent = parts.length ? parts.join(' · ') : '-';
+        }
+
+        /* ============================================================
+           RING COMPONENT RENDERERS  (Shape / Shank Type / Band Type)
+           ============================================================ */
+
+        // Render a swatch grid of variations for a given component
+        function renderVariationSwatches(fieldName, component, opts = {}) {
+            if (!component || !component.variations || !component.variations.length) {
+                setFieldEmpty(fieldName, opts.emptyMsg || 'Not configurable for this model');
+                return;
+            }
+            const grid = el('div', { class: 'swatch-grid' });
+            component.variations.forEach((v, i) => {
+                // Initial selected state: matches plugin selectedIndex AND, for
+                // toggleable components, the component must be currently visible
+                // (so a hidden band shows no selection).
+                const initiallySelected = (i === component.selectedIndex)
+                    && (!opts.toggleable || component.visible !== false);
+
+                const swatch = createTypeSwatch(v, initiallySelected, async () => {
+                    // Toggleable: clicking the already-selected swatch hides the
+                    // entire component instead of re-applying the same variation.
+                    if (opts.toggleable && swatch.classList.contains('selected')
+                        && component.visible !== false) {
+                        opts.onToggleOff?.();
+                        grid.querySelectorAll('.swatch').forEach(s => s.classList.remove('selected'));
+                        return;
+                    }
+
+                    setLoading(swatch, true);
+                    // If the component is hidden, keep it hidden through the
+                    // model swap + alignment so we never render it at the
+                    // origin for a frame. We reveal only at the very end.
+                    const wasHidden = opts.toggleable && component.visible === false;
+                    try {
+                        await component.applyVariation(v);
+                        if (state.materialPlugin?.reapplyAll) await state.materialPlugin.reapplyAll();
+                        alignBands();
+                        // Reveal AFTER positioning — band appears already placed
+                        if (wasHidden) opts.onToggleOn?.();
+                        // Update selected styling
+                        grid.querySelectorAll('.swatch').forEach(s => s.classList.remove('selected'));
+                        swatch.classList.add('selected');
+                        setFieldValue(fieldName, cleanName(v.title || v.name));
+                        if (opts.onSelect) opts.onSelect(v, i);
+                    } finally {
+                        setLoading(swatch, false);
+                    }
+                });
+                grid.appendChild(swatch);
+            });
+            setFieldContent(fieldName, grid);
+            const cur = component.variations[component.selectedIndex];
+            const showValue = cur && (!opts.toggleable || component.visible !== false);
+            setFieldValue(fieldName, showValue ? cleanName(cur.title || cur.name) : '-');
+        }
+
+        function createTypeSwatch(variation, isSelected, onClick) {
+            const sw = el('div', { class: `swatch${isSelected ? ' selected' : ''}` });
+            const img = el('div', { class: 'swatch-img' });
+            if (variation.icon) {
+                const i = el('img', { src: variation.icon, alt: variation.title || variation.name });
+                i.onerror = () => { i.remove(); img.classList.add('placeholder'); };
+                img.appendChild(i);
+            } else {
+                img.classList.add('placeholder');
+            }
+            sw.appendChild(img);
+            sw.appendChild(el('span', { class: 'swatch-label', text: cleanName(variation.title || variation.name) }));
+            sw.addEventListener('click', onClick);
+            return sw;
+        }
+
+        /* ============================================================
+           HEAD - Shape + Size (carat dropdown) + Gem Type
+           ============================================================ */
+
+        // Build a nested hierarchy: type → shape → [variations with size]
+        function groupHeadVariations(component) {
+            const byType = {};
+            component.variations.forEach((v, i) => {
+                const { type, shape, size } = parseTags(v);
+                const typeKey  = type  || '__none__';
+                const shapeKey = shape || '__none__';
+                if (!byType[typeKey]) byType[typeKey] = { type: type, icon: v.icon, shapes: {} };
+                if (!byType[typeKey].shapes[shapeKey]) {
+                    byType[typeKey].shapes[shapeKey] = { shape: shape, icon: v.icon, variations: [] };
+                }
+                byType[typeKey].shapes[shapeKey].variations.push({ variation: v, originalIndex: i, size });
+            });
+            return byType;
+        }
+
+        // Legacy helper: flat shape→variations (for fallback when no type: tags)
+        function groupHeadByShapeOnly(component) {
+            const groups = {};
+            component.variations.forEach((v, i) => {
+                const { shape, size } = parseTags(v);
+                if (!shape) return;
+                if (!groups[shape]) groups[shape] = { shape, icon: v.icon, variations: [] };
+                groups[shape].variations.push({ variation: v, originalIndex: i, size });
+            });
+            return groups;
+        }
+
+        /* ── Master entry point for Head section ───────────────────── */
+        function renderHeadSection(component) {
+            const byType = groupHeadVariations(component);
+            const typeKeys = Object.keys(byType).filter(k => k !== '__none__');
+
+            // ── Path A: variations have type: tags → 3-level cascade ──
+            if (typeKeys.length) {
+                renderHeadType(component, byType, typeKeys);
+                return;
+            }
+
+            // ── Path B: no type: tags but has shape: tags → 2-level ──
+            const byShape = groupHeadByShapeOnly(component);
+            const shapeKeys = Object.keys(byShape);
+            if (shapeKeys.length) {
+                setFieldEmpty('head-type', 'Type not available for this model');
+                renderHeadShapes_flat(component, byShape, shapeKeys);
+                return;
+            }
+
+            // ── Path C: no tags at all → plain swatch-per-variation ──
+            setFieldEmpty('head-type', 'Type not available for this model');
+            renderVariationSwatches('shape', component, {
+                onSelect: (v) => {
+                    state.sel.shape = cleanName(v.title || v.name);
+                    updateSku();
+                    setFieldEmpty('size', 'Carat size not available for this model');
+                },
+                emptyMsg: 'No head shapes available'
+            });
+            const sel = component.variations[component.selectedIndex];
+            state.sel.shape = sel ? cleanName(sel.title || sel.name) : null;
+            setFieldEmpty('size', 'Carat size not available for this model');
+            updateSku();
+        }
+
+        /* ── Level 1: Type swatches ────────────────────────────────── */
+        function renderHeadType(component, byType, typeKeys) {
+            const selected = component.variations[component.selectedIndex];
+            const selInfo = parseTags(selected);
+
+            // Source of truth from loaded 3D variation
+            const activeType = selInfo.type && typeKeys.includes(selInfo.type) ? selInfo.type : typeKeys[0];
+            state.currentType = activeType;
+
+            const grid = el('div', { class: 'swatch-grid' });
+            typeKeys.forEach(typeKey => {
+                const g = byType[typeKey];
+                const isSel = state.currentType === typeKey;
+                const sw = el('div', {
+                    class: `swatch${isSel ? ' selected' : ''}`,
+                    'data-type': typeKey
+                });
+                const img = el('div', { class: 'swatch-img' });
+                if (g.icon) {
+                    const i = el('img', { src: g.icon, alt: typeKey });
+                    i.onerror = () => { i.remove(); img.classList.add('placeholder'); };
+                    img.appendChild(i);
+                } else {
+                    img.classList.add('placeholder');
+                }
+                sw.appendChild(img);
+                sw.appendChild(el('span', { class: 'swatch-label', text: capitalize(typeKey) }));
+
+                sw.addEventListener('click', async () => {
+                    if (state.currentType === typeKey) return;
+                    setLoading(sw, true);
+                    try {
+                        // When type changes, select the best shape and carat matching the current ones
+                        const targetTypeGroup = byType[typeKey];
+                        const shapeKeys = Object.keys(targetTypeGroup.shapes).filter(k => k !== '__none__');
+                        
+                        // Fallback to first shape of the target type if current shape is not available there
+                        const targetShapeKey = shapeKeys.includes(selInfo.shape) ? selInfo.shape : shapeKeys[0];
+                        const sg = targetTypeGroup.shapes[targetShapeKey];
+                        
+                        if (sg && sg.variations.length) {
+                            const next = sg.variations.find(x => x.size === selInfo.size) || sg.variations[0];
+                            await component.applyVariation(next.variation);
+                            if (state.materialPlugin?.reapplyAll) await state.materialPlugin.reapplyAll();
+                            alignBands();
+                        }
+                    } finally {
+                        setLoading(sw, false);
+                    }
+                });
+                grid.appendChild(sw);
+            });
+
+            setFieldContent('head-type', grid);
+            setFieldValue('head-type', capitalize(state.currentType));
+            state.sel.headType = capitalize(state.currentType);
+
+            // Render level 2: Shapes
+            renderHeadShapesForType(component, byType, state.currentType, selInfo);
+        }
+
+        /* ── Level 2: Shape swatches (filtered by type) ────────────── */
+        function renderHeadShapesForType(component, byType, typeKey, selInfo) {
+            const typeGroup = byType[typeKey];
+            if (!typeGroup) {
+                setFieldEmpty('shape', 'No shapes for this type');
+                setFieldEmpty('size', 'No carat sizes available');
+                return;
+            }
+            const shapeKeys = Object.keys(typeGroup.shapes).filter(k => k !== '__none__');
+
+            if (!shapeKeys.length) {
+                setFieldEmpty('shape', 'Shape not configurable for this type');
+                rebuildSizeDropdownForType(component, typeKey, '__none__', selInfo);
+                return;
+            }
+
+            // Determine active shape matching the loaded model
+            const activeShape = selInfo.type === typeKey && selInfo.shape && shapeKeys.includes(selInfo.shape)
+                ? selInfo.shape : shapeKeys[0];
+            state.currentShape = activeShape;
+
+            const grid = el('div', { class: 'swatch-grid' });
+            shapeKeys.forEach(shapeKey => {
+                const sg = typeGroup.shapes[shapeKey];
+                const isSel = state.currentShape === shapeKey;
+                const sw = el('div', {
+                    class: `swatch${isSel ? ' selected' : ''}`,
+                    'data-shape': shapeKey
+                });
+                const img = el('div', { class: 'swatch-img' });
+                if (sg.icon) {
+                    const i = el('img', { src: sg.icon, alt: shapeKey });
+                    i.onerror = () => { i.remove(); img.classList.add('placeholder'); };
+                    img.appendChild(i);
+                } else {
+                    img.classList.add('placeholder');
+                }
+                sw.appendChild(img);
+                sw.appendChild(el('span', { class: 'swatch-label', text: capitalize(shapeKey) }));
+
+                sw.addEventListener('click', async () => {
+                    if (state.currentShape === shapeKey) return;
+                    setLoading(sw, true);
+                    try {
+                        const next = sg.variations.find(x => x.size === selInfo.size) || sg.variations[0];
+                        await component.applyVariation(next.variation);
+                        if (state.materialPlugin?.reapplyAll) await state.materialPlugin.reapplyAll();
+                        alignBands();
+                    } finally {
+                        setLoading(sw, false);
+                    }
+                });
+                grid.appendChild(sw);
+            });
+
+            setFieldContent('shape', grid);
+            setFieldValue('shape', capitalize(state.currentShape));
+            state.sel.shape = capitalize(state.currentShape);
+
+            // Render level 3: Size
+            rebuildSizeDropdownForType(component, typeKey, state.currentShape, selInfo);
+        }
+
+        /* ── Level 3: Size dropdown (filtered by type + shape) ─────── */
+        function rebuildSizeDropdownForType(component, typeKey, shapeKey, selInfo) {
+            const byType = groupHeadVariations(component);
+            const typeGroup = byType[typeKey];
+            const shapeGroup = typeGroup?.shapes?.[shapeKey];
+            if (!shapeGroup || !shapeGroup.variations.length) {
+                setFieldEmpty('size', 'No carat sizes for this shape');
+                state.sizeDropdown = null;
+                return;
+            }
+
+            // Sort by carat ascending
+            const sorted = shapeGroup.variations
+                .map(x => ({ ...x, carat: parseCarat(x.size) }))
+                .filter(x => x.carat > 0 || x.size)
+                .sort((a, b) => a.carat - b.carat);
+
+            if (!sorted.length) {
+                setFieldEmpty('size', 'No carat sizes for this shape');
+                state.sizeDropdown = null;
+                return;
+            }
+
+            const options = sorted.map(x => ({
+                value: x.size,
+                label: `${x.carat.toFixed(2)} ct`,
+                sub:   caratTier(x.carat),
+                _ref:  x
+            }));
+
+            // Active size from loaded model, fallback to first option
+            const currentValue = (selInfo.type === typeKey && selInfo.shape === shapeKey && selInfo.size && options.some(o => o.value === selInfo.size))
+                ? selInfo.size : options[0].value;
+
+            state.sel.size = currentValue;
+
+            // Build or reuse dropdown
+            if (!state.sizeDropdown) {
+                state.sizeDropdown = window.createGemSizeDropdown({
+                    options,
+                    value: currentValue,
+                    placeholder: 'Choose carat size',
+                    onChange: async (val, opt) => {
+                        const target = opt && opt._ref;
+                        if (!target) return;
+                        state.sizeDropdown.setLoading(true);
+                        try {
+                            await component.applyVariation(target.variation);
+                            if (state.materialPlugin?.reapplyAll) await state.materialPlugin.reapplyAll();
+                            alignBands();
+                        } finally {
+                            state.sizeDropdown.setLoading(false);
+                        }
+                    }
+                });
+                setFieldContent('size', state.sizeDropdown.element);
+            } else {
+                state.sizeDropdown.setOptions(options, { value: currentValue });
+            }
+            const curCarat = parseCarat(currentValue);
+            setFieldValue('size', curCarat ? `${curCarat.toFixed(2)} ct` : '-');
+        }
+
+        /* ── Flat 2-level shape→size (fallback when no type: tags) ── */
+        function renderHeadShapes_flat(component, byShape, shapeKeys) {
+            const selected = component.variations[component.selectedIndex];
+            const selInfo = parseTags(selected);
+
+            // Active shape from loaded model
+            const activeShape = selInfo.shape && shapeKeys.includes(selInfo.shape) ? selInfo.shape : shapeKeys[0];
+            state.currentShape = activeShape;
+
+            const grid = el('div', { class: 'swatch-grid' });
+            shapeKeys.forEach(shapeKey => {
+                const g = byShape[shapeKey];
+                const isSel = state.currentShape === shapeKey;
+                const sw = el('div', {
+                    class: `swatch${isSel ? ' selected' : ''}`,
+                    'data-shape': shapeKey
+                });
+                const img = el('div', { class: 'swatch-img' });
+                if (g.icon) {
+                    const i = el('img', { src: g.icon, alt: shapeKey });
+                    i.onerror = () => { i.remove(); img.classList.add('placeholder'); };
+                    img.appendChild(i);
+                } else {
+                    img.classList.add('placeholder');
+                }
+                sw.appendChild(img);
+                sw.appendChild(el('span', { class: 'swatch-label', text: capitalize(shapeKey) }));
+
+                sw.addEventListener('click', async () => {
+                    if (state.currentShape === shapeKey) return;
+                    setLoading(sw, true);
+                    try {
+                        const next = g.variations.find(x => x.size === selInfo.size) || g.variations[0];
+                        await component.applyVariation(next.variation);
+                        if (state.materialPlugin?.reapplyAll) await state.materialPlugin.reapplyAll();
+                        alignBands();
+                    } finally {
+                        setLoading(sw, false);
+                    }
+                });
+                grid.appendChild(sw);
+            });
+
+            setFieldContent('shape', grid);
+            setFieldValue('shape', capitalize(state.currentShape));
+            state.sel.shape = capitalize(state.currentShape);
+
+            rebuildSizeDropdown_flat(component, state.currentShape, selInfo);
+        }
+
+        function rebuildSizeDropdown_flat(component, shape, selInfo) {
+            const byShape = groupHeadByShapeOnly(component);
+            const g = byShape[shape];
+            if (!g || !g.variations.length) {
+                setFieldEmpty('size', 'No carat sizes for this shape');
+                state.sizeDropdown = null;
+                return;
+            }
+
+            const sorted = g.variations
+                .map(x => ({ ...x, carat: parseCarat(x.size) }))
+                .filter(x => x.carat > 0 || x.size)
+                .sort((a, b) => a.carat - b.carat);
+
+            if (!sorted.length) {
+                setFieldEmpty('size', 'No carat sizes for this shape');
+                state.sizeDropdown = null;
+                return;
+            }
+
+            const options = sorted.map(x => ({
+                value: x.size,
+                label: `${x.carat.toFixed(2)} ct`,
+                sub:   caratTier(x.carat),
+                _ref:  x
+            }));
+
+            const currentValue = (selInfo.shape === shape && selInfo.size && options.some(o => o.value === selInfo.size))
+                ? selInfo.size : options[0].value;
+
+            state.sel.size = currentValue;
+
+            if (!state.sizeDropdown) {
+                state.sizeDropdown = window.createGemSizeDropdown({
+                    options,
+                    value: currentValue,
+                    placeholder: 'Choose carat size',
+                    onChange: async (val, opt) => {
+                        const target = opt && opt._ref;
+                        if (!target) return;
+                        state.sizeDropdown.setLoading(true);
+                        try {
+                            await component.applyVariation(target.variation);
+                            if (state.materialPlugin?.reapplyAll) await state.materialPlugin.reapplyAll();
+                            alignBands();
+                        } finally {
+                            state.sizeDropdown.setLoading(false);
+                        }
+                    }
+                });
+                setFieldContent('size', state.sizeDropdown.element);
+            } else {
+                state.sizeDropdown.setOptions(options, { value: currentValue });
+            }
+            const curCarat = parseCarat(currentValue);
+            setFieldValue('size', curCarat ? `${curCarat.toFixed(2)} ct` : '-');
+        }
+
+        // Helper: apply a variation + reapply materials + align
+        async function applyVariationAndAlign(component, variation) {
+            try {
+                await component.applyVariation(variation);
+                if (state.materialPlugin?.reapplyAll) await state.materialPlugin.reapplyAll();
+                alignBands();
+            } catch (e) {
+                console.warn('applyVariationAndAlign failed', e);
+            }
+        }
+
+        /* ============================================================
+           MATERIAL CONFIGURATOR - Gem / Colours
+           ============================================================ */
+
+        function materialExists(variation) {
+            if (!state.viewer || !variation) return false;
+            let found = false;
+            state.viewer.scene.traverse(obj => {
+                if (obj.isMesh) {
+                    const n = obj.material?.name;
+                    if (!n) return;
+                    try { if (new RegExp(variation.uuid).test(n)) found = true; }
+                    catch { if (n === variation.uuid) found = true; }
+                }
+            });
+            return found;
+        }
+
+        function classifyMaterials() {
+            const plugin = state.materialPlugin;
+            const mats = {
+                gems: [], metals: [],
+                metalHead: null, metalShank: null, metalBand: null
+            };
+            if (!plugin || !plugin.variations) return mats;
+
+            plugin.variations.forEach((v, vi) => {
+                if (!materialExists(v)) return;
+                const options = plugin.options[vi] || [];
+                if (!options.length) return;
+                const role = materialRole(v.title || v.uuid);
+                const entry = { variation: v, variationIndex: vi, options };
+                if (role === 'gem')          mats.gems.push(entry);
+                else if (role === 'metal-head'  && !mats.metalHead)  mats.metalHead = entry;
+                else if (role === 'metal-shank' && !mats.metalShank) mats.metalShank = entry;
+                else if (role === 'metal-band'  && !mats.metalBand)  mats.metalBand = entry;
+                else if (role === 'metal')   mats.metals.push(entry);
+            });
+            // Convenience accessors for the primary entries.
+            mats.gem          = mats.gems[0]   || null;
+            mats.metalGeneric = mats.metals[0] || null;
+            return mats;
+        }
+
+        // Build a material/gem option swatch styled like a component-type
+        // swatch (square card with icon and label). Falls back to a tinted
+        // background when no icon is provided. `label` is supplied by the
+        // caller so the index-based fallback (e.g. "Metal-2") matches the
+        // value shown elsewhere in the UI.
+        function createMaterialSwatch(opt, variation, label, isSel, isGem, onClick) {
+            const sw = el('div', { class: `swatch${isSel ? ' selected' : ''}`, title: label });
+            const img = el('div', { class: 'swatch-img' });
+            if (opt.icon) {
+                img.classList.add('swatch-img--material');
+                const i = el('img', { src: opt.icon, alt: label });
+                i.onerror = () => {
+                    i.remove();
+                    img.classList.remove('swatch-img--material');
+                    const cls = isGem ? gemSwatchClass(label) : colorSwatchClass(label, variation.title);
+                    if (cls) img.classList.add(cls);
+                    else img.classList.add('placeholder');
+                };
+                img.appendChild(i);
+            } else {
+                const cls = isGem ? gemSwatchClass(label) : colorSwatchClass(label, variation.title);
+                if (cls) img.classList.add(cls);
+                else if (opt.color) img.style.background = opt.color;
+                else img.classList.add('placeholder');
+            }
+            sw.appendChild(img);
+            sw.appendChild(el('span', { class: 'swatch-label', text: label }));
+            sw.addEventListener('click', onClick);
+            return sw;
+        }
+
+        // Render gem-type using the component-icon swatch style.
+        function renderGemType(matEntry) {
+            if (!matEntry) {
+                setFieldEmpty('gem-type', 'Single gem material for this model');
+                return;
+            }
+            const { variation, options } = matEntry;
+            const wrap = el('div', { class: 'swatch-grid' });
+            options.forEach((opt, oi) => {
+                const label = opt.title || `${variation.title}-${oi+1}`;
+                const isSel = variation.selectedIndex === oi;
+                const sw = createMaterialSwatch(opt, variation, label, isSel, true, async () => {
+                    if (sw.classList.contains('selected')) return;
+                    setLoading(sw, true);
+                    try {
+                        await state.materialPlugin.applyVariation(variation, opt.uuid);
+                        wrap.querySelectorAll('.swatch').forEach(s => s.classList.remove('selected'));
+                        sw.classList.add('selected');
+                        setFieldValue('gem-type', label);
+                        state.sel.gemType = label;
+                        updateSku();
+                    } finally {
+                        setLoading(sw, false);
+                    }
+                });
+                wrap.appendChild(sw);
+            });
+            setFieldContent('gem-type', wrap);
+            const cur = options[variation.selectedIndex];
+            const curLabel = cur ? (cur.title || `${variation.title}-${variation.selectedIndex+1}`) : '-';
+            setFieldValue('gem-type', curLabel);
+            state.sel.gemType = curLabel;
+            updateSku();
+        }
+
+        // Generic component-icon-style renderer used for "extra" material
+        // slots (e.g. Head's Metal 02 / Gem 02). Hides the field row entirely
+        // when the model doesn't expose a matching material.
+        function renderExtraMaterial(fieldName, matEntry, opts = {}) {
+            const fieldEl = getFieldEl(fieldName);
+            if (!matEntry) {
+                if (fieldEl) fieldEl.style.display = 'none';
+                opts.onSelect?.(null);
+                return;
+            }
+            if (fieldEl) fieldEl.style.display = '';
+
+            const { variation, options } = matEntry;
+            const isGem = opts.style === 'gem';
+            const wrap = el('div', { class: 'swatch-grid' });
+            options.forEach((opt, oi) => {
+                const label = opt.title || `${variation.title}-${oi+1}`;
+                const isSel = variation.selectedIndex === oi;
+                const sw = createMaterialSwatch(opt, variation, label, isSel, isGem, async () => {
+                    if (sw.classList.contains('selected')) return;
+                    setLoading(sw, true);
+                    try {
+                        await state.materialPlugin.applyVariation(variation, opt.uuid);
+                        wrap.querySelectorAll('.swatch').forEach(s => s.classList.remove('selected'));
+                        sw.classList.add('selected');
+                        setFieldValue(fieldName, label);
+                        opts.onSelect?.(label);
+                        updateSku();
+                    } finally {
+                        setLoading(sw, false);
+                    }
+                });
+                wrap.appendChild(sw);
+            });
+            setFieldContent(fieldName, wrap);
+            const cur = options[variation.selectedIndex];
+            const curLabel = cur ? (cur.title || `${variation.title}-${variation.selectedIndex+1}`) : '-';
+            setFieldValue(fieldName, curLabel);
+            opts.onSelect?.(curLabel);
+        }
+
+        // Render metal colour swatches for either shank-color or band-color
+        function renderMetalColor(fieldName, matEntry, opts = {}) {
+            if (!matEntry) {
+                setFieldEmpty(fieldName, opts.emptyMsg || 'Colour fixed for this part');
+                return;
+            }
+            const { variation, options } = matEntry;
+            const wrap = el('div', { class: 'swatch-grid' });
+            options.forEach((opt, oi) => {
+                const label = opt.title || `${variation.title}-${oi+1}`;
+                const isSel = variation.selectedIndex === oi;
+                const sw = createMaterialSwatch(opt, variation, label, isSel, false, async () => {
+                    if (sw.classList.contains('selected')) return;
+                    setLoading(sw, true);
+                    try {
+                        await state.materialPlugin.applyVariation(variation, opt.uuid);
+                        wrap.querySelectorAll('.swatch').forEach(s => s.classList.remove('selected'));
+                        sw.classList.add('selected');
+                        setFieldValue(fieldName, label);
+                        if (fieldName === 'shank-color') state.sel.shankColor = label;
+                        if (fieldName === 'band-color')  state.sel.bandColor  = label;
+                        updateSku();
+                        // Refresh sibling field if it points at the same generic metal
+                        if (opts.mirrorField) {
+                            setFieldValue(opts.mirrorField, label);
+                            if (opts.mirrorField === 'shank-color') state.sel.shankColor = label;
+                            if (opts.mirrorField === 'band-color')  state.sel.bandColor  = label;
+                        }
+                    } finally {
+                        setLoading(sw, false);
+                    }
+                });
+                wrap.appendChild(sw);
+            });
+            setFieldContent(fieldName, wrap);
+            const cur = options[variation.selectedIndex];
+            const curLabel = cur ? (cur.title || `${variation.title}-${variation.selectedIndex+1}`) : '-';
+            setFieldValue(fieldName, curLabel);
+            if (fieldName === 'shank-color') state.sel.shankColor = curLabel;
+            if (fieldName === 'band-color')  state.sel.bandColor  = curLabel;
+            updateSku();
+        }
+
+        /* ============================================================
+           ORCHESTRATION
+           ============================================================ */
+
+        function classifyComponents(components) {
+            const map = { head: null, shank: null, band: null };
+            components.forEach(c => {
+                // Classify by role only — don't filter on visibility; the
+                // band can be toggled hidden at runtime and we still need
+                // a handle to it to toggle it back on.
+                const role = ringCompRole(c.name);
+                if (role && !map[role]) map[role] = c;
+            });
+            return map;
+        }
+
+        /* ============================================================
+           BAND VISIBILITY — header toggle + click-selected-to-hide
+           ============================================================ */
+        const bandToggleBtn = document.querySelector('.group[data-group="band"] .visibility-toggle');
+
+        function setBandHidden(hidden, opts = {}) {
+            const band  = state.comps.band;
+            const group = document.querySelector('.group[data-group="band"]');
+            if (!band) return;
+
+            try { band.setVisible(!hidden); } catch (_) {}
+
+            // Header toggle visual
+            if (bandToggleBtn) {
+                bandToggleBtn.classList.toggle('hidden-state', !!hidden);
+                bandToggleBtn.setAttribute('aria-pressed', hidden ? 'false' : 'true');
+                bandToggleBtn.title = hidden ? 'Show band on ring' : 'Hide band on ring';
+            }
+            if (group) group.classList.toggle('component-hidden', !!hidden);
+
+            // Sidebar text + summary
+            if (hidden) {
+                state.sel.bandType  = null;
+                state.sel.bandColor = null;
+                setFieldValue('band-type', '-');
+            } else {
+                const sel = band.variations[band.selectedIndex];
+                const label = sel ? cleanName(sel.title || sel.name) : null;
+                state.sel.bandType = label;
+                setFieldValue('band-type', label || '-');
+            }
+
+            // Sync swatch selected state in the band-type grid
+            const grid = document.querySelector('.field[data-field="band-type"] .swatch-grid');
+            if (grid) {
+                grid.querySelectorAll('.swatch').forEach((sw, i) => {
+                    sw.classList.toggle('selected', !hidden && i === band.selectedIndex);
+                });
+            }
+
+            if (!hidden && !opts.skipAlign) alignBands();
+            // Visibility flip changes scene bounds → rebake shadow regardless
+            // of whether alignBands ran above.
+            refreshShadow();
+            try { state.viewer?.setDirty?.(); } catch (_) {}
+            updateSku();
+        }
+
+        if (bandToggleBtn) {
+            const handleToggle = (e) => {
+                e.stopPropagation();   // don't bubble to the accordion button
+                e.preventDefault();
+                const band = state.comps.band;
+                if (!band) return;
+                setBandHidden(band.visible !== false);   // visible → hide; hidden → show
+            };
+            bandToggleBtn.addEventListener('click', handleToggle);
+            bandToggleBtn.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' || e.key === ' ') handleToggle(e);
+            });
+        }
+
+        let _rendering = false;
+        function renderAll() {
+            if (_rendering) return;   // guard against re-entrant calls
+            _rendering = true;
+            try { _renderAllInner(); } finally { _rendering = false; }
+        }
+        function _renderAllInner() {
+            // Head
+            if (state.comps.head) {
+                renderHeadSection(state.comps.head);
+            } else {
+                setFieldEmpty('head-type', 'No head component in this model');
+                setFieldEmpty('shape', 'No head component in this model');
+                setFieldEmpty('size',  'No carat size selector');
+            }
+
+            // Shank Type
+            if (state.comps.shank) {
+                renderVariationSwatches('shank-type', state.comps.shank, {
+                    onSelect: (v) => { state.sel.shankType = cleanName(v.title || v.name); updateSku(); }
+                });
+                const sel = state.comps.shank.variations[state.comps.shank.selectedIndex];
+                state.sel.shankType = sel ? cleanName(sel.title || sel.name) : null;
+            } else {
+                setFieldEmpty('shank-type', 'Shank style fixed for this model');
+            }
+
+            // Band Type — toggleable: clicking selected swatch hides band
+            if (state.comps.band) {
+                renderVariationSwatches('band-type', state.comps.band, {
+                    toggleable: true,
+                    onSelect: (v) => { state.sel.bandType = cleanName(v.title || v.name); updateSku(); },
+                    onToggleOff: () => setBandHidden(true,  { skipAlign: true }),
+                    onToggleOn:  () => setBandHidden(false, { skipAlign: true })
+                });
+                const band = state.comps.band;
+                const sel = band.variations[band.selectedIndex];
+                state.sel.bandType = (band.visible !== false && sel) ? cleanName(sel.title || sel.name) : null;
+                // Sync header toggle + faded-body to current band visibility
+                setBandHidden(band.visible === false, { skipAlign: true });
+            } else {
+                setFieldEmpty('band-type', 'Band style fixed for this model');
+            }
+
+            // Materials
+            state.mats = classifyMaterials();
+
+            // Gem Type → head section
+            renderGemType(state.mats.gem);
+
+            // Extra Head materials (Metal 02 / Gem 02) — only shown when the
+            // material configurator actually exposes a second metal/gem.
+            renderExtraMaterial('head-metal-02', state.mats.metals[1] || null, {
+                style: 'metal',
+                onSelect: (label) => { state.sel.headMetal02 = label; }
+            });
+            renderExtraMaterial('head-gem-02', state.mats.gems[1] || null, {
+                style: 'gem',
+                onSelect: (label) => { state.sel.headGem02 = label; }
+            });
+
+            // Shank / Band colour. Prefer specific roles, fall back to generic metal mirrored across both.
+            const shankMat = state.mats.metalShank || state.mats.metalGeneric;
+            const bandMat  = state.mats.metalBand  || state.mats.metalGeneric;
+            const shareGeneric = shankMat && bandMat && shankMat === bandMat;
+            renderMetalColor('shank-color', shankMat, { mirrorField: shareGeneric ? 'band-color' : null });
+            renderMetalColor('band-color',  bandMat,  { mirrorField: shareGeneric ? 'shank-color' : null });
+
+            updateSku();
+        }
+
+        /* ============================================================
+           VIEWER LOADER
+           ============================================================ */
+
+        const loadScript = (src) => new Promise((res, rej) => {
+            if (document.querySelector(`script[src="${src}"]`)) return res();
+            const s = document.createElement('script');
+            s.src = src; s.async = true; s.onload = res; s.onerror = rej;
+            document.body.appendChild(s);
+        });
+
+        (async () => {
+            try {
+                await loadScript("https://releases.ijewel3d.com/libs/webgi-v0/bundle-0.22.0.js");
+                await loadScript('https://releases.ijewel3d.com/libs/mini-viewer/0.6.8/bundle.nowebgi.iife.js');
+            } catch (e) {
+                console.error('Failed to load viewer bundle', e);
+                return;
+            }
+
+            const params = new URLSearchParams(window.location.search);
+            const driveBasename = params.get('drive') || 'drive-weur-1';
+            const modelFileId = params.get('fileId') || 'QCJfUUa3SrGoiCokL1k82Q';
+
+            ijewelViewer.loadModelById(
+                modelFileId,
+                driveBasename,
+                document.getElementById('viewer-container'),
+                {
+                    showCard: false, showSwitchNode: false, splitMaterialTabs: true,
+                    useIjewelLogo: false, hideQuality: true, logoScale: 1,
+                    hideFullScreen: true, hideResetView: true, hideFitScene: true,
+                    showLogo: false, hideRotateCamera: true, hideCameraViews: true,
+                    hideGltfAnimations: true, transparentBg: false,
+                    runRotateCamera: false, showConfigurator: false, showShare: false,
+                    brandingSettings: { enable: false, showLoadingScreenLogo: false }
+                }
+            );
+
+            // Camera-distance limits. Override with ?camMin= / ?camMax= so
+            // tuning a new model doesn't need a code edit. Defaults are
+            // tightened from the mini-viewer baseline (0.35 / 1000) to keep
+            // a ring viewer from clipping into the gem or flying away.
+            const camMinParam = parseFloat(params.get('camMin'));
+            const camMaxParam = parseFloat(params.get('camMax'));
+            const CAM_MIN_DISTANCE = Number.isFinite(camMinParam) && camMinParam > 0 ? camMinParam : 3;
+            const CAM_MAX_DISTANCE = Number.isFinite(camMaxParam) && camMaxParam > 0 ? camMaxParam : 30;
+
+            // Helper — toggle camera-control interaction, the same lever the
+            // mini-viewer uses (scene.activeCamera.controls.enabled).
+            function setCameraInteraction(enabled) {
+                try {
+                    const controls = state.viewer?.scene?.activeCamera?.controls;
+                    if (controls) controls.enabled = !!enabled;
+                } catch (_) {}
+            }
+
+            window.addEventListener('ijewel-viewer-ready', (e) => {
+                state.viewer = e.detail.viewer;
+
+                // Apply dolly limits + lock interactions until the ring is
+                // processed. Re-enabled in the componentProcessed handler.
+                try {
+                    const controls = state.viewer?.scene?.activeCamera?.controls;
+                    if (controls) {
+                        controls.minDistance = CAM_MIN_DISTANCE;
+                        controls.maxDistance = CAM_MAX_DISTANCE;
+                    }
+                } catch (_) {}
+                setCameraInteraction(false);
+
+                state.materialPlugin = state.viewer.getPluginByType('MaterialConfiguratorPlugin');
+
+                if (state.materialPlugin) {
+                    const onMaterialUpdate = () => renderAll();
+                    state.materialPlugin.addEventListener('deserialize', onMaterialUpdate);
+                    state.materialPlugin.addEventListener('refreshUi', onMaterialUpdate);
+                    state.viewer.scene.addEventListener('addSceneObject', onMaterialUpdate);
+                }
+
+                const ringPlugin = state.viewer.getPluginByType('RingConfigurator');
+                if (!ringPlugin) {
+                    ['head-type','shape','size','gem-type','shank-type','shank-color','band-type','band-color']
+                        .forEach(f => setFieldEmpty(f, 'Ring builder plugin not available'));
+                    document.body.classList.remove('app-loading');
+                    setCameraInteraction(true);
+                    return;
+                }
+
+                ringPlugin.addEventListener('componentProcessed', () => {
+                    state.ringPlugin = ringPlugin;
+                    state.ringComponents = ringPlugin.components || [];
+                    state.comps = classifyComponents(state.ringComponents);
+
+                    // First-load default: start with no band — the user opts
+                    // in by clicking a band swatch. This also hides the band-
+                    // color field via the .component-hidden CSS.
+                    if (!state.initialized) {
+                        state.initialized = true;
+                        if (state.comps.band) {
+                            try { state.comps.band.setVisible(false); } catch (_) {}
+                        }
+                        // Ring is ready — re-enable the configurator UI
+                        // and unlock the camera.
+                        document.body.classList.remove('app-loading');
+                        setCameraInteraction(true);
+                    }
+
+                    renderAll();
+
+                    // Settle: align bands + refresh ground once on the next
+                    // frame (so the freshly-applied models are in the scene),
+                    // then a delayed retry so the ground definitely fits the
+                    // final bounds (covers cases where the GroundPlugin's
+                    // own _onSceneUpdate hasn't fired yet on first load).
+                    requestAnimationFrame(() => {
+                        alignBands();
+                        setTimeout(refreshShadow, 250);
+                    });
+                });
+            });
+        })();
+    })();
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,726 @@
+/* =====================================================================
+   Ring Builder — Sidebar Configurator
+   Clean, jewellery-store fidelity. No clip-art, no rainbow gradients.
+   ===================================================================== */
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+    --bg:               #faf8f5;
+    --panel:            #ffffff;
+    --ink:              #1a1714;
+    --ink-soft:         #5b554f;
+    --ink-mute:         #9b948c;
+    --line:             #ece7e0;
+    --line-strong:      #d8d1c6;
+    --accent:           #1a1714;
+    --gold:             #b08a4a;
+    --select:           #8a7f6f;
+    --select-soft:      #b6ab98;
+    --viewer-bg:        #f1ede7;
+    --viewer-grad-hi:   #ffffff;
+    --viewer-grad-lo:   #e9e3d8;
+    --hover-soft:       #faf7f2;
+    --footer-bg:        #fbf9f5;
+    --swatch-img-bg:    #f5f1ea;
+    --radius:           10px;
+    --radius-sm:        6px;
+    --shadow-sm:        0 1px 2px rgba(26,23,20,.04);
+    --shadow-md:        0 4px 16px rgba(26,23,20,.06);
+    --font-display:     "Red Hat Display", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    --font-mono:        ui-monospace, "SF Mono", Menlo, monospace;
+}
+
+/* ── Theme: Platinum (cool monochrome) ─────────────────────────── */
+[data-theme="platinum"] {
+    --bg:               #eef0f3;
+    --panel:            #ffffff;
+    --ink:              #1f2329;
+    --ink-soft:         #5a6270;
+    --ink-mute:         #98a0ac;
+    --line:             #dde1e7;
+    --line-strong:      #c2c8d0;
+    --accent:           #1f2329;
+    --gold:             #6b7785;
+    --select:           #4a5562;
+    --select-soft:      #98a0ac;
+    --viewer-bg:        #e5e9ee;
+    --viewer-grad-hi:   #ffffff;
+    --viewer-grad-lo:   #d0d6de;
+    --hover-soft:       #f4f6f9;
+    --footer-bg:        #f6f8fa;
+    --swatch-img-bg:    #eef0f3;
+}
+
+/* ── Theme: Rose (warm rose-gold) ──────────────────────────────── */
+[data-theme="rose"] {
+    --bg:               #fbf3ef;
+    --panel:            #ffffff;
+    --ink:              #2d1f1a;
+    --ink-soft:         #6b5048;
+    --ink-mute:         #a89189;
+    --line:             #f0dfd6;
+    --line-strong:      #d4b8ad;
+    --accent:           #2d1f1a;
+    --gold:             #c89a85;
+    --select:           #a87a6b;
+    --select-soft:      #d4b8ad;
+    --viewer-bg:        #f4e6df;
+    --viewer-grad-hi:   #fff5ef;
+    --viewer-grad-lo:   #ecd5c8;
+    --hover-soft:       #fbede7;
+    --footer-bg:        #fdf6f1;
+    --swatch-img-bg:    #f7e6dd;
+}
+
+/* ── Theme: Sage (muted green) ─────────────────────────────────── */
+[data-theme="sage"] {
+    --bg:               #f1f4ee;
+    --panel:            #ffffff;
+    --ink:              #1f2a1e;
+    --ink-soft:         #4f5d4c;
+    --ink-mute:         #909c8a;
+    --line:             #dfe5d8;
+    --line-strong:      #c0c9b5;
+    --accent:           #1f2a1e;
+    --gold:             #8aa07e;
+    --select:           #6b8062;
+    --select-soft:      #a8b89e;
+    --viewer-bg:        #e4ead8;
+    --viewer-grad-hi:   #f4f7ee;
+    --viewer-grad-lo:   #cdd4be;
+    --hover-soft:       #ecf0e6;
+    --footer-bg:        #f4f7ee;
+    --swatch-img-bg:    #ebefe2;
+}
+
+/* ── Theme: Sand (warm beige) ──────────────────────────────────── */
+[data-theme="sand"] {
+    --bg:               #f7f1e6;
+    --panel:            #ffffff;
+    --ink:              #2a2117;
+    --ink-soft:         #5a4d3a;
+    --ink-mute:         #a0917a;
+    --line:             #eadfca;
+    --line-strong:      #d0bf9c;
+    --accent:           #2a2117;
+    --gold:             #b89763;
+    --select:           #8a7548;
+    --select-soft:      #c5b18b;
+    --viewer-bg:        #efe4cc;
+    --viewer-grad-hi:   #faf2dd;
+    --viewer-grad-lo:   #d8c39b;
+    --hover-soft:       #f4ecd9;
+    --footer-bg:        #faf3e2;
+    --swatch-img-bg:    #f2e8d0;
+}
+
+/* ── Theme: Pearl (cool off-white) ─────────────────────────────── */
+[data-theme="pearl"] {
+    --bg:               #f5f6f8;
+    --panel:            #ffffff;
+    --ink:              #1f2128;
+    --ink-soft:         #4f5560;
+    --ink-mute:         #8e95a3;
+    --line:             #e2e5ec;
+    --line-strong:      #c5cad4;
+    --accent:           #1f2128;
+    --gold:             #7888a0;
+    --select:           #525c6f;
+    --select-soft:      #9aa3b3;
+    --viewer-bg:        #e8ebf0;
+    --viewer-grad-hi:   #ffffff;
+    --viewer-grad-lo:   #d3d8e0;
+    --hover-soft:       #f0f2f6;
+    --footer-bg:        #f4f6f9;
+    --swatch-img-bg:    #ecedf1;
+}
+
+.red-hat-display { font-family: var(--font-display); }
+
+html, body { height: 100%; width: 100vw; }
+
+body {
+    color: var(--ink);
+    background: var(--bg);
+    font-family: var(--font-display);
+    font-weight: 400;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* ── Header ───────────────────────────────────────────────────────── */
+header {
+    position: relative;
+    width: 100%;
+    padding: 0.75rem 1.5rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-bottom: 1px solid var(--line);
+    background: var(--panel);
+}
+.brand-logo > img { height: 32px; width: auto; }
+
+/* ── Theme dropdown ───────────────────────────────────────────────── */
+.theme-dropdown {
+    position: absolute;
+    right: 1.25rem;
+    top: 50%;
+    transform: translateY(-50%);
+}
+.theme-dropdown-trigger {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.35rem 0.6rem 0.35rem 0.45rem;
+    background: var(--panel);
+    border: 1px solid var(--line-strong);
+    border-radius: 999px;
+    cursor: pointer;
+    font-family: var(--font-display);
+    font-size: 0.75rem;
+    color: var(--ink);
+    transition: border-color 0.18s ease, box-shadow 0.18s ease;
+}
+.theme-dropdown-trigger:hover  { border-color: var(--select); }
+.theme-dropdown-trigger:focus-visible {
+    outline: none;
+    border-color: var(--select);
+    box-shadow: 0 0 0 2px var(--select-soft);
+}
+.theme-dropdown-label {
+    line-height: 1;
+    letter-spacing: 0.005em;
+}
+.theme-dropdown-chevron {
+    width: 10px;
+    height: 6px;
+    color: var(--ink-soft);
+    transition: transform 0.2s ease;
+    flex-shrink: 0;
+}
+.theme-dropdown.open .theme-dropdown-chevron { transform: rotate(180deg); }
+
+.theme-dropdown-menu {
+    position: absolute;
+    top: calc(100% + 0.4rem);
+    right: 0;
+    min-width: 160px;
+    margin: 0;
+    padding: 0.3rem;
+    list-style: none;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-md);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-4px);
+    transition: opacity 0.16s ease, transform 0.16s ease, visibility 0s linear 0.16s;
+    z-index: 2147483647;
+}
+.theme-dropdown { z-index: 2147483647; }
+.theme-dropdown.open .theme-dropdown-menu {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+    transition: opacity 0.16s ease, transform 0.16s ease, visibility 0s;
+}
+
+.theme-dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    padding: 0.4rem 0.55rem;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    font-size: 0.78rem;
+    color: var(--ink);
+    transition: background 0.14s ease;
+    user-select: none;
+}
+.theme-dropdown-item:hover { background: var(--hover-soft); }
+.theme-dropdown-item.active {
+    background: var(--hover-soft);
+    font-weight: 500;
+}
+.theme-dropdown-item.active::after {
+    content: "";
+    margin-left: auto;
+    width: 10px;
+    height: 10px;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'><path d='M3 6.5L5 8.5L9 4' fill='none' stroke='%238a7f6f' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+}
+
+.theme-dot {
+    display: block;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    border: 1px solid var(--line-strong);
+    flex-shrink: 0;
+}
+.theme-dot--light    { background: linear-gradient(135deg, #faf8f5 0%, #efe9de 100%); }
+.theme-dot--platinum { background: linear-gradient(135deg, #f0f2f4 0%, #d6d9de 50%, #b8bcc2 100%); }
+.theme-dot--rose     { background: linear-gradient(135deg, #fbf3ef 0%, #e8c4b3 100%); }
+.theme-dot--sage     { background: linear-gradient(135deg, #f1f4ee 0%, #b8c8aa 100%); }
+.theme-dot--sand     { background: linear-gradient(135deg, #f7f1e6 0%, #d4ba80 100%); }
+.theme-dot--pearl    { background: linear-gradient(135deg, #f5f6f8 0%, #c8cfdc 100%); }
+
+/* On narrow screens, collapse the trigger to just the colour dot so it
+   doesn't crowd / overlap the centred brand logo. */
+@media (max-width: 640px) {
+    .theme-dropdown { right: 0.75rem; }
+    .theme-dropdown-trigger {
+        padding: 0.3rem;
+        border-radius: 50%;
+        gap: 0;
+    }
+    .theme-dropdown-label,
+    .theme-dropdown-chevron { display: none; }
+}
+
+/* ── App loading state ─────────────────────────────────────────────
+   Until the ring plugin has processed the first model, block interaction
+   with the configurator UI and the theme picker. Pointer events are
+   disabled so taps fall through, and the panel is dimmed slightly as a
+   visual cue. */
+body.app-loading .sidebar,
+body.app-loading .theme-dropdown {
+    pointer-events: none;
+    opacity: 0.55;
+    cursor: progress;
+}
+body.app-loading { cursor: progress; }
+.sidebar, .theme-dropdown { transition: opacity 0.25s ease; }
+
+/* ── Layout ───────────────────────────────────────────────────────── */
+.main-container {
+    height: calc(100vh - 3.5rem);
+    padding: 0;
+}
+@media (min-width: 1024px) {
+    .main-container { padding: 0.9rem 0.9rem 0.9rem; }
+}
+
+.grid-layout {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+    height: 100%;
+}
+@media (min-width: 1024px) {
+    .grid-layout { grid-template-columns: minmax(0, 1.7fr) minmax(380px, 460px); }
+}
+
+.viewer-section {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--viewer-bg);
+    background-image:
+      radial-gradient(circle at 30% 25%, var(--viewer-grad-hi) 0%, transparent 55%),
+      radial-gradient(circle at 70% 85%, var(--viewer-grad-lo) 0%, transparent 60%);
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+    height: 100%;
+}
+#viewer-container { height: 100%; width: 100%; }
+
+/* ── Sidebar ─────────────────────────────────────────────────────── */
+.sidebar {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    background: var(--panel);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+}
+
+.product-info {
+    padding: 1rem 1.25rem 0.85rem;
+    border-bottom: 1px solid var(--line);
+}
+.product-title {
+    font-size: 1.2rem;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+    margin-bottom: 0.2rem;
+    line-height: 1.25;
+}
+.product-code {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    color: var(--ink-mute);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.config-scroll {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0 0 0.5rem;
+}
+.config-scroll::-webkit-scrollbar { width: 8px; }
+.config-scroll::-webkit-scrollbar-thumb { background: var(--line-strong); border-radius: 4px; }
+.config-scroll::-webkit-scrollbar-track { background: transparent; }
+
+/* ── Accordion groups (Head / Shank / Band) ──────────────────────── */
+.group {
+    border-bottom: 1px solid var(--line);
+}
+.group:last-child { border-bottom: none; }
+
+.group-header {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.8rem 1.25rem;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    text-align: left;
+    font-family: var(--font-display);
+    transition: background 0.15s ease;
+}
+.group-header:hover { background: var(--hover-soft); }
+
+.group-header-left {
+    display: flex;
+    align-items: baseline;
+    gap: 0.6rem;
+}
+.group-step {
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    color: var(--ink-mute);
+    letter-spacing: 0.1em;
+}
+.group-title {
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--ink);
+    letter-spacing: -0.005em;
+}
+
+.group-chevron {
+    width: 12px; height: 12px;
+    color: var(--ink-soft);
+    transition: transform 0.25s ease;
+    flex-shrink: 0;
+}
+.group.open .group-chevron { transform: rotate(180deg); }
+
+/* ── Header actions (visibility toggle, chevron) ─────────────────── */
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    flex-shrink: 0;
+}
+.visibility-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    color: var(--ink-soft);
+    cursor: pointer;
+    user-select: none;
+    transition: background 0.18s ease, color 0.18s ease;
+}
+.visibility-toggle:hover {
+    background: var(--hover-soft);
+    color: var(--ink);
+}
+.visibility-toggle:focus-visible {
+    outline: 2px solid var(--select);
+    outline-offset: 1px;
+}
+.visibility-toggle .vt-icon { width: 16px; height: 16px; }
+.visibility-toggle .vt-icon-off { display: none; }
+.visibility-toggle.hidden-state .vt-icon-on  { display: none; }
+.visibility-toggle.hidden-state .vt-icon-off { display: inline-block; }
+.visibility-toggle.hidden-state { color: var(--ink-mute); }
+
+/* When a component is hidden, mute (but keep usable so the user can
+   re-enable by picking a swatch). */
+.group.component-hidden .group-body-inner { opacity: 0.85; }
+
+/* Band specifically: hide the Colour field when the band itself is hidden
+   — no band on the ring → no band colour to choose. */
+.group[data-group="band"].component-hidden .field[data-field="band-color"] {
+    display: none;
+}
+
+.group-body {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+}
+.group.open .group-body { max-height: 2000px; }
+
+/* Head section can have a lot of content (type + shape + size + gem type
+   swatches). Cap its open height and let it scroll internally so nothing
+   gets clipped by the .group-body overflow:hidden used for the collapse
+   animation. */
+.group[data-group="head"].open .group-body {
+    max-height: 60vh;
+    overflow-y: auto;
+}
+.group[data-group="head"].open .group-body::-webkit-scrollbar { width: 8px; }
+.group[data-group="head"].open .group-body::-webkit-scrollbar-thumb {
+    background: var(--line-strong);
+    border-radius: 4px;
+}
+.group[data-group="head"].open .group-body::-webkit-scrollbar-track { background: transparent; }
+
+.group-body-inner {
+    padding: 0 1.25rem 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+/* ── Sub-fields inside a group ───────────────────────────────────── */
+.field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+}
+.field-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.5rem;
+}
+.field-label {
+    font-size: 0.65rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--ink-soft);
+}
+.field-value {
+    font-size: 0.75rem;
+    color: var(--ink);
+    font-weight: 400;
+}
+.field-value.empty { color: var(--ink-mute); font-style: italic; }
+
+/* ── Swatch grid (shape, gem type, shank type, band type) ────────── */
+.swatch-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 0.4rem;
+}
+
+.swatch {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.35rem 0.25rem 0.35rem;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: all 0.18s ease;
+    position: relative;
+}
+.swatch:hover {
+    border-color: var(--line-strong);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-sm);
+}
+.swatch.selected {
+    border-color: var(--select);
+    box-shadow: 0 0 0 1px var(--select);
+}
+.swatch.selected::after {
+    content: "";
+    position: absolute;
+    top: 3px; right: 3px;
+    width: 11px; height: 11px;
+    background: var(--select);
+    border-radius: 50%;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'><path d='M3 6.5L5 8.5L9 4' fill='none' stroke='white' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 10px;
+}
+
+.swatch-img {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    border-radius: 4px;
+    background: var(--swatch-img-bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+.swatch-img img {
+    width: 100%; height: 100%;
+    object-fit: contain;
+    mix-blend-mode: multiply;
+}
+.swatch-img.placeholder::before {
+    content: "";
+    width: 55%; height: 55%;
+    background:
+      linear-gradient(135deg, transparent 46%, #d8d1c6 46%, #d8d1c6 54%, transparent 54%),
+      #ece7e0;
+    border-radius: 4px;
+}
+.swatch-label {
+    font-size: 0.62rem;
+    color: var(--ink-soft);
+    text-align: center;
+    line-height: 1.2;
+    word-break: break-word;
+    letter-spacing: 0.01em;
+}
+.swatch.selected .swatch-label { color: var(--ink); font-weight: 500; }
+
+/* ── Colour swatches (Shank Colour / Band Colour / Metal) ────────── */
+.color-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+.color-swatch {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.35rem;
+    cursor: pointer;
+    padding: 0.15rem;
+}
+.color-dot {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: 1px solid var(--line-strong);
+    background: #e5e7eb;
+    position: relative;
+    transition: transform 0.18s ease, box-shadow 0.18s ease;
+    overflow: hidden;
+}
+.color-swatch:hover .color-dot { transform: scale(1.06); }
+.color-swatch.selected .color-dot {
+    border-color: var(--select);
+    box-shadow: 0 0 0 2px var(--panel), 0 0 0 3px var(--select);
+}
+.color-dot img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+}
+.color-label {
+    font-size: 0.62rem;
+    color: var(--ink-soft);
+    text-align: center;
+    max-width: 60px;
+    line-height: 1.2;
+}
+.color-swatch.selected .color-label { color: var(--ink); font-weight: 500; }
+
+/* Material presets */
+.material-swatch-white-gold { background: linear-gradient(135deg, #ededed 0%, #f7f7f7 50%, #cfcfcf 100%); box-shadow: inset 0 1px 3px rgba(0,0,0,.08); }
+.material-swatch-gold       { background: linear-gradient(135deg, #f4cf6b 0%, #e0a83a 50%, #b9842a 100%); box-shadow: inset 0 1px 3px rgba(0,0,0,.12); }
+.material-swatch-rose-gold  { background: linear-gradient(135deg, #ecc5c0 0%, #d4a5a5 50%, #b88577 100%); box-shadow: inset 0 1px 3px rgba(0,0,0,.1); }
+.material-swatch-platinum   { background: linear-gradient(135deg, #f0f2f4 0%, #d6d9de 50%, #b8bcc2 100%); box-shadow: inset 0 1px 3px rgba(0,0,0,.08); }
+
+.gem-swatch-diamond  { background: linear-gradient(135deg, #ffffff 0%, #e8e8e8 50%, #d4d4d4 100%); box-shadow: inset 0 1px 3px rgba(0,0,0,.1); }
+.gem-swatch-sapphire { background: linear-gradient(135deg, #2a4ab8 0%, #1e3a8a 50%, #14245c 100%); }
+.gem-swatch-ruby     { background: linear-gradient(135deg, #e0263a 0%, #b91c1c 50%, #82141a 100%); }
+.gem-swatch-emerald  { background: linear-gradient(135deg, #0aa56c 0%, #047857 50%, #024a36 100%); }
+
+/* Material swatches reuse the component-icon look (.swatch / .swatch-img)
+   but their icons are photographic thumbnails — drop the multiply blend
+   and let the image sit at ~70% of the tile with its original aspect
+   ratio preserved (contain, not cover). */
+.swatch-img.swatch-img--material {
+    background: var(--panel, #fff);
+}
+.swatch-img.swatch-img--material img {
+    mix-blend-mode: normal;
+    width: 70%;
+    height: 70%;
+    object-fit: contain;
+    margin: auto;
+}
+
+/* ── Loading state ──────────────────────────────────────────────── */
+.swatch.loading,
+.color-swatch.loading,
+.gem-size-dropdown.loading { pointer-events: none; opacity: 0.55; }
+.swatch.loading::before,
+.color-swatch.loading::before {
+    content: "";
+    position: absolute;
+    top: 50%; left: 50%;
+    width: 20px; height: 20px;
+    margin: -10px 0 0 -10px;
+    border: 2px solid rgba(0,0,0,.15);
+    border-top-color: var(--ink);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    z-index: 2;
+}
+.color-swatch { position: relative; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── Messages ───────────────────────────────────────────────────── */
+.loading-message,
+.empty-message,
+.field-empty {
+    color: var(--ink-mute);
+    font-size: 0.8rem;
+    padding: 0.5rem 0;
+}
+.field-empty {
+    font-style: italic;
+    padding: 0.35rem 0.6rem;
+    background: var(--hover-soft);
+    border-radius: var(--radius-sm);
+    border: 1px dashed var(--line);
+    font-size: 0.75rem;
+}
+
+/* ── Footer / summary ───────────────────────────────────────────── */
+.sidebar-footer {
+    border-top: 1px solid var(--line);
+    padding: 0.75rem 1.25rem;
+    background: var(--footer-bg);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+}
+.summary-label {
+    font-size: 0.58rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--ink-mute);
+    margin-bottom: 0.1rem;
+}
+.summary-value {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    color: var(--ink);
+    word-break: break-all;
+    line-height: 1.35;
+}
