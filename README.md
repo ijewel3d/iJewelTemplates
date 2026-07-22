@@ -21,9 +21,7 @@ For API references, integration guides, and platform documentation, visit the [o
 
 | Template | Description | Links |
 | --- | --- | --- |
-| Advanced Template v4 | Full product-page configurator with an integrated virtual try-on flow. | [View live](https://ijewel3d.github.io/iJewelTemplates/ringconfigurator/advanced/template-v4.html) · [Source](ringconfigurator/advanced/template-v4.html) |
-| Pricing Configurator | Advanced ring configuration with live pricing behavior. | [View live](https://ijewel3d.github.io/iJewelTemplates/ringconfigurator/advanced/pricing-configurator.html) · [Source](ringconfigurator/advanced/pricing-configurator.html) |
-| Complex Configurator | Full multi-control ring configurator example. | [View live](https://ijewel3d.github.io/iJewelTemplates/ringconfigurator/advanced/ringconfigurator-complex.html) · [Source](ringconfigurator/advanced/ringconfigurator-complex.html) |
+| Complex Configurator | Full multi-control ring configurator example. | [View live](https://ijewel3d.github.io/iJewelTemplates/ringconfigurator/advanced/ringbuilder-complex.html) · [Source](ringconfigurator/advanced/ringbuilder-complex.html) |
 | Advanced Template v3 | Storefront-style ring builder with custom product controls. | [View live](https://ijewel3d.github.io/iJewelTemplates/ringconfigurator/advanced/template-v3.html) · [Source](ringconfigurator/advanced/template-v3.html) |
 | Advanced Template v2 | Earlier modular version of the advanced ring builder. | [View live](https://ijewel3d.github.io/iJewelTemplates/ringconfigurator/advanced/template-v2.html) · [Source](ringconfigurator/advanced/template-v2.html) |
 | Base Advanced Template | Baseline advanced ring builder implementation. | [View live](https://ijewel3d.github.io/iJewelTemplates/ringconfigurator/advanced/template.html) · [Source](ringconfigurator/advanced/template.html) |
@@ -42,12 +40,6 @@ For API references, integration guides, and platform documentation, visit the [o
 | --- | --- | --- |
 | Virtual Try-On | Small example for loading a model and enabling camera-based try-on. | [View live](https://ijewel3d.github.io/iJewelTemplates/tryon/try-on.html) · [Source](tryon/try-on.html) |
 | Viewer SDK | Viewer controls and virtual try-on configuration in one SDK example. | [View live](https://ijewel3d.github.io/iJewelTemplates/viewer-sdk/index.html) · [Source](viewer-sdk/index.html) |
-
-## Development Example
-
-The following page is retained for focused configurator testing and may expose experimental controls:
-
-- [Open the ring configurator test](https://ijewel3d.github.io/iJewelTemplates/ringconfigurator/test/index.html) · [Source](ringconfigurator/test/index.html)
 
 ## Using a Template
 
@@ -74,13 +66,11 @@ ijewelViewer.loadModelById(
 
 ```text
 ringconfigurator/
-  advanced/       Full storefront, pricing, and try-on examples
+  advanced/       Full storefront and complex configurator examples
   simple/         Minimal ring configurator integrations
-  test/           Development test page
 tryon/            Standalone virtual try-on example
 viewer-sdk/       Viewer SDK example
 wedding-band/     Standard, custom UI, and iframe Wedding Band examples
-shopify/          Shopify Liquid and JavaScript integration assets
 ```
 
 ## Notes
