@@ -1,0 +1,508 @@
+{
+  "plugins": {
+    "WeddingBandBuilder": {
+      "type": "WeddingBandBuilder",
+      "version": 1,
+      "assetBaseUrl": "https://pixotronicscontent.s3.ap-south-1.amazonaws.com/engagementring/profiles/",
+      "icons": {
+        "logo": "https://drive-weur-1.ijewel3d.com/files/logo_icon_030c98538f.svg?h=ijewel3d.com",
+        "tabs": {
+          "profile": "https://drive-weur-1.ijewel3d.com/files/profile_2e8405d7f2.svg?h=ijewel3d.com",
+          "dimensions": "https://drive-weur-1.ijewel3d.com/files/dimensions_88d79ea60a.svg?h=ijewel3d.com",
+          "material": "https://drive-weur-1.ijewel3d.com/files/material_ff2ffae7f7.svg?h=ijewel3d.com",
+          "diamonds": "https://drive-weur-1.ijewel3d.com/files/diamonds_f01327d013.svg?h=ijewel3d.com"
+        },
+        "poses": {
+          "default": "https://drive-weur-1.ijewel3d.com/files/pose_default_e2093cd35c.svg?h=ijewel3d.com",
+          "crossed": "https://drive-weur-1.ijewel3d.com/files/pose_crossed_ab5461a5f6.svg?h=ijewel3d.com",
+          "stacked": "https://drive-weur-1.ijewel3d.com/files/pose_stacked_cbd6f367d1.svg?h=ijewel3d.com",
+          "nested": "https://drive-weur-1.ijewel3d.com/files/pose_nested_cf7405900e.svg?h=ijewel3d.com"
+        },
+        "design": {
+          "no-diamonds": "https://drive-weur-1.ijewel3d.com/files/no_diamonds_3b4c659cbb.svg?h=ijewel3d.com",
+          "full-diamonds": "https://drive-weur-1.ijewel3d.com/files/full_diamonds_3f4f16e691.svg?h=ijewel3d.com",
+          "bezel-diamonds": "https://drive-weur-1.ijewel3d.com/files/bezel_diamonds_b019441d6c.svg?h=ijewel3d.com",
+          "prong-diamonds": "https://drive-weur-1.ijewel3d.com/files/prong_diamonds_d8a0a31026.svg?h=ijewel3d.com",
+          "channel-all-around": "https://drive-weur-1.ijewel3d.com/files/channel_all_around_65ffd624dc.svg?h=ijewel3d.com",
+          "ruler": "https://drive-weur-1.ijewel3d.com/files/ruler_2ae2737be0.svg?h=ijewel3d.com",
+          "slider": "https://drive-weur-1.ijewel3d.com/files/slider_af60d0cdab.svg?h=ijewel3d.com"
+        },
+        "cuts": {
+          "1": "https://drive-weur-1.ijewel3d.com/files/11dc3c_2299b027ea.svg?h=ijewel3d.com",
+          "2": "https://drive-weur-1.ijewel3d.com/files/2f4417_c0f72c74cb.svg?h=ijewel3d.com",
+          "3": "https://drive-weur-1.ijewel3d.com/files/355c29_ac8d674094.svg?h=ijewel3d.com"
+        }
+      },
+      "profiles": [
+        {
+          "id": "d-shape",
+          "name": "D-Shape",
+          "file": "https://pixotronicscontent.s3.ap-south-1.amazonaws.com/engagementring/profiles/INT388 12Cad-M1 Rep-1.3dm",
+          "iconUrl": "https://drive-weur-1.ijewel3d.com/files/vector_e4c1c71825.svg?h=ijewel3d.com",
+          "engravingVOffset": {
+            "oneColor": 0.25,
+            "multiColor": 0.78
+          }
+        },
+        {
+          "id": "flat",
+          "name": "Flat",
+          "file": "https://pixotronicscontent.s3.ap-south-1.amazonaws.com/engagementring/profiles/INT388 12Cad-M2 Rep-1.3dm",
+          "iconUrl": "https://drive-weur-1.ijewel3d.com/files/vector_1_5490a67246.svg?h=ijewel3d.com",
+          "engravingVOffset": {
+            "oneColor": 0.72,
+            "multiColor": 0.69
+          }
+        },
+        {
+          "id": "concave",
+          "name": "Concave",
+          "file": "https://pixotronicscontent.s3.ap-south-1.amazonaws.com/engagementring/profiles/INT388 12Cad-M3.3dm",
+          "iconUrl": "https://drive-weur-1.ijewel3d.com/files/vector_2_de5a5d2f63.svg?h=ijewel3d.com",
+          "engravingVOffset": {
+            "oneColor": 0.75,
+            "multiColor": 0.69
+          }
+        },
+        {
+          "id": "round",
+          "name": "Round",
+          "file": "https://pixotronicscontent.s3.ap-south-1.amazonaws.com/engagementring/profiles/INT388 12Cad-M4.3dm",
+          "iconUrl": "https://drive-weur-1.ijewel3d.com/files/vector_3_6fe5376337.svg?h=ijewel3d.com",
+          "engravingVOffset": {
+            "oneColor": 0.22,
+            "multiColor": 0.7
+          }
+        },
+        {
+          "id": "knife-edge",
+          "name": "Knife Edge",
+          "file": "https://pixotronicscontent.s3.ap-south-1.amazonaws.com/engagementring/profiles/INT388 12Cad-M5.3dm",
+          "iconUrl": "https://drive-weur-1.ijewel3d.com/files/vector_4_c4d37c05a6.svg?h=ijewel3d.com",
+          "engravingVOffset": {
+            "oneColor": 0.24,
+            "multiColor": 0.7
+          }
+        },
+        {
+          "id": "beveled",
+          "name": "Beveled",
+          "file": "https://pixotronicscontent.s3.ap-south-1.amazonaws.com/engagementring/profiles/INT388 12Cad-M6 Rep-1.3dm",
+          "iconUrl": "https://drive-weur-1.ijewel3d.com/files/vector_5_e7bd257bef.svg?h=ijewel3d.com",
+          "engravingVOffset": {
+            "oneColor": 0.72,
+            "multiColor": 0.69
+          }
+        },
+        {
+          "id": "comfort",
+          "name": "Comfort",
+          "file": "https://pixotronicscontent.s3.ap-south-1.amazonaws.com/engagementring/profiles/INT388 12Cad-W1 Rep-1.3dm",
+          "iconUrl": "https://drive-weur-1.ijewel3d.com/files/vector_6_587fb7b20c.svg?h=ijewel3d.com",
+          "engravingVOffset": {
+            "oneColor": 0.4,
+            "multiColor": 0.4
+          }
+        }
+      ],
+      "metals": [
+        {
+          "id": "yellow",
+          "name": "Gold",
+          "iconUrl": "https://drive-weur-1.ijewel3d.com/files/yellow_gold_944578ef68.png?h=ijewel3d.com"
+        },
+        {
+          "id": "white",
+          "name": "White Gold",
+          "iconUrl": "https://drive-weur-1.ijewel3d.com/files/white_gold_92aeb5185c.png?h=ijewel3d.com"
+        },
+        {
+          "id": "rose",
+          "name": "Rose Gold",
+          "iconUrl": "https://drive-weur-1.ijewel3d.com/files/rose_gold_27dce97ecb.png?h=ijewel3d.com"
+        }
+      ],
+      "finishes": [
+        {
+          "id": "hammered",
+          "name": "Hammered",
+          "iconUrl": "https://drive-weur-1.ijewel3d.com/files/scratch_8f7eb72dd9.png?h=ijewel3d.com",
+          "files": {
+            "yellow": "https://pixotronicscontent.s3.ap-south-1.amazonaws.com/engagementring/profiles/yellow-hammered.pmat",
+            "white": "https://pixotronicscontent.s3.ap-south-1.amazonaws.com/engagementring/profiles/white-hammered.pmat",
+            "rose": "https://pixotronicscontent.s3.ap-south-1.amazonaws.com/engagementring/profiles/rose-hammered.pmat"
+          }
+        },
+        {
+          "id": "sand",
+          "name": "Sand",
+          "iconUrl": "https://drive-weur-1.ijewel3d.com/files/sand_f17d32add4.png?h=ijewel3d.com",
+          "files": {
+            "yellow": "https://pixotronicscontent.s3.ap-south-1.amazonaws.com/engagementring/profiles/yellow-sand.pmat",
+            "white": "https://pixotronicscontent.s3.ap-south-1.amazonaws.com/engagementring/profiles/white-sand.pmat",
+            "rose": "https://pixotronicscontent.s3.ap-south-1.amazonaws.com/engagementring/profiles/rose-sand.pmat"
+          }
+        },
+        {
+          "id": "ice",
+          "name": "Ice",
+          "iconUrl": "https://drive-weur-1.ijewel3d.com/files/scratch_8f7eb72dd9.png?h=ijewel3d.com",
+          "files": {
+            "yellow": "https://drive-weur-1.ijewel3d.com/files/scratch_material_e4e918fa67.pmat?h=ijewel3d.com",
+            "white": "https://drive-weur-1.ijewel3d.com/files/white_gold_scratched_ad333f5ce6.pmat?h=ijewel3d.com",
+            "rose": "https://drive-weur-1.ijewel3d.com/files/rose_gold_scratched_057fd46036.pmat?h=ijewel3d.com"
+          }
+        },
+        {
+          "id": "nature",
+          "name": "Nature",
+          "iconUrl": "https://drive-weur-1.ijewel3d.com/files/scratch_8f7eb72dd9.png?h=ijewel3d.com",
+          "files": {
+            "yellow": "https://pixotronicscontent.s3.ap-south-1.amazonaws.com/engagementring/profiles/yellow-nature.pmat",
+            "white": "https://pixotronicscontent.s3.ap-south-1.amazonaws.com/engagementring/profiles/white-nature.pmat",
+            "rose": "https://pixotronicscontent.s3.ap-south-1.amazonaws.com/engagementring/profiles/rose-nature.pmat"
+          }
+        },
+        {
+          "id": "brush",
+          "name": "Brush",
+          "iconUrl": "https://drive-weur-1.ijewel3d.com/files/brush_1603ad165e.png?h=ijewel3d.com",
+          "files": {
+            "yellow": "https://pixotronicscontent.s3.ap-south-1.amazonaws.com/engagementring/profiles/yellow-brush.pmat",
+            "white": "https://pixotronicscontent.s3.ap-south-1.amazonaws.com/engagementring/profiles/white-brush.pmat",
+            "rose": "https://pixotronicscontent.s3.ap-south-1.amazonaws.com/engagementring/profiles/rose-brush.pmat"
+          }
+        },
+        {
+          "id": "linear",
+          "name": "Linear",
+          "iconUrl": "https://drive-weur-1.ijewel3d.com/files/scratch_8f7eb72dd9.png?h=ijewel3d.com",
+          "files": {
+            "yellow": "https://pixotronicscontent.s3.ap-south-1.amazonaws.com/engagementring/profiles/yellow-linear.pmat",
+            "white": "https://pixotronicscontent.s3.ap-south-1.amazonaws.com/engagementring/profiles/white-linear.pmat",
+            "rose": "https://pixotronicscontent.s3.ap-south-1.amazonaws.com/engagementring/profiles/rose-linear.pmat"
+          }
+        },
+        {
+          "id": "polished",
+          "name": "Polished",
+          "iconUrl": "https://drive-weur-1.ijewel3d.com/files/polish_c6be6f3ea9.png?h=ijewel3d.com",
+          "files": {
+            "yellow": "https://pixotronicscontent.s3.ap-south-1.amazonaws.com/engagementring/profiles/yellow-polished.pmat",
+            "white": "https://pixotronicscontent.s3.ap-south-1.amazonaws.com/engagementring/profiles/white-polished.pmat",
+            "rose": "https://pixotronicscontent.s3.ap-south-1.amazonaws.com/engagementring/profiles/rose-polished.pmat"
+          }
+        }
+      ],
+      "diamonds": {
+        "singleModelFile": "diamond_single.glb",
+        "prongsModelFile": "diamond_pave.glb"
+      },
+      "separationPresets": {
+        "1 Color": {
+          "divisions": [
+            1,
+            1
+          ],
+          "horizontalSep": false,
+          "useGrooveEdges": false,
+          "regions": [
+            {
+              "slotIndex": 1,
+              "usePolished": false,
+              "respectInsidePolished": false
+            },
+            {
+              "slotIndex": 1,
+              "usePolished": false,
+              "respectInsidePolished": false
+            },
+            {
+              "slotIndex": 1,
+              "usePolished": true,
+              "respectInsidePolished": true
+            },
+            {
+              "slotIndex": 1,
+              "usePolished": true,
+              "respectInsidePolished": true
+            }
+          ]
+        },
+        "2 Color": {
+          "divisions": [
+            1,
+            1
+          ],
+          "horizontalSep": false,
+          "useGrooveEdges": true,
+          "regions": [
+            {
+              "slotIndex": 2,
+              "usePolished": false,
+              "respectInsidePolished": false
+            },
+            {
+              "slotIndex": 1,
+              "usePolished": false,
+              "respectInsidePolished": false
+            },
+            {
+              "slotIndex": 1,
+              "usePolished": true,
+              "respectInsidePolished": true
+            },
+            {
+              "slotIndex": 2,
+              "usePolished": true,
+              "respectInsidePolished": true
+            }
+          ]
+        },
+        "3 Color": {
+          "divisions": [
+            1,
+            1,
+            1
+          ],
+          "horizontalSep": false,
+          "useGrooveEdges": true,
+          "regions": [
+            {
+              "slotIndex": 3,
+              "usePolished": false,
+              "respectInsidePolished": false
+            },
+            {
+              "slotIndex": 2,
+              "usePolished": false,
+              "respectInsidePolished": false
+            },
+            {
+              "slotIndex": 1,
+              "usePolished": false,
+              "respectInsidePolished": false
+            },
+            {
+              "slotIndex": 1,
+              "usePolished": true,
+              "respectInsidePolished": true
+            },
+            {
+              "slotIndex": 2,
+              "usePolished": true,
+              "respectInsidePolished": true
+            },
+            {
+              "slotIndex": 3,
+              "usePolished": true,
+              "respectInsidePolished": true
+            }
+          ]
+        }
+      },
+      "theme": "luxury-gold",
+      "defaults": {
+        "rootScale": 0.1,
+        "autoFit": false,
+        "bands": [
+          {
+            "name": "her",
+            "displayName": "Her Ring",
+            "defaultWidthMm": 3.5,
+            "defaultHeightMm": 1.8,
+            "state": {
+              "profileIndex": 0,
+              "profileWidth": 1,
+              "profileHeight": 1,
+              "ringSize": 8.26,
+              "partition": "2 Color",
+              "activeMetalTab": 0,
+              "metals": [
+                "Yellow",
+                "White",
+                "White"
+              ],
+              "surfaces": [
+                "Polished",
+                "Brush",
+                "Brush"
+              ],
+              "diamond": "none",
+              "diamondPlacement": 0.5,
+              "stoneSize": 1.5,
+              "engravingText": "",
+              "engravingFont": "Sacramento",
+              "engravingFontSize": 80,
+              "edgeType": "None",
+              "edgeSide": "Both",
+              "settingType": "Prong",
+              "diamondSpan": "full",
+              "diamondSpacing": "touching",
+              "diamondCount": 0,
+              "insidePolished": true,
+              "splitGroove": true,
+              "wavyGrooves": false,
+              "wavySplit": true,
+              "wavyFrequency": 6,
+              "wavyAmplitude": 0.3
+            },
+            "position": [
+              1,
+              0,
+              1
+            ],
+            "rotation": [
+              0,
+              0.3,
+              3.14
+            ]
+          },
+          {
+            "name": "his",
+            "displayName": "His Ring",
+            "defaultWidthMm": 5,
+            "defaultHeightMm": 1.9,
+            "state": {
+              "profileIndex": 0,
+              "profileWidth": 1,
+              "profileHeight": 1,
+              "ringSize": 9.45,
+              "partition": "2 Color",
+              "activeMetalTab": 0,
+              "metals": [
+                "Yellow",
+                "White",
+                "White"
+              ],
+              "surfaces": [
+                "Polished",
+                "Brush",
+                "Brush"
+              ],
+              "diamond": "none",
+              "diamondPlacement": 0.5,
+              "stoneSize": 1.5,
+              "engravingText": "",
+              "engravingFont": "Sacramento",
+              "engravingFontSize": 80,
+              "edgeType": "None",
+              "edgeSide": "Both",
+              "settingType": "none",
+              "diamondSpan": "full",
+              "diamondSpacing": "touching",
+              "diamondCount": 0,
+              "insidePolished": true,
+              "splitGroove": true,
+              "wavyGrooves": false,
+              "wavySplit": true,
+              "wavyFrequency": 6,
+              "wavyAmplitude": 0.3
+            },
+            "position": [
+              14,
+              0,
+              0
+            ],
+            "rotation": [
+              3.14,
+              1.57,
+              0
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "version": "v1",
+  "isDefault": true,
+  "sceneConfig": {
+    "VJSON": {
+      "path": "https://drive-weur-1.ijewel3d.com/files/wedding_band_scene_settings_0fb39114e4.vjson?h=ijewel3d.com",
+      "name": "wedding_band_scene_settings.vjson",
+      "isCustom": true,
+      "config": {
+        "usePresetCamera": false,
+        "usePresetLoadingPlugin": false,
+        "usePresetInteractionPlugin": false,
+        "usePresetParallaxMappingPlugin": false,
+        "usePresetRendererUiPlugin": false,
+        "usePresetCameraViewPlugin": false,
+        "usePresetMaterialConfiguratorPlugin": false,
+        "usePresetSwitchNodePlugin": false
+      }
+    },
+    "type": "PresetLibraryPlugin"
+  },
+  "cameraConfig": {
+    "userData": {},
+    "camControls": {
+      "type": "OrbitControls",
+      "dollyZoom": false,
+      "zoomToCursor": false,
+      "enableDamping": true,
+      "dampingFactor": 0.08,
+      "autoRotate": false,
+      "autoRotateSpeed": 2,
+      "enableZoom": true,
+      "zoomSpeed": 0.15,
+      "maxZoomSpeed": 0.2,
+      "enableRotate": true,
+      "rotateSpeed": 2,
+      "enablePan": true,
+      "panSpeed": 1,
+      "autoPushTarget": false,
+      "autoPullTarget": false,
+      "minDistance": 0.35,
+      "maxDistance": 1000,
+      "minZoom": 0.01,
+      "maxZoom": 1000,
+      "minPolarAngle": 0,
+      "maxPolarAngle": 1.5707963267948966,
+      "minAzimuthAngle": -1000000,
+      "maxAzimuthAngle": 1000000,
+      "clampMin": {
+        "x": -1000000,
+        "y": -1000000,
+        "z": -1000000,
+        "isVector3": true
+      },
+      "clampMax": {
+        "x": 1000000,
+        "y": 1000000,
+        "z": 1000000,
+        "isVector3": true
+      },
+      "screenSpacePanning": true,
+      "keyPanSpeed": 7
+    },
+    "camOptions": {
+      "type": "PerspectiveCamera",
+      "aspect": "auto",
+      "focus": 10,
+      "fov": 40,
+      "zoom": 1,
+      "frustumSize": 1,
+      "top": 1,
+      "bottom": -1,
+      "left": -1,
+      "right": 1,
+      "controlsMode": "orbit",
+      "controlsEnabled": true
+    },
+    "position": {
+      "x": -2.5,
+      "y": 3.5,
+      "z": 4.5,
+      "isVector3": true
+    },
+    "target": {
+      "x": 0,
+      "y": 0,
+      "z": 0,
+      "isVector3": true
+    }
+  },
+  "basePath": "",
+  "name": "Wedding Band"
+}

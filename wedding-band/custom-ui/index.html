@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>Wedding Band Builder - Custom UI</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="preload"
+      as="style"
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter:wght@300;400;500;600;700&family=Sacramento&family=Dancing+Script:wght@400;600&family=Montserrat:wght@400;500;600&family=Nunito&family=Aboreto&display=swap"
+      onload="this.onload=null;this.rel='stylesheet'"
+    />
+    <noscript>
+      <link
+        rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter:wght@300;400;500;600;700&family=Sacramento&family=Dancing+Script:wght@400;600&family=Montserrat:wght@400;500;600&family=Nunito&family=Aboreto&display=swap"
+      />
+    </noscript>
+    <link rel="stylesheet" href="https://drive-weur-1.ijewel3d.com/files/style_d5f0f7b4c7.css?h=ijewel3d.com" />
+  </head>
+  <body>
+    <div id="loading">
+      <div class="loader">
+        <div class="loader-ring"></div>
+        <div class="loader-text">Crafting your band…</div>
+      </div>
+    </div>
+
+    <div id="app">
+      <div id="stage">
+        <div id="root"></div>
+
+        <div id="logo-overlay">
+          <img src="https://drive-weur-1.ijewel3d.com/files/logo_icon_030c98538f.svg?h=ijewel3d.com" alt="logo" decoding="async" />
+          <span class="brand">Wedding Band</span>
+        </div>
+
+        <div id="build-badge"><span class="mini-spinner"></span><span>Rebuilding…</span></div>
+
+        <!-- <div id="poses-bar"></div> -->
+      </div>
+
+      <aside id="panel" aria-label="Customisation panel">
+        <div class="panel-header">
+          <!-- ── Band Switch ── -->
+          <div class="band-switch" id="band-switch">
+            <button data-band="her" class="active">Her Ring</button>
+            <div class="band-sep">
+              <span class="sep-line"></span>
+              <span class="sep-diamond"></span>
+              <span class="sep-line"></span>
+            </div>
+            <button data-band="his">His Ring</button>
+          </div>
+
+          <!-- ── Title area ── -->
+          <div class="title-area">
+            <span class="ring-label">Custom Wedding Band</span>
+            <div class="title-row">
+              <h1 id="title">Love <em>Forever</em></h1>
+              <span class="sku">iJewel3d</span>
+            </div>
+          </div>
+        </div>
+
+        <nav class="tabs" id="tabs">
+          <button class="tab active" data-tab="profile">Profile</button>
+          <button class="tab" data-tab="dimensions">Size</button>
+          <button class="tab" data-tab="material">Material</button>
+          <button class="tab" data-tab="design">Diamonds</button>
+          <button class="tab" data-tab="grooves">Grooves</button>
+          <button class="tab" data-tab="engraving">Engraving</button>
+        </nav>
+
+        <div class="panel-body">
+          <!-- PROFILE ───────────────────────────────── -->
+          <section class="tab-pane active" data-pane="profile">
+            <div class="field">
+              <div class="field-head">
+                <span class="field-label">Profile</span>
+                <span class="field-value" id="profile-value">-</span>
+              </div>
+              <div class="opt-row" id="profile-opts"></div>
+            </div>
+
+            <div class="field">
+              <div class="field-head">
+                <span class="field-label">Edge Type</span>
+                <span class="field-value" id="edge-value">-</span>
+              </div>
+              <div class="opt-row" id="edge-opts"></div>
+            </div>
+
+            <div class="field" id="edge-side-field" style="display:none">
+              <div class="field-head">
+                <span class="field-label">Edge Side</span>
+              </div>
+              <div class="opt-row" id="edge-side-opts"></div>
+            </div>
+          </section>
+
+          <!-- DIMENSIONS ───────────────────────────────── -->
+          <section class="tab-pane" data-pane="dimensions">
+            <div class="field">
+              <div class="field-head">
+                <span class="field-label">Ring Width <span class="field-value" id="width-value">-</span></span>
+              </div>
+              <div class="tape-container">
+                <div class="tape-wrap" id="width-tape">
+                  <img class="tape-ruler" id="width-ruler" alt="" draggable="false" loading="lazy" decoding="async" />
+                  <div class="tape-clip" id="width-clip"><div class="tape-edge"></div></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="field">
+              <div class="field-head">
+                <span class="field-label">Ring Thickness <span class="field-value" id="height-value">-</span></span>
+              </div>
+              <div class="tape-container">
+                <div class="tape-wrap" id="height-tape">
+                  <img class="tape-ruler" id="height-ruler" alt="" draggable="false" loading="lazy" decoding="async" />
+                  <div class="tape-clip" id="height-clip"><div class="tape-edge"></div></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="field">
+              <div class="field-head">
+                <span class="field-label">Ring Size <span class="field-value" id="ring-size-value">-</span></span>
+                <div class="size-system-toggle" id="size-system-toggle">
+                  <button type="button" data-sys="US">US</button>
+                  <button type="button" data-sys="EU" class="active">EU</button>
+                  <button type="button" data-sys="UK">UK</button>
+                </div>
+              </div>
+              <div class="tape-container">
+                <div class="tape-wrap" id="ring-size-tape">
+                  <img class="tape-ruler" id="ring-size-ruler" alt="" draggable="false" loading="lazy" decoding="async" />
+                  <div class="tape-clip" id="ring-size-clip">
+                    <div class="tape-edge"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="field">
+              <div class="field-head"><span class="field-label">Dimensions</span></div>
+              <div class="dim-list">
+                <div>Width: <span class="field-value" id="dim-w">-</span></div>
+                <div>Thickness: <span class="field-value" id="dim-h">-</span></div>
+                <div>Radius: <span class="field-value" id="dim-r">-</span></div>
+              </div>
+            </div>
+
+            <div class="field">
+              <div class="field-head"><span class="field-label">Config</span></div>
+              <div class="row-inline">
+                <button class="btn-ghost full" id="export-btn">Export JSON</button>
+                <button class="btn-ghost full" id="import-btn">Import JSON</button>
+              </div>
+            </div>
+          </section>
+
+          <!-- MATERIAL ───────────────────────────────── -->
+          <section class="tab-pane" data-pane="material">
+            <div class="field">
+              <div class="field-head">
+                <span class="field-label">Color Partition</span>
+                <span class="field-value" id="partition-value">-</span>
+              </div>
+              <div class="opt-row" id="partition-opts"></div>
+            </div>
+
+            <div class="slot-tabs" id="slot-tabs">
+              <button class="active" data-slot="1">Metal 1</button>
+              <button data-slot="2">Metal 2</button>
+              <button data-slot="3">Metal 3</button>
+            </div>
+
+            <div class="field">
+              <div class="field-head">
+                <span class="field-label">Metal</span>
+                <span class="field-value" id="metal-value">-</span>
+              </div>
+              <div class="opt-row" id="metal-opts"></div>
+            </div>
+
+            <div class="field">
+              <div class="field-head">
+                <span class="field-label">Surface Finish</span>
+                <span class="field-value" id="finish-value">-</span>
+              </div>
+              <div class="opt-row" id="finish-opts"></div>
+            </div>
+
+            <div class="field">
+              <div class="toggle-panel">
+                <div class="toggle-row">
+                  <span class="toggle-label">Polished Interior</span>
+                  <div class="toggle" id="toggle-inside"></div>
+                </div>
+                <div class="toggle-row">
+                  <span class="toggle-label">Split At Groove</span>
+                  <div class="toggle" id="toggle-split"></div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- DIAMONDS ───────────────────────────────── -->
+          <section class="tab-pane" data-pane="design">
+            <div class="field">
+              <div class="field-head">
+                <span class="field-label">Setting Type</span>
+                <span class="field-value" id="setting-value">None</span>
+              </div>
+              <div class="opt-row" id="setting-opts"></div>
+            </div>
+
+            <div id="diamond-hint" class="field-hint">
+              <svg class="field-hint-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 10L7.5 4H16.5L21 10L12 21L3 10Z" />
+                <line x1="3" y1="10" x2="21" y2="10" />
+                <line x1="12" y1="10" x2="12" y2="21" />
+              </svg>
+              <p class="field-hint-text">Choose a setting type to add diamonds to your band</p>
+            </div>
+
+            <div class="field" id="diamond-extra" style="display:none">
+              <!-- Diamond Span -->
+              <div class="field">
+                <div class="field-head">
+                  <span class="field-label">Diamond Span</span>
+                  <span class="field-value" id="span-value">Full Ring</span>
+                </div>
+                <div class="opt-row" id="span-opts"></div>
+              </div>
+
+              <!-- Diamond Count (shown only in Custom span mode) -->
+              <div class="field" id="count-field" style="display:none">
+                <div class="field-head">
+                  <span class="field-label">Diamond Count</span>
+                  <span class="field-value" id="count-value">1</span>
+                </div>
+                <input type="range" class="slider" id="count-slider" min="1" max="50" step="1" value="1" />
+              </div>
+
+              <!-- Computed count (shown in non-custom modes) -->
+              <div class="field" id="computed-count-field">
+                <div class="field-head">
+                  <span class="field-label">Diamond Count</span>
+                  <span class="field-value" id="computed-count-value">0</span>
+                </div>
+              </div>
+
+              <!-- Diamond Spacing -->
+              <div class="field">
+                <div class="field-head">
+                  <span class="field-label">Diamond Spacing</span>
+                  <span class="field-value" id="spacing-value">Stone to Stone</span>
+                </div>
+                <div class="opt-row" id="spacing-opts"></div>
+              </div>
+
+              <!-- Stone Size -->
+              <div class="field">
+                <div class="field-head">
+                  <span class="field-label">Stone Size</span>
+                  <span class="field-value" id="stone-value">1.50</span>
+                </div>
+                <input type="range" class="slider" id="stone-slider" min="0.5" max="3" step="0.05" value="1.5" />
+              </div>
+
+              <!-- Diamond Position -->
+              <div id="position-section">
+                <div class="field">
+                  <div class="field-head">
+                    <span class="field-label">Position</span>
+                    <span class="field-value" id="position-snap-value">Center</span>
+                  </div>
+                  <div class="opt-row" id="position-snap-opts"></div>
+                </div>
+                <div class="field">
+                  <div class="field-head">
+                    <span class="field-label">Fine Position</span>
+                    <span class="field-value" id="position-value">0</span>
+                  </div>
+                  <input type="range" class="slider" id="position-slider" min="-1" max="1" step="0.05" value="0" />
+                </div>
+              </div>
+
+              <div id="position-disabled-hint" class="field-disabled-hint" style="display:none">
+                <svg class="field-disabled-hint-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="8" cy="8" r="6.5" />
+                  <path d="M8 5v3.5" />
+                  <circle cx="8" cy="12" r="0.5" fill="currentColor" stroke="none" />
+                </svg>
+                <span>Diamond position is fixed when wavy grooves are enabled</span>
+              </div>
+            </div>
+          </section>
+
+          <!-- GROOVES ───────────────────────────────── -->
+          <section class="tab-pane" data-pane="grooves">
+            <div class="field">
+              <div class="toggle-panel">
+                <div class="toggle-row">
+                  <span class="toggle-label">Wavy Grooves</span>
+                  <div class="toggle" id="toggle-wavy"></div>
+                </div>
+              </div>
+            </div>
+
+            <div id="wavy-hint" class="field-hint">
+              <svg class="field-hint-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round">
+                <path d="M2 12C3.5 8 5 16 6.5 12C8 8 9.5 16 11 12C12.5 8 14 16 15.5 12C17 8 18.5 16 20 12C21.5 8 22.5 14 23 12" />
+                <path d="M2 17C3.5 13 5 21 6.5 17C8 13 9.5 21 11 17C12.5 13 14 21 15.5 17C17 13 18.5 21 20 17C21.5 13 22.5 19 23 17" opacity="0.4" />
+              </svg>
+              <p class="field-hint-text">Add wavy grooves around your band</p>
+            </div>
+
+            <div id="wavy-field" style="display:none">
+              <div class="field">
+                <div class="field-head">
+                  <span class="field-label">Wave Frequency</span>
+                  <span class="field-value" id="wavy-freq-value">6</span>
+                </div>
+                <input type="range" class="slider" id="wavy-freq" min="1" max="6" step="1" value="4" />
+              </div>
+              <div class="field">
+                <div class="field-head">
+                  <span class="field-label">Wave Amplitude</span>
+                  <span class="field-value" id="wavy-amp-value">0.30</span>
+                </div>
+                <input type="range" class="slider" id="wavy-amp" min="0.05" max="1" step="0.05" value="0.3" />
+              </div>
+              <div class="field">
+                <div class="toggle-panel">
+                  <div class="toggle-row">
+                    <span class="toggle-label">Wavy Split</span>
+                    <div class="toggle" id="toggle-wavy-split"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- ENGRAVING ───────────────────────────────── -->
+          <section class="tab-pane" data-pane="engraving">
+            <div class="field">
+              <div class="field-head">
+                <span class="field-label">Text</span>
+                <span class="field-value" id="engrave-count">0/30</span>
+              </div>
+              <input type="text" class="text-input" id="engrave-input" maxlength="30" placeholder="Enter engraving text…" />
+            </div>
+
+            <div class="field">
+              <div class="field-head"><span class="field-label">Font</span></div>
+              <select class="select-input" id="font-select">
+                <option value="Inter">Inter</option>
+                <option value="Aboreto">Aboreto</option>
+                <option value="Dancing Script">Dancing Script</option>
+                <option value="Montserrat">Montserrat</option>
+                <option value="Nunito">Nunito</option>
+                <option value="Sacramento" selected>Sacramento</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <div class="field-head">
+                <span class="field-label">Font Size</span>
+                <span class="field-value" id="font-size-value">60</span>
+              </div>
+              <input type="range" class="slider" id="font-size-slider" min="4" max="72" step="1" value="60" />
+            </div>
+
+            <div class="field">
+              <div class="field-head">
+                <span class="field-label">Position</span>
+                <span class="field-value" id="engrave-rotation-value">0°</span>
+              </div>
+              <input type="range" class="slider" id="engrave-rotation-slider" min="-314" max="314" step="1" value="0"/>
+            </div>
+
+            <div class="field">
+              <div class="field-head"><span class="field-label">Symbols</span></div>
+              <div class="symbol-grid" id="symbol-grid"></div>
+            </div>
+          </section>
+        </div>
+
+        <div class="price-bar">
+          <div class="price-lines" id="price-lines"></div>
+
+          <div class="price-total-row" id="price-total-row" hidden>
+            <span class="total-label">Total</span>
+            <span class="total-amount" id="price-total">-</span>
+          </div>
+
+          <div class="price-actions">
+            <button class="btn-ghost" id="spec-btn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="14" height="14">
+                <path d="M14 3H6C4.9 3 4 3.9 4 5V19C4 20.1 4.9 21 6 21H18C19.1 21 20 20.1 20 19V9L14 3Z"/>
+                <path d="M14 3V9H20"/>
+              </svg>
+              Spec Sheet
+            </button>
+            <button class="btn-primary" id="cta-btn">Add to Cart</button>
+          </div>
+        </div>
+      </aside>
+    </div>
+
+    <div id="toast"></div>
+
+    <script src="https://releases.ijewel3d.com/libs/webgi-v0/bundle-0.22.0.js"></script>
+    <script src="https://releases.ijewel3d.com/libs/mini-viewer/0.6.10/bundle.nowebgi.iife.js"></script>
+    <script src="./script.js"></script>
+  </body>
+</html>

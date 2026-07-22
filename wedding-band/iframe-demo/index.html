@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>Wedding Band Builder - iframe Demo</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@300;400;500;600;700&display=swap"
+    />
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <!-- ═══════════════════════════════════════════════════════════════
+         HEADER — quick context + URL bar
+         ═══════════════════════════════════════════════════════════════ -->
+    <header id="topbar">
+      <div class="brand-area">
+        <div class="brand-mark">iJewel<em>3D</em></div>
+        <div class="brand-sub">Wedding Band Builder · iframe Demo</div>
+      </div>
+
+      <div class="url-area">
+        <label for="iframe-url">Hosted iframe URL</label>
+        <div class="url-row">
+          <input
+            id="iframe-url"
+            type="url"
+            spellcheck="false"
+            placeholder="https://ijewel3d.com/{instance}/files/{file}/embedded?hideWbbUi=true"
+          />
+          <button id="iframe-load">Load</button>
+        </div>
+        <div class="url-hint">
+          The host page below talks to this iframe over <code>postMessage</code>.
+          Use <code>?hideWbbUi=true</code> to hide the built-in panel.
+        </div>
+      </div>
+
+      <div class="status-area">
+        <span class="status-dot" id="status-dot"></span>
+        <span id="status-label">Waiting for iframe…</span>
+      </div>
+    </header>
+
+    <!-- ═══════════════════════════════════════════════════════════════
+         MAIN — iframe (left) + custom host-page controls (right)
+         ═══════════════════════════════════════════════════════════════ -->
+    <main id="app">
+      <section id="stage">
+        <iframe
+          id="viewer-iframe"
+          title="Wedding Band Builder"
+          allow="camera; xr-spatial-tracking"
+          referrerpolicy="no-referrer-when-downgrade"
+        ></iframe>
+      </section>
+
+      <aside id="panel" aria-label="Host page controls">
+        <!-- BAND SWITCH ──────────────────────────────────────────── -->
+        <div class="card">
+          <div class="card-head">
+            <span class="card-label">Band</span>
+            <span class="card-value" id="band-value">—</span>
+          </div>
+          <div class="seg" id="band-switch">
+            <button data-band="her" class="active">Her</button>
+            <button data-band="his">His</button>
+          </div>
+        </div>
+
+        <!-- PROFILE ──────────────────────────────────────────────── -->
+        <div class="card">
+          <div class="card-head">
+            <span class="card-label">Profile</span>
+            <span class="card-value" id="profile-value">—</span>
+          </div>
+          <div class="opt-row" id="profile-opts">
+            <div class="muted-hint">Loading profiles…</div>
+          </div>
+        </div>
+
+        <!-- METAL ───────────────────────────────────────────────── -->
+        <div class="card">
+          <div class="card-head">
+            <span class="card-label">Metal · Slot 1</span>
+            <span class="card-value" id="metal-value">—</span>
+          </div>
+          <div class="opt-row" id="metal-opts">
+            <div class="muted-hint">Loading metals…</div>
+          </div>
+        </div>
+
+        <!-- FINISH ──────────────────────────────────────────────── -->
+        <div class="card">
+          <div class="card-head">
+            <span class="card-label">Finish · Slot 1</span>
+            <span class="card-value" id="finish-value">—</span>
+          </div>
+          <div class="opt-row" id="finish-opts">
+            <div class="muted-hint">Loading finishes…</div>
+          </div>
+        </div>
+
+        <!-- WIDTH ───────────────────────────────────────────────── -->
+        <div class="card">
+          <div class="card-head">
+            <span class="card-label">Width</span>
+            <span class="card-value" id="width-value">—</span>
+          </div>
+          <input
+            type="range"
+            id="width-slider"
+            class="slider"
+            min="0.5"
+            max="2.0"
+            step="0.05"
+            value="1.0"
+          />
+        </div>
+
+        <!-- DIAMONDS ───────────────────────────────────────────── -->
+        <div class="card">
+          <div class="card-head">
+            <span class="card-label">Diamond Setting</span>
+            <span class="card-value" id="setting-value">—</span>
+          </div>
+          <div class="opt-row" id="setting-opts">
+            <div class="muted-hint">Loading settings…</div>
+          </div>
+        </div>
+
+        <!-- ENGRAVING ──────────────────────────────────────────── -->
+        <div class="card">
+          <div class="card-head">
+            <span class="card-label">Engraving</span>
+            <span class="card-value" id="engrave-count">0/30</span>
+          </div>
+          <input
+            id="engrave-input"
+            type="text"
+            class="text-input"
+            maxlength="30"
+            placeholder="Enter text…"
+          />
+        </div>
+
+        <!-- PRICE ──────────────────────────────────────────────── -->
+        <div class="price-bar">
+          <div class="price-row">
+            <span class="price-label">Live Price</span>
+            <span class="price-value" id="price-value">—</span>
+          </div>
+          <button id="cart-btn" class="cart-btn">Add to Cart</button>
+        </div>
+      </aside>
+    </main>
+
+    <!-- ═══════════════════════════════════════════════════════════════
+         EVENT LOG — collapsible, shows postMessage traffic
+         ═══════════════════════════════════════════════════════════════ -->
+    <details id="log-panel" open>
+      <summary>
+        <span>postMessage Log</span>
+        <button id="log-clear" type="button">Clear</button>
+      </summary>
+      <ol id="log-list" aria-live="polite"></ol>
+    </details>
+
+    <!-- TODO(WBB-MONO-001): Remove the host-side readiness probe in script.js once
+         ijewel-mono emits the documented Wedding Band `ready` event itself. -->
+    <script src="./script.js"></script>
+  </body>
+</html>

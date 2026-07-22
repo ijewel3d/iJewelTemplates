@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="https://releases.ijewel3d.com/libs/webgi-v0/bundle-0.22.0.js"></script>
+    <script src="https://releases.ijewel3d.com/libs/mini-viewer/0.6.10/bundle.nowebgi.iife.js"></script>
+  </head>
+  <body style="margin: 0; padding: 0; width: 100vw; height: 100vh; overflow: hidden;">
+    <div id="viewer" style="width: 100%; height: 100%;"></div>
+    <script>
+      const CONFIG = {
+        fileId: "WsF9jzAESde9Jij21ef8cA",
+        instance: "demo-weur",
+      };
+      let viewer, matPlugin;
+
+      //initialize viewer and load model
+      ijewelViewer.loadModelById(
+        CONFIG.fileId,
+        CONFIG.instance,
+        document.getElementById("viewer"),
+        {
+          showCard: false,
+          showSwitchNode: false,
+          showUiButtons: true,
+          showConfigurator: false,
+          showZoomButtons: false,
+          enableZoom: true,
+          hideWbbUi: false,
+        },
+      );
+
+      window.addEventListener("ijewel-viewer-ready", async ({ detail }) => {
+        viewer = detail.viewer;
+      });
+    </script>
+  </body>
+</html>

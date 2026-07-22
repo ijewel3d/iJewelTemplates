@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Wedding Band Builder — iJewel3d</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body, #root { width: 100vw; height: 100vh; }
+  </style>
+</head>
+<body>
+  <img src="https://drive-weur-1.ijewel3d.com/files/weddingbad_logo_c993bbf149.svg?h=ijewel3d.com" alt="iJewel3D"
+       style="position:fixed;top:12px;left:12px;height:48px;z-index:10000;opacity:.85;pointer-events:none">
+  <div id="root"></div>
+  <script src="https://releases.ijewel3d.com/libs/webgi-v0/bundle-0.22.0.js"></script>
+  <script src="https://releases.ijewel3d.com/libs/mini-viewer/0.6.10/bundle.nowebgi.iife.js"></script>
+  <script>
+    const PROJECT_URL = 'https://drive-weur-1.ijewel3d.com/files/wedding_band_project_f4a009b2f2.json?h=ijewel3d.com';
+
+    (async () => {
+      const root = document.getElementById('root');
+      const project = await fetch(PROJECT_URL).then(r => r.json());
+
+      // Mobile: bump model scale by 20%
+      const isMobile = window.matchMedia('(max-width: 768px)').matches;
+      if (isMobile) {
+        const wbb = project?.plugins?.WeddingBandBuilder;
+        if (wbb?.defaults) {
+          wbb.defaults.rootScale = (wbb.defaults.rootScale ?? 0.1) * 1.2;
+        }
+      }
+
+      const viewerOptions = {
+        showCard: false,
+        showSwitchNode: false,
+        showUiButtons: true,
+        showConfigurator: false,
+        showZoomButtons: false,
+        enableZoom: true,
+        hideWbbUi: false
+      };
+
+      if (window.ijewelViewer?.Viewer) {
+        new window.ijewelViewer.Viewer(root, project, viewerOptions);
+      } else {
+        root.innerHTML = '<div style="color:red;padding:20px;font-family:monospace">mini-viewer IIFE bundle failed to load.</div>';
+      }
+    })();
+  </script>
+</body>
+</html>
