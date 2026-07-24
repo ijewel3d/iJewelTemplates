@@ -23,9 +23,6 @@ const DEFAULT_VIEWER_URL =
   + '?hideWbbUi=true&showUiButtons=true&isAutoplay=true';
 
 const REPLY_TIMEOUT_MS = 8000;
-const READY_PROBE_TIMEOUT_MS = 1500;
-const READY_PROBE_RETRY_MS = 750;
-const READY_PROBE_MAX_ATTEMPTS = 40;
 const MAX_LOG_ENTRIES  = 200;
 
 
@@ -71,7 +68,6 @@ const state = {
   requestId:     0,            // monotonic for { id } correlation
   pending:       new Map(),    // id → { resolve, reject, timer }
   ready:         false,
-  loadGeneration: 0,           // invalidates a readiness probe after iframe reload
   activeBand:    'her',
   iconCache:     {},           // optional iconUrl cache from manifest
 };
@@ -92,7 +88,6 @@ function init() {
   buildLogPanel();
 
   window.addEventListener('message', handleIncomingMessage);
-  state.iframe.addEventListener('load', startReadyFallback);
 
   loadIframe(DEFAULT_VIEWER_URL);
 }
@@ -134,7 +129,6 @@ function loadIframe(url) {
 
 function resetState() {
   state.ready = false;
-  state.loadGeneration += 1;
   state.pending.forEach(({ reject, timer }) => {
     clearTimeout(timer);
     reject(new Error('iframe reloaded'));
@@ -197,45 +191,6 @@ function query(method, args, timeoutMs) {
   });
 }
 
-/*
- * TEMPORARY FALLBACK — WBB-MONO-001
- *
- * The hosted viewer currently exposes working postMessage queries but does not
- * emit its documented `ready` event. Treat the first successful getSnapshot
- * reply as readiness so this demo remains usable. Remove this function and the
- * iframe `load` listener above after ijewel-mono emits `ready` from core.
- */
-async function startReadyFallback() {
-  const generation = state.loadGeneration;
-
-  for (let attempt = 1; attempt <= READY_PROBE_MAX_ATTEMPTS; attempt += 1) {
-    if (state.ready || generation !== state.loadGeneration) return;
-
-    try {
-      const snapshot = await query('getSnapshot', [], READY_PROBE_TIMEOUT_MS);
-      if (state.ready || generation !== state.loadGeneration) return;
-
-      logEvent('in', 'ready:fallback', {
-        attempt,
-        reason: 'WBB-MONO-001: getSnapshot replied before a ready event',
-      });
-      await onReady(snapshot);
-      return;
-    } catch {
-      await delay(READY_PROBE_RETRY_MS);
-    }
-  }
-
-  if (!state.ready && generation === state.loadGeneration) {
-    setStatus('error', 'Viewer did not become responsive');
-  }
-}
-
-function delay(ms) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
-
-
 /* ══════════════════════════════════════════════════════════════════
  *  INCOMING MESSAGE ROUTER
  *  Three shapes are handled:
@@ -245,6 +200,9 @@ function delay(ms) {
  * ══════════════════════════════════════════════════════════════════ */
 
 function handleIncomingMessage(event) {
+  if (event.source !== state.iframe.contentWindow) return;
+  if (state.iframeOrigin !== '*' && event.origin !== state.iframeOrigin) return;
+
   const data = event.data;
   if (!data || typeof data !== 'object') return;
 
@@ -288,18 +246,14 @@ function handleViewerEvent(name, data) {
   }
 }
 
-async function onReady(initialSnapshot) {
+async function onReady() {
   if (state.ready) return;
   state.ready = true;
-  setStatus('ready', initialSnapshot ? 'Connected · fallback probe' : 'Connected · listening');
+  setStatus('ready', 'Connected · listening');
 
   try {
     await populateCatalogs();
-    if (initialSnapshot) {
-      applySnapshot(initialSnapshot);
-    } else {
-      await refreshSnapshot();
-    }
+    await refreshSnapshot();
   } catch (err) {
     setStatus('error', 'Catalog load failed: ' + err.message);
   }

@@ -3,42 +3,42 @@
     "WeddingBandBuilder": {
       "type": "WeddingBandBuilder",
       "version": 1,
-      "assetBaseUrl": "https://pixotronicscontent.s3.ap-south-1.amazonaws.com/engagementring/profiles/",
+      "assetBaseUrl": "https://packs.ijewel3d.com/files/",
       "icons": {
-        "logo": "https://drive-weur-1.ijewel3d.com/files/logo_icon_030c98538f.svg?h=ijewel3d.com",
+        "logo": "https://packs.ijewel3d.com/files/logo_9fb31e5f84.svg?h=ijewel3d.com",
         "tabs": {
-          "profile": "https://drive-weur-1.ijewel3d.com/files/profile_2e8405d7f2.svg?h=ijewel3d.com",
-          "dimensions": "https://drive-weur-1.ijewel3d.com/files/dimensions_88d79ea60a.svg?h=ijewel3d.com",
-          "material": "https://drive-weur-1.ijewel3d.com/files/material_ff2ffae7f7.svg?h=ijewel3d.com",
-          "diamonds": "https://drive-weur-1.ijewel3d.com/files/diamonds_f01327d013.svg?h=ijewel3d.com"
+          "profile": "https://packs.ijewel3d.com/files/tab_profile_8e2a280a41.svg?h=ijewel3d.com",
+          "dimensions": "https://packs.ijewel3d.com/files/tab_dimensions_c55777f3ca.svg?h=ijewel3d.com",
+          "material": "https://packs.ijewel3d.com/files/tab_material_f2003cbcb2.svg?h=ijewel3d.com",
+          "diamonds": "https://packs.ijewel3d.com/files/tab_diamonds_7bcbf155a9.svg?h=ijewel3d.com"
         },
         "poses": {
-          "default": "https://drive-weur-1.ijewel3d.com/files/pose_default_e2093cd35c.svg?h=ijewel3d.com",
-          "crossed": "https://drive-weur-1.ijewel3d.com/files/pose_crossed_ab5461a5f6.svg?h=ijewel3d.com",
-          "stacked": "https://drive-weur-1.ijewel3d.com/files/pose_stacked_cbd6f367d1.svg?h=ijewel3d.com",
-          "nested": "https://drive-weur-1.ijewel3d.com/files/pose_nested_cf7405900e.svg?h=ijewel3d.com"
+          "default": "https://packs.ijewel3d.com/files/pose_default_c45072aa11.svg?h=ijewel3d.com",
+          "crossed": "https://packs.ijewel3d.com/files/pose_crossed_d0ffdd60a3.svg?h=ijewel3d.com",
+          "stacked": "https://packs.ijewel3d.com/files/pose_stacked_295fdb541b.svg?h=ijewel3d.com",
+          "nested": "https://packs.ijewel3d.com/files/pose_nested_a6eba8bd04.svg?h=ijewel3d.com"
         },
         "design": {
-          "no-diamonds": "https://drive-weur-1.ijewel3d.com/files/no_diamonds_3b4c659cbb.svg?h=ijewel3d.com",
-          "full-diamonds": "https://drive-weur-1.ijewel3d.com/files/full_diamonds_3f4f16e691.svg?h=ijewel3d.com",
-          "bezel-diamonds": "https://drive-weur-1.ijewel3d.com/files/bezel_diamonds_b019441d6c.svg?h=ijewel3d.com",
-          "prong-diamonds": "https://drive-weur-1.ijewel3d.com/files/prong_diamonds_d8a0a31026.svg?h=ijewel3d.com",
-          "channel-all-around": "https://drive-weur-1.ijewel3d.com/files/channel_all_around_65ffd624dc.svg?h=ijewel3d.com",
-          "ruler": "https://drive-weur-1.ijewel3d.com/files/ruler_2ae2737be0.svg?h=ijewel3d.com",
-          "slider": "https://drive-weur-1.ijewel3d.com/files/slider_af60d0cdab.svg?h=ijewel3d.com"
+          "no-diamonds": "https://packs.ijewel3d.com/files/design_no_diamonds_e02ddc2648.svg?h=ijewel3d.com",
+          "full-diamonds": "https://packs.ijewel3d.com/files/design_full_diamonds_60c6aa1b0e.svg?h=ijewel3d.com",
+          "bezel-diamonds": "https://packs.ijewel3d.com/files/design_bezel_diamonds_c63b5603c7.svg?h=ijewel3d.com",
+          "prong-diamonds": "https://packs.ijewel3d.com/files/design_prong_diamonds_340fdf8993.svg?h=ijewel3d.com",
+          "channel-all-around": "https://packs.ijewel3d.com/files/design_channel_all_around_1b7c67be7c.svg?h=ijewel3d.com",
+          "ruler": "https://packs.ijewel3d.com/files/design_ruler_c62822107f.svg?h=ijewel3d.com",
+          "slider": "https://packs.ijewel3d.com/files/design_slider_493be9daac.svg?h=ijewel3d.com"
         },
         "cuts": {
-          "1": "https://drive-weur-1.ijewel3d.com/files/11dc3c_2299b027ea.svg?h=ijewel3d.com",
-          "2": "https://drive-weur-1.ijewel3d.com/files/2f4417_c0f72c74cb.svg?h=ijewel3d.com",
-          "3": "https://drive-weur-1.ijewel3d.com/files/355c29_ac8d674094.svg?h=ijewel3d.com"
+          "1": "https://packs.ijewel3d.com/files/cut_1_fead566453.svg?h=ijewel3d.com",
+          "2": "https://packs.ijewel3d.com/files/cut_2_00d7df922e.svg?h=ijewel3d.com",
+          "3": "https://packs.ijewel3d.com/files/cut_3_6b05f54d1f.svg?h=ijewel3d.com"
         }
       },
       "profiles": [
         {
           "id": "d-shape",
           "name": "D-Shape",
-          "file": "https://pixotronicscontent.s3.ap-south-1.amazonaws.com/engagementring/profiles/INT388 12Cad-M1 Rep-1.3dm",
-          "iconUrl": "https://drive-weur-1.ijewel3d.com/files/vector_e4c1c71825.svg?h=ijewel3d.com",
+          "file": "https://packs.ijewel3d.com/files/d_shape_02677d1bec.3dm?h=ijewel3d.com",
+          "iconUrl": "https://packs.ijewel3d.com/files/profile_d_shape_6171cbb993.svg?h=ijewel3d.com",
           "engravingVOffset": {
             "oneColor": 0.25,
             "multiColor": 0.78
@@ -47,8 +47,8 @@
         {
           "id": "flat",
           "name": "Flat",
-          "file": "https://pixotronicscontent.s3.ap-south-1.amazonaws.com/engagementring/profiles/INT388 12Cad-M2 Rep-1.3dm",
-          "iconUrl": "https://drive-weur-1.ijewel3d.com/files/vector_1_5490a67246.svg?h=ijewel3d.com",
+          "file": "https://packs.ijewel3d.com/files/flat_fbc2074ad3.3dm?h=ijewel3d.com",
+          "iconUrl": "https://packs.ijewel3d.com/files/profile_flat_b9dae83e66.svg?h=ijewel3d.com",
           "engravingVOffset": {
             "oneColor": 0.72,
             "multiColor": 0.69
@@ -57,8 +57,8 @@
         {
           "id": "concave",
           "name": "Concave",
-          "file": "https://pixotronicscontent.s3.ap-south-1.amazonaws.com/engagementring/profiles/INT388 12Cad-M3.3dm",
-          "iconUrl": "https://drive-weur-1.ijewel3d.com/files/vector_2_de5a5d2f63.svg?h=ijewel3d.com",
+          "file": "https://packs.ijewel3d.com/files/concave_d43dee56b7.3dm?h=ijewel3d.com",
+          "iconUrl": "https://packs.ijewel3d.com/files/profile_concave_6e3f2e0ecb.svg?h=ijewel3d.com",
           "engravingVOffset": {
             "oneColor": 0.75,
             "multiColor": 0.69
@@ -67,8 +67,8 @@
         {
           "id": "round",
           "name": "Round",
-          "file": "https://pixotronicscontent.s3.ap-south-1.amazonaws.com/engagementring/profiles/INT388 12Cad-M4.3dm",
-          "iconUrl": "https://drive-weur-1.ijewel3d.com/files/vector_3_6fe5376337.svg?h=ijewel3d.com",
+          "file": "https://packs.ijewel3d.com/files/round_d8bf65fff1.3dm?h=ijewel3d.com",
+          "iconUrl": "https://packs.ijewel3d.com/files/profile_round_f7ed94488b.svg?h=ijewel3d.com",
           "engravingVOffset": {
             "oneColor": 0.22,
             "multiColor": 0.7
@@ -77,8 +77,8 @@
         {
           "id": "knife-edge",
           "name": "Knife Edge",
-          "file": "https://pixotronicscontent.s3.ap-south-1.amazonaws.com/engagementring/profiles/INT388 12Cad-M5.3dm",
-          "iconUrl": "https://drive-weur-1.ijewel3d.com/files/vector_4_c4d37c05a6.svg?h=ijewel3d.com",
+          "file": "https://packs.ijewel3d.com/files/knife_edge_26868b3291.3dm?h=ijewel3d.com",
+          "iconUrl": "https://packs.ijewel3d.com/files/profile_knife_edge_09a74d25d9.svg?h=ijewel3d.com",
           "engravingVOffset": {
             "oneColor": 0.24,
             "multiColor": 0.7
@@ -87,8 +87,8 @@
         {
           "id": "beveled",
           "name": "Beveled",
-          "file": "https://pixotronicscontent.s3.ap-south-1.amazonaws.com/engagementring/profiles/INT388 12Cad-M6 Rep-1.3dm",
-          "iconUrl": "https://drive-weur-1.ijewel3d.com/files/vector_5_e7bd257bef.svg?h=ijewel3d.com",
+          "file": "https://packs.ijewel3d.com/files/beveled_a20f2fd8b1.3dm?h=ijewel3d.com",
+          "iconUrl": "https://packs.ijewel3d.com/files/profile_beveled_9637b69f5c.svg?h=ijewel3d.com",
           "engravingVOffset": {
             "oneColor": 0.72,
             "multiColor": 0.69
@@ -97,8 +97,8 @@
         {
           "id": "comfort",
           "name": "Comfort",
-          "file": "https://pixotronicscontent.s3.ap-south-1.amazonaws.com/engagementring/profiles/INT388 12Cad-W1 Rep-1.3dm",
-          "iconUrl": "https://drive-weur-1.ijewel3d.com/files/vector_6_587fb7b20c.svg?h=ijewel3d.com",
+          "file": "https://packs.ijewel3d.com/files/comfort_049e411cdd.3dm?h=ijewel3d.com",
+          "iconUrl": "https://packs.ijewel3d.com/files/profile_comfort_dba6681505.svg?h=ijewel3d.com",
           "engravingVOffset": {
             "oneColor": 0.4,
             "multiColor": 0.4
@@ -109,94 +109,94 @@
         {
           "id": "yellow",
           "name": "Gold",
-          "iconUrl": "https://drive-weur-1.ijewel3d.com/files/yellow_gold_944578ef68.png?h=ijewel3d.com"
+          "iconUrl": "https://packs.ijewel3d.com/files/metal_yellow_gold_47354c9fee.png?h=ijewel3d.com"
         },
         {
           "id": "white",
           "name": "White Gold",
-          "iconUrl": "https://drive-weur-1.ijewel3d.com/files/white_gold_92aeb5185c.png?h=ijewel3d.com"
+          "iconUrl": "https://packs.ijewel3d.com/files/metal_white_gold_c10ace10cb.png?h=ijewel3d.com"
         },
         {
           "id": "rose",
           "name": "Rose Gold",
-          "iconUrl": "https://drive-weur-1.ijewel3d.com/files/rose_gold_27dce97ecb.png?h=ijewel3d.com"
+          "iconUrl": "https://packs.ijewel3d.com/files/metal_rose_gold_cea0bbcf59.png?h=ijewel3d.com"
         }
       ],
       "finishes": [
         {
           "id": "hammered",
           "name": "Hammered",
-          "iconUrl": "https://drive-weur-1.ijewel3d.com/files/scratch_8f7eb72dd9.png?h=ijewel3d.com",
+          "iconUrl": "https://packs.ijewel3d.com/files/finish_scratch_7b6b503a12.png?h=ijewel3d.com",
           "files": {
-            "yellow": "https://pixotronicscontent.s3.ap-south-1.amazonaws.com/engagementring/profiles/yellow-hammered.pmat",
-            "white": "https://pixotronicscontent.s3.ap-south-1.amazonaws.com/engagementring/profiles/white-hammered.pmat",
-            "rose": "https://pixotronicscontent.s3.ap-south-1.amazonaws.com/engagementring/profiles/rose-hammered.pmat"
+            "yellow": "https://packs.ijewel3d.com/files/yellow_hammered_783d284bce.pmat?h=ijewel3d.com",
+            "white": "https://packs.ijewel3d.com/files/white_hammered_444898cd13.pmat?h=ijewel3d.com",
+            "rose": "https://packs.ijewel3d.com/files/rose_hammered_18b32f5560.pmat?h=ijewel3d.com"
           }
         },
         {
           "id": "sand",
           "name": "Sand",
-          "iconUrl": "https://drive-weur-1.ijewel3d.com/files/sand_f17d32add4.png?h=ijewel3d.com",
+          "iconUrl": "https://packs.ijewel3d.com/files/finish_sand_7c4b574b76.png?h=ijewel3d.com",
           "files": {
-            "yellow": "https://pixotronicscontent.s3.ap-south-1.amazonaws.com/engagementring/profiles/yellow-sand.pmat",
-            "white": "https://pixotronicscontent.s3.ap-south-1.amazonaws.com/engagementring/profiles/white-sand.pmat",
-            "rose": "https://pixotronicscontent.s3.ap-south-1.amazonaws.com/engagementring/profiles/rose-sand.pmat"
+            "yellow": "https://packs.ijewel3d.com/files/yellow_sand_370aa8d207.pmat?h=ijewel3d.com",
+            "white": "https://packs.ijewel3d.com/files/white_sand_100f0f8025.pmat?h=ijewel3d.com",
+            "rose": "https://packs.ijewel3d.com/files/rose_sand_ff687d3270.pmat?h=ijewel3d.com"
           }
         },
         {
           "id": "ice",
           "name": "Ice",
-          "iconUrl": "https://drive-weur-1.ijewel3d.com/files/scratch_8f7eb72dd9.png?h=ijewel3d.com",
+          "iconUrl": "https://packs.ijewel3d.com/files/finish_scratch_7b6b503a12.png?h=ijewel3d.com",
           "files": {
-            "yellow": "https://drive-weur-1.ijewel3d.com/files/scratch_material_e4e918fa67.pmat?h=ijewel3d.com",
-            "white": "https://drive-weur-1.ijewel3d.com/files/white_gold_scratched_ad333f5ce6.pmat?h=ijewel3d.com",
-            "rose": "https://drive-weur-1.ijewel3d.com/files/rose_gold_scratched_057fd46036.pmat?h=ijewel3d.com"
+            "yellow": "https://packs.ijewel3d.com/files/yellow_ice_3ecb8c8ed3.pmat?h=ijewel3d.com",
+            "white": "https://packs.ijewel3d.com/files/white_ice_816dfc6e3f.pmat?h=ijewel3d.com",
+            "rose": "https://packs.ijewel3d.com/files/rose_ice_36fac71821.pmat?h=ijewel3d.com"
           }
         },
         {
           "id": "nature",
           "name": "Nature",
-          "iconUrl": "https://drive-weur-1.ijewel3d.com/files/scratch_8f7eb72dd9.png?h=ijewel3d.com",
+          "iconUrl": "https://packs.ijewel3d.com/files/finish_scratch_7b6b503a12.png?h=ijewel3d.com",
           "files": {
-            "yellow": "https://pixotronicscontent.s3.ap-south-1.amazonaws.com/engagementring/profiles/yellow-nature.pmat",
-            "white": "https://pixotronicscontent.s3.ap-south-1.amazonaws.com/engagementring/profiles/white-nature.pmat",
-            "rose": "https://pixotronicscontent.s3.ap-south-1.amazonaws.com/engagementring/profiles/rose-nature.pmat"
+            "yellow": "https://packs.ijewel3d.com/files/yellow_nature_f064bf6a1c.pmat?h=ijewel3d.com",
+            "white": "https://packs.ijewel3d.com/files/white_nature_e79103cfdd.pmat?h=ijewel3d.com",
+            "rose": "https://packs.ijewel3d.com/files/rose_nature_13e759b8ef.pmat?h=ijewel3d.com"
           }
         },
         {
           "id": "brush",
           "name": "Brush",
-          "iconUrl": "https://drive-weur-1.ijewel3d.com/files/brush_1603ad165e.png?h=ijewel3d.com",
+          "iconUrl": "https://packs.ijewel3d.com/files/finish_brush_c925849edd.png?h=ijewel3d.com",
           "files": {
-            "yellow": "https://pixotronicscontent.s3.ap-south-1.amazonaws.com/engagementring/profiles/yellow-brush.pmat",
-            "white": "https://pixotronicscontent.s3.ap-south-1.amazonaws.com/engagementring/profiles/white-brush.pmat",
-            "rose": "https://pixotronicscontent.s3.ap-south-1.amazonaws.com/engagementring/profiles/rose-brush.pmat"
+            "yellow": "https://packs.ijewel3d.com/files/yellow_brush_16b6836aa5.pmat?h=ijewel3d.com",
+            "white": "https://packs.ijewel3d.com/files/white_brush_12073f8252.pmat?h=ijewel3d.com",
+            "rose": "https://packs.ijewel3d.com/files/rose_brush_791525fac9.pmat?h=ijewel3d.com"
           }
         },
         {
           "id": "linear",
           "name": "Linear",
-          "iconUrl": "https://drive-weur-1.ijewel3d.com/files/scratch_8f7eb72dd9.png?h=ijewel3d.com",
+          "iconUrl": "https://packs.ijewel3d.com/files/finish_scratch_7b6b503a12.png?h=ijewel3d.com",
           "files": {
-            "yellow": "https://pixotronicscontent.s3.ap-south-1.amazonaws.com/engagementring/profiles/yellow-linear.pmat",
-            "white": "https://pixotronicscontent.s3.ap-south-1.amazonaws.com/engagementring/profiles/white-linear.pmat",
-            "rose": "https://pixotronicscontent.s3.ap-south-1.amazonaws.com/engagementring/profiles/rose-linear.pmat"
+            "yellow": "https://packs.ijewel3d.com/files/yellow_linear_d9efd6ac68.pmat?h=ijewel3d.com",
+            "white": "https://packs.ijewel3d.com/files/white_linear_0fcbdc7feb.pmat?h=ijewel3d.com",
+            "rose": "https://packs.ijewel3d.com/files/rose_linear_38619bb14f.pmat?h=ijewel3d.com"
           }
         },
         {
           "id": "polished",
           "name": "Polished",
-          "iconUrl": "https://drive-weur-1.ijewel3d.com/files/polish_c6be6f3ea9.png?h=ijewel3d.com",
+          "iconUrl": "https://packs.ijewel3d.com/files/finish_polish_50a5ee0f37.png?h=ijewel3d.com",
           "files": {
-            "yellow": "https://pixotronicscontent.s3.ap-south-1.amazonaws.com/engagementring/profiles/yellow-polished.pmat",
-            "white": "https://pixotronicscontent.s3.ap-south-1.amazonaws.com/engagementring/profiles/white-polished.pmat",
-            "rose": "https://pixotronicscontent.s3.ap-south-1.amazonaws.com/engagementring/profiles/rose-polished.pmat"
+            "yellow": "https://packs.ijewel3d.com/files/yellow_polished_621d0db379.pmat?h=ijewel3d.com",
+            "white": "https://packs.ijewel3d.com/files/white_polished_442725fa85.pmat?h=ijewel3d.com",
+            "rose": "https://packs.ijewel3d.com/files/rose_polished_e2c17d95bc.pmat?h=ijewel3d.com"
           }
         }
       ],
       "diamonds": {
-        "singleModelFile": "diamond_single.glb",
-        "prongsModelFile": "diamond_pave.glb"
+        "singleModelFile": "diamond_single_a848d0d5f8.glb?h=ijewel3d.com",
+        "prongsModelFile": "diamond_pave_78f1c980fd.glb?h=ijewel3d.com"
       },
       "separationPresets": {
         "1 Color": {
@@ -301,7 +301,6 @@
           ]
         }
       },
-      "theme": "luxury-gold",
       "defaults": {
         "rootScale": 0.1,
         "autoFit": false,
@@ -337,8 +336,8 @@
               "edgeType": "None",
               "edgeSide": "Both",
               "settingType": "Prong",
-              "diamondSpan": "full",
-              "diamondSpacing": "touching",
+              "diamondSpan": "Full Ring",
+              "diamondSpacing": "Stone to Stone",
               "diamondCount": 0,
               "insidePolished": true,
               "splitGroove": true,
@@ -389,8 +388,8 @@
               "edgeType": "None",
               "edgeSide": "Both",
               "settingType": "none",
-              "diamondSpan": "full",
-              "diamondSpacing": "touching",
+              "diamondSpan": "Full Ring",
+              "diamondSpacing": "Stone to Stone",
               "diamondCount": 0,
               "insidePolished": true,
               "splitGroove": true,
@@ -418,8 +417,8 @@
   "isDefault": true,
   "sceneConfig": {
     "VJSON": {
-      "path": "https://drive-weur-1.ijewel3d.com/files/wedding_band_scene_settings_0fb39114e4.vjson?h=ijewel3d.com",
-      "name": "wedding_band_scene_settings.vjson",
+      "path": "https://packs.ijewel3d.com/files/wedding_band_scene_22bc7660a5.vjson?h=ijewel3d.com",
+      "name": "wedding_band_scene.vjson",
       "isCustom": true,
       "config": {
         "usePresetCamera": false,
