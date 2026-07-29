@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>Virtual Try-On - Standalone WebGi Viewer</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@300;400;500;600;700&display=swap"
+    />
+    <link rel="stylesheet" href="./style.css" />
+
+    <!-- ═══════════════════════════════════════════════════════════════
+         SCRIPTS — webgi, then web-vto. The order is not optional:
+         web-vto reads webgi off window.webgi, so the assignment has to
+         sit between the two tags. Loading web-vto first throws at
+         parse time.
+
+         No mini-viewer here. This page builds the viewer itself, which
+         is what you want when the models are your own files rather
+         than iJewel Drive documents.
+         ═══════════════════════════════════════════════════════════════ -->
+    <script src="https://releases.ijewel3d.com/libs/webgi-v0/bundle-0.22.0.js"></script>
+    <script>window.webgi = window;</script>
+    <script src="https://releases.ijewel3d.com/libs/web-vto/0.2.9/web-vto.js"></script>
+  </head>
+  <body>
+    <!-- ═══════════════════════════════════════════════════════════════
+         HEADER
+         ═══════════════════════════════════════════════════════════════ -->
+    <header id="topbar">
+      <div class="brand-mark">iJewel<em>3D</em></div>
+      <div class="brand-sub">Virtual Try-On &middot; Standalone WebGi Viewer</div>
+
+      <div class="status-area">
+        <span class="status-dot" id="status-dot"></span>
+        <span id="status-label">Starting…</span>
+      </div>
+    </header>
+
+    <!-- ═══════════════════════════════════════════════════════════════
+         MAIN — the canvas fills #canvas-container. Resize the
+         container, never the canvas: its width/height are set to 100%
+         on purpose.
+         ═══════════════════════════════════════════════════════════════ -->
+    <main id="app">
+      <section id="stage">
+        <div id="canvas-container">
+          <canvas id="webgi-canvas"></canvas>
+        </div>
+
+        <!-- IN-SESSION CONTROLS — only shown while try-on is running -->
+        <div id="session-controls" hidden>
+          <button id="flip" type="button" class="pill">Flip camera</button>
+          <button id="finger" type="button" class="pill">Next finger</button>
+        </div>
+      </section>
+
+      <aside id="details" aria-label="Product details">
+        <p class="eyebrow">Engagement</p>
+        <h1 class="product-name">Solitaire Ring</h1>
+        <p class="price">$1,890</p>
+
+        <p class="copy">
+          Before try-on starts, this is an ordinary turntable viewer — drag to
+          orbit, scroll to zoom. Press the button and the same ring moves onto
+          your hand.
+        </p>
+
+        <button id="tryon-toggle" class="tryon-btn" type="button" disabled>
+          <span class="tryon-icon" aria-hidden="true">◎</span>
+          <span id="tryon-label">Try it on</span>
+        </button>
+
+        <p id="tryon-hint" class="hint">Loading the model…</p>
+
+        <button class="cart-btn" type="button">Add to Cart</button>
+
+        <div class="note">
+          <p class="note-title">Two files per model</p>
+          <ul class="note-list">
+            <li>A <code>.glb</code> — the ring itself.</li>
+            <li>A <code>.json</code> — the try-on placement for that ring, produced by the plugin's setup mode.</li>
+          </ul>
+          <p class="note-foot">
+            Load both, in that order. The JSON is what tells the plugin how
+            big the ring is and where it sits on a finger.
+          </p>
+        </div>
+      </aside>
+    </main>
+
+    <footer id="footnote">
+      Camera access needs an <strong>HTTPS</strong> origin. Opening this file
+      straight from disk (<code>file://</code>) loads the model but blocks the camera.
+    </footer>
+
+    <script src="./script.js"></script>
+  </body>
+</html>

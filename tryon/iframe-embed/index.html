@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>Virtual Try-On - iframe Embed</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@300;400;500;600;700&display=swap"
+    />
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <!-- ═══════════════════════════════════════════════════════════════
+         HEADER
+         ═══════════════════════════════════════════════════════════════ -->
+    <header id="topbar">
+      <div class="brand-mark">iJewel<em>3D</em></div>
+      <div class="brand-sub">Virtual Try-On &middot; iframe Embed</div>
+    </header>
+
+    <!-- ═══════════════════════════════════════════════════════════════
+         PRODUCT PAGE — the iframe sits where a product photo would
+
+         Everything below the comment marker is the code the editor's
+         Embed (</>) tool put on your clipboard. Open your own model in
+         iJewel Drive or iJewel Playground, enable try-on under the
+         TryOn Settings tab, then use Embed -> Copy HTML code and paste
+         the result in place of this iframe.
+
+         Note there is nothing try-on specific in the tag: the embed
+         page offers try-on for any model that has it enabled. The one
+         attribute that matters is allow="camera" — an iframe does not
+         inherit camera access from the page around it, so without it
+         the model renders but try-on fails when a visitor taps it.
+         ═══════════════════════════════════════════════════════════════ -->
+    <main id="app">
+      <section id="stage">
+        <!-- ▼▼▼ PASTE YOUR EMBED CODE HERE ▼▼▼ -->
+        <iframe
+          title="Solitaire Ring"
+          frameborder="0"
+          mozallowfullscreen="true"
+          webkitallowfullscreen="true"
+          xr-spatial-tracking
+          execution-while-out-of-viewport
+          execution-while-not-rendered
+          web-share
+          allow="camera; autoplay; fullscreen; xr-spatial-tracking; web-share"
+          width="100%"
+          height="100%"
+          src="https://ijewel3d.com/drive-weur-1/files/V_F5uknHREmYQZTrP9ZwDA/embedded"
+        ></iframe>
+        <!-- ▲▲▲ PASTE YOUR EMBED CODE HERE ▲▲▲ -->
+      </section>
+
+      <aside id="details" aria-label="Product details">
+        <p class="eyebrow">Engagement</p>
+        <h1 class="product-name">Solitaire Ring</h1>
+        <p class="price">$1,890</p>
+
+        <p class="copy">
+          Rotate the ring to inspect it from any angle, then tap the try-on
+          button inside the viewer to see it on your own hand.
+        </p>
+
+        <button class="cart-btn" type="button">Add to Cart</button>
+
+        <div class="note">
+          <p class="note-title">How the try-on button gets there</p>
+          <ol class="note-list">
+            <li>Open the model in iJewel Drive or iJewel Playground.</li>
+            <li>Under the <strong>TryOn Settings</strong> tab, switch on <strong>Enable AR</strong> and fit the ring to the sizing cylinder.</li>
+            <li>Save, then use <strong>Embed&nbsp;(&lt;/&gt;)&nbsp;&rarr; Copy HTML&nbsp;code</strong>.</li>
+          </ol>
+          <p class="note-foot">
+            This page has no JavaScript at all — the embed carries the whole
+            experience, including the camera flow and its error states.
+          </p>
+        </div>
+      </aside>
+    </main>
+
+    <footer id="footnote">
+      Camera access needs an <strong>HTTPS</strong> origin. Opening this file
+      straight from disk (<code>file://</code>) loads the model but blocks the camera.
+    </footer>
+  </body>
+</html>

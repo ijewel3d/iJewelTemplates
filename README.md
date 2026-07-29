@@ -34,11 +34,23 @@ For API references, integration guides, and platform documentation, visit the [o
 | Size and Shape Configurator | Adds size and shape controls to the basic ring example. | [View live](https://ijewel3d.github.io/iJewelTemplates/ringconfigurator/simple/configurator-with-size-shape.html) · [Source](ringconfigurator/simple/configurator-with-size-shape.html) |
 | Stored Custom Configurator | Builds custom controls from the configurator data stored with a model. | [View live](https://ijewel3d.github.io/iJewelTemplates/ringconfigurator/simple/custom-stored-configurator.html) · [Source](ringconfigurator/simple/custom-stored-configurator.html) |
 
-## Viewer and Virtual Try-On
+## Virtual Try-On
+
+Four ways to put a ring on a customer's hand, from least to most control. All four need a model that has try-on enabled and saved in the editor — open it in iJewel Drive or iJewel Playground, switch on **Enable AR** under the **TryOn Settings** tab, fit the ring to the sizing cylinder, and save.
 
 | Template | Description | Links |
 | --- | --- | --- |
-| Virtual Try-On | Small example for loading a model and enabling camera-based try-on. | [View live](https://ijewel3d.github.io/iJewelTemplates/tryon/try-on.html) · [Source](tryon/try-on.html) |
+| iframe Embed | Product page hosting the editor's generated embed code. No JavaScript at all. | [View live](https://ijewel3d.github.io/iJewelTemplates/tryon/iframe-embed/index.html) · [Source](tryon/iframe-embed/index.html) |
+| Mini Viewer Options | Mini Viewer with its built-in try-on button turned on through one viewer option. | [View live](https://ijewel3d.github.io/iJewelTemplates/tryon/viewer-options/index.html) · [Source](tryon/viewer-options/index.html) |
+| Custom UI | Mini Viewer with the built-in button hidden and `RingTryonPlugin` driven from the page's own controls. | [View live](https://ijewel3d.github.io/iJewelTemplates/tryon/custom-ui/index.html) · [Source](tryon/custom-ui/index.html) |
+| Standalone WebGi Viewer | Try-on on a viewer built from scratch, for models hosted outside iJewel Drive. | [View live](https://ijewel3d.github.io/iJewelTemplates/tryon/webgi-standalone/index.html) · [Source](tryon/webgi-standalone/index.html) |
+
+Camera access requires an HTTPS origin. Opening these files from disk loads the model but blocks the camera.
+
+## Viewer
+
+| Template | Description | Links |
+| --- | --- | --- |
 | Viewer SDK | Viewer controls and virtual try-on configuration in one SDK example. | [View live](https://ijewel3d.github.io/iJewelTemplates/viewer-sdk/index.html) · [Source](viewer-sdk/index.html) |
 
 ## Using a Template

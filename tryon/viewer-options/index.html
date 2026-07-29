@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>Virtual Try-On - Mini Viewer Options</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@300;400;500;600;700&display=swap"
+    />
+    <link rel="stylesheet" href="./style.css" />
+
+    <!-- ═══════════════════════════════════════════════════════════════
+         SCRIPTS — webgi first, then the mini-viewer's nowebgi build.
+
+         web-vto is NOT loaded here. The Mini Viewer fetches it on
+         demand, the first time a visitor presses the try-on button,
+         so it costs nothing on initial page load.
+         ═══════════════════════════════════════════════════════════════ -->
+    <script src="https://releases.ijewel3d.com/libs/webgi-v0/bundle-0.22.0.js"></script>
+    <script src="https://releases.ijewel3d.com/libs/mini-viewer/0.6.11/bundle.nowebgi.iife.js"></script>
+  </head>
+  <body>
+    <!-- ═══════════════════════════════════════════════════════════════
+         HEADER
+         ═══════════════════════════════════════════════════════════════ -->
+    <header id="topbar">
+      <div class="brand-mark">iJewel<em>3D</em></div>
+      <div class="brand-sub">Virtual Try-On &middot; Mini Viewer Options</div>
+    </header>
+
+    <!-- ═══════════════════════════════════════════════════════════════
+         MAIN — the viewer mounts into #viewer and draws its own
+         button bar, try-on button included.
+         ═══════════════════════════════════════════════════════════════ -->
+    <main id="app">
+      <section id="stage">
+        <div id="viewer"></div>
+      </section>
+
+      <aside id="details" aria-label="Product details">
+        <p class="eyebrow">Engagement</p>
+        <h1 class="product-name">Solitaire Ring</h1>
+        <p class="price">$1,890</p>
+
+        <p class="copy">
+          The try-on button lives in the viewer's own button bar. One viewer
+          option puts it there; iJewel3D handles the camera prompt, the
+          loading screen and the error states.
+        </p>
+
+        <button class="cart-btn" type="button">Add to Cart</button>
+
+        <div class="note">
+          <p class="note-title">The whole integration</p>
+          <pre class="note-code">hideTryOn: false</pre>
+          <p class="note-foot">
+            The button only appears when the model itself has try-on enabled
+            and saved in the editor. Open <code>script.js</code> to see the
+            complete call.
+          </p>
+        </div>
+      </aside>
+    </main>
+
+    <footer id="footnote">
+      Camera access needs an <strong>HTTPS</strong> origin. Opening this file
+      straight from disk (<code>file://</code>) loads the model but blocks the camera.
+    </footer>
+
+    <script src="./script.js"></script>
+  </body>
+</html>

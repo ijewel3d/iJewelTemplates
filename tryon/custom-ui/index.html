@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>Virtual Try-On - Custom UI</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@300;400;500;600;700&display=swap"
+    />
+    <link rel="stylesheet" href="./style.css" />
+
+    <!-- ═══════════════════════════════════════════════════════════════
+         SCRIPTS — the order below is not optional.
+
+           1. webgi
+           2. window.webgi = window   (web-vto reads webgi off there)
+           3. web-vto
+           4. mini-viewer (nowebgi build)
+
+         Loading web-vto before webgi throws at parse time.
+
+         Unlike the viewer-options template, web-vto is loaded up front
+         here, because this page drives the plugin itself.
+         ═══════════════════════════════════════════════════════════════ -->
+    <script src="https://releases.ijewel3d.com/libs/webgi-v0/bundle-0.22.0.js"></script>
+    <script>window.webgi = window;</script>
+    <script src="https://releases.ijewel3d.com/libs/web-vto/0.2.9/web-vto.js"></script>
+    <script src="https://releases.ijewel3d.com/libs/mini-viewer/0.6.11/bundle.nowebgi.iife.js"></script>
+  </head>
+  <body>
+    <!-- ═══════════════════════════════════════════════════════════════
+         HEADER
+         ═══════════════════════════════════════════════════════════════ -->
+    <header id="topbar">
+      <div class="brand-mark">iJewel<em>3D</em></div>
+      <div class="brand-sub">Virtual Try-On &middot; Custom UI</div>
+
+      <div class="status-area">
+        <span class="status-dot" id="status-dot"></span>
+        <span id="status-label">Loading model…</span>
+      </div>
+    </header>
+
+    <!-- ═══════════════════════════════════════════════════════════════
+         MAIN — the viewer's own try-on button is hidden; every control
+         below belongs to this page.
+         ═══════════════════════════════════════════════════════════════ -->
+    <main id="app">
+      <section id="stage">
+        <div id="viewer"></div>
+
+        <!-- IN-SESSION CONTROLS — only shown while try-on is running -->
+        <div id="session-controls" hidden>
+          <button id="flip" type="button" class="pill" title="Front / rear camera">
+            Flip camera
+          </button>
+          <div class="finger-picker" role="group" aria-label="Finger">
+            <button type="button" class="finger" data-finger="index">Index</button>
+            <button type="button" class="finger" data-finger="middle">Middle</button>
+            <button type="button" class="finger active" data-finger="ring">Ring</button>
+            <button type="button" class="finger" data-finger="pinky">Pinky</button>
+          </div>
+        </div>
+      </section>
+
+      <aside id="details" aria-label="Product details">
+        <p class="eyebrow">Engagement</p>
+        <h1 class="product-name">Solitaire Ring</h1>
+        <p class="price">$1,890</p>
+
+        <p class="copy">
+          Your own try-on entry point, your own copy, your own finger picker.
+          The plugin does the tracking; the interface is entirely yours.
+        </p>
+
+        <!-- THE ENTRY POINT — this page's own try-on button -->
+        <button id="tryon-toggle" class="tryon-btn" type="button" disabled>
+          <span class="tryon-icon" aria-hidden="true">◎</span>
+          <span id="tryon-label">Try it on</span>
+        </button>
+
+        <p id="tryon-hint" class="hint">Preparing…</p>
+
+        <button class="cart-btn" type="button">Add to Cart</button>
+
+        <div class="note">
+          <p class="note-title">What this page does</p>
+          <ul class="note-list">
+            <li>Reads <code>tryonConfig</code> off the Drive file and hides the button if try-on was never enabled for the model.</li>
+            <li>Calls <code>canRunVTO()</code> so unsupported devices never see an entry point that cannot work.</li>
+            <li>Adds <code>RingTryonPlugin</code> with <code>preload</code>, then applies the placement authored in the editor.</li>
+            <li>Brands the loading screen and hand prompt through <code>TryonUIPlugin</code>.</li>
+          </ul>
+        </div>
+      </aside>
+    </main>
+
+    <footer id="footnote">
+      Camera access needs an <strong>HTTPS</strong> origin. Opening this file
+      straight from disk (<code>file://</code>) loads the model but blocks the camera.
+    </footer>
+
+    <script src="./script.js"></script>
+  </body>
+</html>
