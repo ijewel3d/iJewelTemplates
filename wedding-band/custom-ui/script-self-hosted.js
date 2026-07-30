@@ -13,8 +13,10 @@
  *  CONFIG
  * ══════════════════════════════════════════════════════════════════ */
 
-const PROJECT_URL =
-  'https://drive-weur-1.ijewel3d.com/files/wedding_band_project_43b95939f1.json?h=ijewel3d.com';
+// The project you host. Everything the configurator offers comes from this
+// file: the catalog, the opening state, and the scene it renders in.
+// Edit it in place, or point this at your own copy.
+const PROJECT_URL = './wedding_band_project.json';
 
 const VIEWER_OPTIONS = {
   showCard:         false,

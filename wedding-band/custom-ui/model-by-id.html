@@ -4,19 +4,6 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <title>Wedding Band Builder - Custom UI - Drive Model ID</title>
-    <!--
-      Default alias of model-by-id.html.
-
-      fileId is the published Wedding Band project's unique iJewel Drive file
-      ID. Find it in Drive via Share and copy the value between /files/ and
-      /view. instance is the Drive basename: normally "drive", or the basename
-      supplied to enterprise accounts.
-
-      Docs:
-      https://docs.ijewel3d.com/viewer/tutorial-embed-drive.html#find-the-model-id
-      https://docs.ijewel3d.com/viewer/connect-to-drive.html#loading-a-specific-model-by-id-loadmodelbyid
-    -->
-
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -432,6 +419,21 @@
 
     <script src="https://releases.ijewel3d.com/libs/webgi-v0/bundle-0.22.0.js"></script>
     <script src="https://releases.ijewel3d.com/libs/mini-viewer/0.6.11/bundle.nowebgi.iife.js"></script>
+    <!--
+      DRIVE MODEL ID VARIANT
+
+      fileId: the unique ID of the published Wedding Band project in iJewel
+      Drive. Open the project in Drive, choose Share, and copy the value between
+      /files/ and /view in its viewer URL.
+
+      instance: the Drive basename used in iJewel URLs. Standard Drive accounts
+      normally use "drive". Enterprise accounts use the basename supplied by
+      iJewel3D; the demo below uses "demo-weur".
+
+      Docs:
+      https://docs.ijewel3d.com/viewer/tutorial-embed-drive.html#find-the-model-id
+      https://docs.ijewel3d.com/viewer/connect-to-drive.html#loading-a-specific-model-by-id-loadmodelbyid
+    -->
     <script src="./script-drive.js"></script>
   </body>
 </html>

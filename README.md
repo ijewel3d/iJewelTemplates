@@ -12,7 +12,8 @@ For API references, integration guides, and platform documentation, visit the [o
 | --- | --- | --- |
 | Wedding Band Builder | Loads a complete Wedding Band project with the standard iJewel3D interface. | [View live](https://ijewel3d.github.io/iJewelTemplates/wedding-band/wedding-band.html) · [Source](wedding-band/wedding-band.html) |
 | Default Viewer | Minimal `loadModelById` integration with the built-in Wedding Band controls. | [View live](https://ijewel3d.github.io/iJewelTemplates/wedding-band/wedding-band-default.html) · [Source](wedding-band/wedding-band-default.html) |
-| Custom UI | Headless Wedding Band controller connected to a complete custom storefront interface. | [View live](https://ijewel3d.github.io/iJewelTemplates/wedding-band/custom-ui/index.html) · [Source](wedding-band/custom-ui/index.html) |
+| Custom UI — Drive Model ID | Headless storefront UI loading a published Drive project with `loadModelById`. | [View live](https://ijewel3d.github.io/iJewelTemplates/wedding-band/custom-ui/model-by-id.html) · [Source](wedding-band/custom-ui/model-by-id.html) |
+| Custom UI — Self Hosted | The same headless UI loading the repository's adjacent Wedding Band project JSON directly. | [View live](https://ijewel3d.github.io/iJewelTemplates/wedding-band/custom-ui/self-hosted.html) · [Source](wedding-band/custom-ui/self-hosted.html) |
 | iframe Integration | Host-page controls communicating with an iJewel3D embedded viewer through `postMessage`. | [View live](https://ijewel3d.github.io/iJewelTemplates/wedding-band/iframe-demo/index.html) · [Source](wedding-band/iframe-demo/index.html) |
 
 ## Ring Configurator

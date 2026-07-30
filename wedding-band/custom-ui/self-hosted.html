@@ -3,14 +3,17 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <title>Wedding Band Builder - Custom UI - Drive Model ID</title>
+    <title>Wedding Band Builder - Custom UI - Self Hosted</title>
     <!--
-      Default alias of model-by-id.html.
+      SELF-HOSTED VARIANT
 
-      fileId is the published Wedding Band project's unique iJewel Drive file
-      ID. Find it in Drive via Share and copy the value between /files/ and
-      /view. instance is the Drive basename: normally "drive", or the basename
-      supplied to enterprise accounts.
+      This page loads wedding_band_project.json directly and therefore does not
+      use a Drive fileId or instance. The project JSON is published from the
+      same custom-ui directory in the iJewelTemplates GitHub Pages site.
+
+      If you switch to Drive loading, fileId is the published project's unique
+      Drive file ID and instance is the Drive basename (normally "drive", or the
+      basename supplied to enterprise accounts).
 
       Docs:
       https://docs.ijewel3d.com/viewer/tutorial-embed-drive.html#find-the-model-id
@@ -432,6 +435,6 @@
 
     <script src="https://releases.ijewel3d.com/libs/webgi-v0/bundle-0.22.0.js"></script>
     <script src="https://releases.ijewel3d.com/libs/mini-viewer/0.6.11/bundle.nowebgi.iife.js"></script>
-    <script src="./script-drive.js"></script>
+    <script src="./script-self-hosted.js"></script>
   </body>
 </html>

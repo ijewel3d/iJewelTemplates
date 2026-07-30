@@ -14,8 +14,17 @@
        style="position:fixed;top:12px;left:12px;height:48px;z-index:10000;opacity:.85;pointer-events:none">
   <div id="root"></div>
   <script src="https://releases.ijewel3d.com/libs/webgi-v0/bundle-0.22.0.js"></script>
-  <script src="https://releases.ijewel3d.com/libs/mini-viewer/0.6.10/bundle.nowebgi.iife.js"></script>
+  <script src="https://releases.ijewel3d.com/libs/mini-viewer/0.6.11/bundle.nowebgi.iife.js"></script>
   <script>
+    /*
+     * This self-hosted-project variant loads a JSON URL directly, so it does
+     * not use loadModelById's fileId or instance arguments.
+     *
+     * For Drive loading, fileId is the published project's unique Drive ID and
+     * instance is the Drive basename (normally "drive", or the enterprise
+     * basename supplied by iJewel3D):
+     * https://docs.ijewel3d.com/viewer/connect-to-drive.html#loading-a-specific-model-by-id-loadmodelbyid
+     */
     const PROJECT_URL = 'https://drive-weur-1.ijewel3d.com/files/wedding_band_project_f4a009b2f2.json?h=ijewel3d.com';
 
     (async () => {

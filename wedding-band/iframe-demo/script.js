@@ -5,6 +5,14 @@
  *  hosted WBB viewer iframe at:
  *     https://ijewel3d.com/{instance}/files/{fileId}/embedded
  *
+ *  fileId is the unique ID of the published Wedding Band project. Find it in
+ *  Drive through Share and copy the value between /files/ and /view.
+ *  instance is the Drive basename: normally "drive", or the basename supplied
+ *  to enterprise accounts. The demo URL below uses "demo-weur".
+ *
+ *  https://docs.ijewel3d.com/viewer/tutorial-embed-drive.html#find-the-model-id
+ *  https://docs.ijewel3d.com/wedding-band-builder/integration-iframe.html
+ *
  *  Wire protocol (see ijewel3d-docs/wedding-band-builder/integration-iframe.md):
  *
  *    Command   host   → iframe   { id, method, args }
