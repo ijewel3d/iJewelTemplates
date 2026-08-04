@@ -240,6 +240,20 @@ body {
   gap: 6px;
 }
 
+.opt-row + .opt-row,
+.range-label {
+  margin-top: 8px;
+}
+
+.edge-sides:empty { display: none; }
+
+.range-label {
+  display: flex;
+  justify-content: space-between;
+  color: var(--muted);
+  font-size: 11px;
+}
+
 .opt {
   padding: 6px 10px;
   background: var(--bg-card);

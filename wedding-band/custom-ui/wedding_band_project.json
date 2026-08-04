@@ -196,7 +196,39 @@
       ],
       "diamonds": {
         "singleModelFile": "diamond_single_a848d0d5f8.glb?h=ijewel3d.com",
-        "prongsModelFile": "diamond_pave_78f1c980fd.glb?h=ijewel3d.com"
+        "prongsModelFile": "diamond_pave_78f1c980fd.glb?h=ijewel3d.com",
+        "colors": [
+          {
+            "id": "white",
+            "name": "White",
+            "swatch": "#f4f7fb",
+            "file": "https://packs.ijewel3d.com/files/diamond_white_e9bad178fa.dmat?h=ijewel3d.com"
+          },
+          {
+            "id": "black",
+            "name": "Black",
+            "swatch": "#2b2b2e",
+            "file": "https://packs.ijewel3d.com/files/diamond_black_51353f79aa.dmat?h=ijewel3d.com"
+          },
+          {
+            "id": "yellow",
+            "name": "Yellow",
+            "swatch": "#f2cf5b",
+            "file": "https://packs.ijewel3d.com/files/diamond_yellow_5f79e11cb4.dmat?h=ijewel3d.com"
+          },
+          {
+            "id": "pink",
+            "name": "Pink",
+            "swatch": "#efa9bd",
+            "file": "https://packs.ijewel3d.com/files/diamond_pink_29dc158692.dmat?h=ijewel3d.com"
+          },
+          {
+            "id": "ruby",
+            "name": "Ruby",
+            "swatch": "#b3123a",
+            "file": "https://packs.ijewel3d.com/files/diamond_ruby_9bd2137a41.dmat?h=ijewel3d.com"
+          }
+        ]
       },
       "separationPresets": {
         "1 Color": {
@@ -295,6 +327,121 @@
             },
             {
               "slotIndex": 3,
+              "usePolished": true,
+              "respectInsidePolished": true
+            }
+          ]
+        },
+        "4 Color": {
+          "divisions": [
+            1,
+            1,
+            1,
+            1
+          ],
+          "horizontalSep": false,
+          "useGrooveEdges": true,
+          "regions": [
+            {
+              "slotIndex": 4,
+              "usePolished": false,
+              "respectInsidePolished": false
+            },
+            {
+              "slotIndex": 3,
+              "usePolished": false,
+              "respectInsidePolished": false
+            },
+            {
+              "slotIndex": 2,
+              "usePolished": false,
+              "respectInsidePolished": false
+            },
+            {
+              "slotIndex": 1,
+              "usePolished": false,
+              "respectInsidePolished": false
+            },
+            {
+              "slotIndex": 1,
+              "usePolished": true,
+              "respectInsidePolished": true
+            },
+            {
+              "slotIndex": 2,
+              "usePolished": true,
+              "respectInsidePolished": true
+            },
+            {
+              "slotIndex": 3,
+              "usePolished": true,
+              "respectInsidePolished": true
+            },
+            {
+              "slotIndex": 4,
+              "usePolished": true,
+              "respectInsidePolished": true
+            }
+          ]
+        },
+        "5 Color": {
+          "divisions": [
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          "horizontalSep": false,
+          "useGrooveEdges": true,
+          "regions": [
+            {
+              "slotIndex": 5,
+              "usePolished": false,
+              "respectInsidePolished": false
+            },
+            {
+              "slotIndex": 4,
+              "usePolished": false,
+              "respectInsidePolished": false
+            },
+            {
+              "slotIndex": 3,
+              "usePolished": false,
+              "respectInsidePolished": false
+            },
+            {
+              "slotIndex": 2,
+              "usePolished": false,
+              "respectInsidePolished": false
+            },
+            {
+              "slotIndex": 1,
+              "usePolished": false,
+              "respectInsidePolished": false
+            },
+            {
+              "slotIndex": 1,
+              "usePolished": true,
+              "respectInsidePolished": true
+            },
+            {
+              "slotIndex": 2,
+              "usePolished": true,
+              "respectInsidePolished": true
+            },
+            {
+              "slotIndex": 3,
+              "usePolished": true,
+              "respectInsidePolished": true
+            },
+            {
+              "slotIndex": 4,
+              "usePolished": true,
+              "respectInsidePolished": true
+            },
+            {
+              "slotIndex": 5,
               "usePolished": true,
               "respectInsidePolished": true
             }
@@ -410,6 +557,58 @@
             ]
           }
         ]
+      },
+      "paths": [
+        {
+          "id": "wavy",
+          "name": "Wavy",
+          "file": "https://packs.ijewel3d.com/files/wavy_9d728f569d.3dm?h=ijewel3d.com"
+        }
+      ],
+      "ringCatalog": {
+        "engagement": [
+          {
+            "id": "ring-1",
+            "name": "Solitaire I",
+            "file": "https://packs.ijewel3d.com/files/ring_1_688671e1c4.glb?h=ijewel3d.com",
+            "thumbnail": "https://packs.ijewel3d.com/files/engagement_ring_1_038da2630f.png?h=ijewel3d.com"
+          },
+          {
+            "id": "ring-2",
+            "name": "Solitaire II",
+            "file": "https://packs.ijewel3d.com/files/ring_2_308ec6faf3.glb?h=ijewel3d.com",
+            "thumbnail": "https://packs.ijewel3d.com/files/engagement_ring_2_ae63d62f02.png?h=ijewel3d.com"
+          },
+          {
+            "id": "ring-3",
+            "name": "Solitaire III",
+            "file": "https://packs.ijewel3d.com/files/ring_3_b07f1b0fc4.glb?h=ijewel3d.com",
+            "thumbnail": "https://packs.ijewel3d.com/files/engagement_ring_3_32b99cd363.png?h=ijewel3d.com"
+          }
+        ],
+        "memoire": [
+          {
+            "id": "eternity-1",
+            "name": "Eternity I",
+            "file": "https://packs.ijewel3d.com/files/eternity_1_dc9d0f866f.glb?h=ijewel3d.com",
+            "scaleAdjust": 1.12,
+            "thumbnail": "https://packs.ijewel3d.com/files/eternity_1_f6a891ff1f.png?h=ijewel3d.com"
+          },
+          {
+            "id": "eternity-2",
+            "name": "Eternity II",
+            "file": "https://packs.ijewel3d.com/files/eternity_2_394144d0d1.glb?h=ijewel3d.com",
+            "scaleAdjust": 1.12,
+            "thumbnail": "https://packs.ijewel3d.com/files/eternity_2_22a6cfa450.png?h=ijewel3d.com"
+          },
+          {
+            "id": "eternity-3",
+            "name": "Eternity III",
+            "file": "https://packs.ijewel3d.com/files/eternity_3_1c01d76a29.glb?h=ijewel3d.com",
+            "scaleAdjust": 1.12,
+            "thumbnail": "https://packs.ijewel3d.com/files/eternity_3_c53a6e3c42.png?h=ijewel3d.com"
+          }
+        ]
       }
     }
   },
@@ -434,7 +633,11 @@
     "type": "PresetLibraryPlugin"
   },
   "cameraConfig": {
-    "userData": {},
+    "userData": {
+      "autoNearFar": true,
+      "minNearPlane": 0.01,
+      "maxFarPlane": 1000
+    },
     "camControls": {
       "type": "OrbitControls",
       "dollyZoom": false,

@@ -99,7 +99,7 @@ async function init() {
     const controllerPromise = waitForController();
     const projectPromise = waitForDriveProject();
 
-    bootDriveViewer();
+    await bootDriveViewer();
 
     const project = await projectPromise;
     state.api = await controllerPromise;
@@ -125,6 +125,7 @@ async function init() {
   buildMetalOptions();
   buildFinishOptions();
   buildMaterialToggles();
+  buildDivisionSection();
 
   // Diamond tab
   buildSettingOptions();
@@ -132,14 +133,26 @@ async function init() {
   buildDiamondSpacingOptions();
   buildDiamondPositionSnaps();
   buildDiamondInputs();
+  buildDiamondTypeExtras();
+  buildFreeStoneEditor();
+  buildSmoothSeatsToggle();
+  buildSideStoneSection();
 
   // Grooves tab
   buildGrooveToggles();
   buildWavySliders();
+  buildSeparationGrooveEditor();
+  buildDesignGrooveEditor();
 
   // Engraving tab
   buildEngravingInputs();
   buildSymbolGrid();
+
+  // Rings tab
+  buildRingsSection();
+
+  // Theme tab
+  buildThemeSection();
 
   // Shell
   buildTabs();
@@ -203,14 +216,22 @@ function waitForDriveProject() {
  *  STEP 2 — BOOT THE VIEWER
  * ══════════════════════════════════════════════════════════════════ */
 
-function assertMiniViewer() {
-  if (!window.ijewelViewer || !window.ijewelViewer.Viewer) {
-    $('loading').innerHTML =
-      '<div style="color:red;padding:20px;font-family:monospace">'
-      + 'mini-viewer IIFE bundle failed to load.'
-      + '</div>';
-    throw new Error('mini-viewer not available');
-  }
+function waitForMiniViewerGlobal(timeoutMs) {
+  return new Promise((resolve, reject) => {
+    const start = Date.now();
+    const check = () => {
+      if (window.ijewelViewer && window.ijewelViewer.Viewer) {
+        resolve();
+        return;
+      }
+      if (Date.now() - start > timeoutMs) {
+        reject(new Error('mini-viewer IIFE bundle did not become available in time'));
+        return;
+      }
+      setTimeout(check, 50);
+    };
+    check();
+  });
 }
 
 function showFatalError(error) {
@@ -222,8 +243,16 @@ function showFatalError(error) {
     + '</div>';
 }
 
-function bootDriveViewer() {
-  assertMiniViewer();
+async function bootDriveViewer() {
+  try {
+    await waitForMiniViewerGlobal(15000);
+  } catch (err) {
+    $('loading').innerHTML =
+      '<div style="color:red;padding:20px;font-family:monospace">'
+      + 'mini-viewer IIFE bundle failed to load.'
+      + '</div>';
+    throw err;
+  }
 
   return window.ijewelViewer.loadModelById(
     CONFIG.fileId,
@@ -356,6 +385,7 @@ function buildPartitionOptions() {
         $('partition-value').textContent = label;
         setActive(host, btn);
         syncSlotTabsForPartition(numColors);
+        renderDivisionOptions();
       },
     });
 
@@ -459,7 +489,7 @@ function buildMetalOptions() {
   metals.forEach((metal) => {
     const btn = createOptionButton({
       label:     metal.name,
-      swatchUrl: metal.thumbnail,
+      swatchUrl: metal.iconUrl || metal.thumbnail,
       onClick: () => {
         const currentFinish = getCurrentFinishForSlot();
         const fallback      = state.api.getAvailableFinishes()[0];
@@ -483,7 +513,7 @@ function buildFinishOptions() {
   finishes.forEach((finish) => {
     const btn = createOptionButton({
       label:     finish.name,
-      swatchUrl: finish.thumbnail,
+      swatchUrl: finish.iconUrl || finish.thumbnail,
       onClick: () => {
         const currentMetal = getCurrentMetalForSlot();
         const fallback     = state.api.getAvailableMetals()[0];
@@ -666,6 +696,7 @@ function applyDiamondSetting(settingType, settingName, btn) {
     state.api.setDiamonds(null);
     $('diamond-extra').style.display = 'none';
     $('diamond-hint').style.display = 'flex';
+    updateDiamondTypeFieldVisibility('none');
     return;
   }
 
@@ -673,6 +704,7 @@ function applyDiamondSetting(settingType, settingName, btn) {
   $('diamond-hint').style.display = 'none';
 
   state.api.setDiamonds({ settingType: settingType });
+  updateDiamondTypeFieldVisibility(settingType);
 }
 
 /* Diamond span, spacing, and position snap option builders */
@@ -1140,6 +1172,10 @@ function buildTabs() {
       $$('.tab-pane').forEach((pane) => {
         pane.classList.toggle('active', pane.dataset.pane === paneName);
       });
+
+      // The tab strip scrolls horizontally once every section is present,
+      // so pull the tab the user just picked fully into view.
+      tab.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
     });
   });
 }
@@ -1439,6 +1475,809 @@ ${sheetsHtml}
 
 
 /* ══════════════════════════════════════════════════════════════════
+ *  MATERIAL — color boundary (division) + segment widths
+ * ══════════════════════════════════════════════════════════════════ */
+
+function buildDivisionSection() {
+  renderDivisionOptions();
+
+  const applyParams = debounce(() => {
+    const frequency = parseInt($('division-freq-slider').value, 10);
+    const amplitude = parseFloat($('division-amp-slider').value);
+    state.api.setDivisionParams({ frequency, amplitude });
+  }, 60);
+
+  $('division-freq-slider').addEventListener('input', (event) => {
+    $('division-freq-value').textContent = event.target.value;
+    applyParams();
+  });
+
+  $('division-amp-slider').addEventListener('input', (event) => {
+    const value = parseFloat(event.target.value);
+    $('division-amp-value').textContent = value.toFixed(2);
+    applyParams();
+  });
+}
+
+function renderDivisionOptions() {
+  const host  = $('division-opts');
+  const types = state.api.getAvailableDivisionTypes();
+  host.innerHTML = '';
+
+  if (types.length < 2) {
+    $('division-field').style.display = 'none';
+    $('division-params-field').style.display = 'none';
+    $('segment-widths-field').style.display = 'none';
+    return;
+  }
+
+  $('division-field').style.display = 'block';
+
+  types.forEach((division) => {
+    const btn = createOptionButton({
+      label: division.name,
+      iconUrl: division.iconUrl,
+      extraClass: division.iconUrl ? '' : 'text-opt',
+      onClick: async () => {
+        try {
+          await state.api.setDivision(division.id);
+          syncDivisionSection();
+        } catch (err) {
+          showToast('Division failed: ' + err.message, 'err');
+        }
+      },
+    });
+    btn.dataset.optionId = division.id;
+    host.appendChild(btn);
+  });
+
+  syncDivisionSection();
+}
+
+function syncDivisionSection() {
+  if (!$('division-opts').children.length) return;
+
+  const current = state.api.getDivision();
+
+  $('division-value').textContent =
+    (state.api.getAvailableDivisionTypes().find((t) => t.id === current.division) || {}).name
+    || current.division;
+
+  $$('#division-opts .opt').forEach((btn) => {
+    btn.classList.toggle('active', btn.dataset.optionId === current.division);
+  });
+
+  const showFreq = current.division === 'wavy';
+  const showAmp  = current.division === 'wavy' || current.division === 'diagonal';
+  $('division-freq-row').style.display     = showFreq ? 'block' : 'none';
+  $('division-amp-row').style.display      = showAmp  ? 'block' : 'none';
+  $('division-params-field').style.display = (showFreq || showAmp) ? 'block' : 'none';
+
+  $('division-freq-slider').value      = current.frequency;
+  $('division-freq-value').textContent = current.frequency;
+  $('division-amp-slider').value       = current.amplitude;
+  $('division-amp-value').textContent  = current.amplitude.toFixed(2);
+
+  renderSegmentWidths();
+}
+
+function renderSegmentWidths() {
+  const host   = $('segment-widths-list');
+  const widths = typeof state.api.getSegmentWidthsMm === 'function'
+    ? state.api.getSegmentWidthsMm()
+    : [];
+
+  if (widths.length < 2) {
+    $('segment-widths-field').style.display = 'none';
+    return;
+  }
+
+  $('segment-widths-field').style.display = 'block';
+  host.innerHTML = '';
+  const total = widths.reduce((sum, mm) => sum + mm, 0);
+
+  widths.forEach((mm, index) => {
+    const row = document.createElement('div');
+    row.className = 'field';
+    row.innerHTML =
+      '<div class="field-head">'
+      + `<span class="field-label">Zone ${index + 1}</span>`
+      + `<span class="field-value">${mm.toFixed(2)} mm</span>`
+      + '</div>'
+      + `<input type="range" class="slider" min="0.2" max="${Math.max(total - 0.2, 0.4).toFixed(2)}" step="0.05" value="${mm.toFixed(2)}">`;
+
+    const slider   = row.querySelector('input');
+    const valueLbl = row.querySelector('.field-value');
+
+    slider.addEventListener('input', () => {
+      valueLbl.textContent = parseFloat(slider.value).toFixed(2) + ' mm';
+    });
+
+    slider.addEventListener('change', async () => {
+      const next = widths.map((w, i) => (i === index ? parseFloat(slider.value) : w));
+      await state.api.setSegmentWidthsMm(next);
+      renderSegmentWidths();
+    });
+
+    host.appendChild(row);
+  });
+}
+
+
+/* ══════════════════════════════════════════════════════════════════
+ *  DIAMONDS — type-specific fields (position angle / bridge width / eye)
+ * ══════════════════════════════════════════════════════════════════ */
+
+const POSITION_ANGLE_SETTINGS = ['Cross Bezel', 'Cross Channel', 'Cross Around', 'Tension', 'Tension Diagonal', 'Eye'];
+const BRIDGE_WIDTH_SETTINGS   = ['Tension', 'Tension Diagonal'];
+
+const debouncedSetDiamonds = debounce((patch) => state.api.setDiamonds(patch), 60);
+
+function buildDiamondTypeExtras() {
+  const limits = state.api.getLimits();
+
+  $('position-angle-slider').min = limits.positionAngle.min;
+  $('position-angle-slider').max = limits.positionAngle.max;
+  $('position-angle-slider').addEventListener('input', (event) => {
+    const value = parseFloat(event.target.value);
+    $('position-angle-value').textContent = Math.round(value) + '°';
+    debouncedSetDiamonds({ positionAngle: value });
+  });
+
+  $('bridge-width-slider').min  = limits.bridgeWidth.min;
+  $('bridge-width-slider').max  = limits.bridgeWidth.max;
+  $('bridge-width-slider').step = limits.bridgeWidth.step || 0.05;
+  $('bridge-width-slider').addEventListener('input', (event) => {
+    const value = parseFloat(event.target.value);
+    $('bridge-width-value').textContent = value.toFixed(2) + ' mm';
+    debouncedSetDiamonds({ bridgeWidth: value });
+  });
+
+  const host = $('eye-orient-opts');
+  state.api.getAvailableEyeOrientations().forEach((option) => {
+    const btn = createOptionButton({
+      label: option.name,
+      extraClass: 'text-opt',
+      onClick: () => {
+        setActive(host, btn);
+        state.api.setDiamonds({ eyeOrient: option.value });
+      },
+    });
+    btn.dataset.optionId = String(option.value);
+    host.appendChild(btn);
+  });
+}
+
+function updateDiamondTypeFieldVisibility(settingType) {
+  const showPositionAngle = POSITION_ANGLE_SETTINGS.includes(settingType);
+  const showBridgeWidth   = BRIDGE_WIDTH_SETTINGS.includes(settingType);
+  const showEyeOrient     = settingType === 'Eye';
+  const isFree            = settingType === 'Free';
+
+  $('position-angle-field').style.display = showPositionAngle ? 'block' : 'none';
+  $('bridge-width-field').style.display   = showBridgeWidth ? 'block' : 'none';
+  $('eye-orient-field').style.display     = showEyeOrient ? 'block' : 'none';
+
+  $('span-field').style.display       = isFree ? 'none' : 'block';
+  $('spacing-field').style.display    = isFree ? 'none' : 'block';
+  $('stone-size-field').style.display = isFree ? 'none' : 'block';
+  $('position-section').style.display = isFree ? 'none' : 'block';
+  if (isFree) {
+    $('count-field').style.display          = 'none';
+    $('computed-count-field').style.display = 'none';
+  }
+
+  $('free-stones-field').style.display = isFree ? 'block' : 'none';
+  if (isFree) renderFreeStones();
+}
+
+
+/* ══════════════════════════════════════════════════════════════════
+ *  DIAMONDS — free stone placement (Free setting)
+ * ══════════════════════════════════════════════════════════════════ */
+
+function buildFreeStoneEditor() {
+  const presetHost = $('free-preset-opts');
+  state.api.getFreeStonePresetOptions().forEach((preset) => {
+    const btn = createOptionButton({
+      label:      preset.name,
+      iconUrl:    preset.iconUrl,
+      extraClass: preset.iconUrl ? '' : 'text-opt',
+      onClick: () => {
+        state.api.applyFreeStonePreset(preset.id);
+        renderFreeStones();
+      },
+    });
+    presetHost.appendChild(btn);
+  });
+
+  $('free-add-btn').addEventListener('click', () => {
+    state.api.addFreeStone();
+    renderFreeStones();
+  });
+
+  $('free-clear-btn').addEventListener('click', () => {
+    state.api.clearFreeStones();
+    renderFreeStones();
+  });
+}
+
+function renderFreeStones() {
+  const host   = $('free-stones-list');
+  const stones = state.api.getFreeStones();
+  const limits = state.api.getLimits();
+
+  $('free-stones-count').textContent = stones.length;
+  host.innerHTML = '';
+
+  const FIELD_LABEL = { angleDeg: 'Angle', offset: 'Offset', size: 'Size' };
+
+  stones.forEach((stone, index) => {
+    const card = document.createElement('div');
+    card.className = 'mini-card';
+    card.innerHTML =
+      '<div class="mini-card-row">'
+      + `<span class="mini-card-title">Stone ${index + 1}</span>`
+      + '<div class="mini-card-actions"><button data-action="remove" title="Remove">×</button></div>'
+      + '</div>'
+      + '<div class="mini-card-body">'
+      + `<div><span class="mini-card-sub-label">Angle ${Math.round(stone.angleDeg)}°</span>`
+      + `<input type="range" class="slider" data-field="angleDeg" min="0" max="360" step="1" value="${stone.angleDeg}"></div>`
+      + `<div><span class="mini-card-sub-label">Offset ${stone.offset.toFixed(2)}</span>`
+      + `<input type="range" class="slider" data-field="offset" min="${limits.freeStoneOffset.min}" max="${limits.freeStoneOffset.max}" step="0.05" value="${stone.offset}"></div>`
+      + `<div><span class="mini-card-sub-label">Size ${stone.size.toFixed(2)}</span>`
+      + `<input type="range" class="slider" data-field="size" min="${limits.stoneSize.min}" max="${limits.stoneSize.max}" step="0.05" value="${stone.size}"></div>`
+      + '</div>';
+
+    card.querySelector('[data-action="remove"]').addEventListener('click', () => {
+      state.api.removeFreeStone(index);
+      renderFreeStones();
+    });
+
+    card.querySelectorAll('input[type="range"]').forEach((slider) => {
+      const field  = slider.dataset.field;
+      const subLbl = slider.previousElementSibling;
+      const apply  = debounce((value) => state.api.updateFreeStone(index, { [field]: value }), 60);
+
+      slider.addEventListener('input', () => {
+        const value = parseFloat(slider.value);
+        const shown = field === 'angleDeg' ? Math.round(value) + '°' : value.toFixed(2);
+        subLbl.textContent = `${FIELD_LABEL[field]} ${shown}`;
+        apply(value);
+      });
+    });
+
+    host.appendChild(card);
+  });
+}
+
+
+/* ══════════════════════════════════════════════════════════════════
+ *  DIAMONDS — smooth seats
+ * ══════════════════════════════════════════════════════════════════ */
+
+function buildSmoothSeatsToggle() {
+  state.toggleSmoothSeats = makeToggle(
+    $('toggle-smooth-seats'),
+    false,
+    (on) => state.api.setSmoothSeats(on),
+  );
+}
+
+
+/* ══════════════════════════════════════════════════════════════════
+ *  DIAMONDS — side stone settings (independent of the top setting)
+ * ══════════════════════════════════════════════════════════════════ */
+
+function buildSideStoneSection() {
+  const host = $('side-setting-opts');
+  state.api.getAvailableSideSettingOptions().forEach((option) => {
+    const btn = createOptionButton({
+      label: option.name,
+      extraClass: 'text-opt',
+      onClick: () => {
+        setActive(host, btn);
+        $('side-setting-value').textContent = option.name;
+        state.api.setSideSetting(option.id);
+        $('side-stones-extra').style.display = option.id === 'none' ? 'none' : 'block';
+        if (option.id !== 'none') syncSideStonePanels();
+      },
+    });
+    btn.dataset.optionId = option.id;
+    host.appendChild(btn);
+  });
+
+  const sidesHost = $('side-sides-opts');
+  [['left', 'Left'], ['right', 'Right'], ['both', 'Both']].forEach(([id, label]) => {
+    const btn = createOptionButton({
+      label,
+      extraClass: 'text-opt',
+      onClick: () => {
+        setActive(sidesHost, btn);
+        state.api.setSideBezelSides(id);
+        syncSideStonePanels();
+      },
+    });
+    btn.dataset.optionId = id;
+    sidesHost.appendChild(btn);
+  });
+
+  buildSideBezelPanel('left');
+  buildSideBezelPanel('right');
+
+  $('side-copy-btn').addEventListener('click', () => {
+    state.api.copySideBezelSide('left');
+    syncSideStonePanels();
+  });
+}
+
+function buildSideBezelPanel(side) {
+  const spanHost    = $(`side-${side}-span-opts`);
+  const spacingHost = $(`side-${side}-spacing-opts`);
+  const slider       = $(`side-${side}-stone-slider`);
+  const valueLbl     = $(`side-${side}-stone-value`);
+
+  state.api.getAvailableDiamondSpans()
+    .filter((span) => span.id !== 'custom')
+    .forEach((span) => {
+      const btn = createOptionButton({
+        label: span.name,
+        extraClass: 'text-opt',
+        onClick: () => {
+          setActive(spanHost, btn);
+          state.api.setSideBezelSide(side, { span: span.id });
+        },
+      });
+      btn.dataset.optionId = span.id;
+      spanHost.appendChild(btn);
+    });
+
+  state.api.getAvailableDiamondSpacings()
+    .filter((spacing) => typeof spacing.value === 'number')
+    .forEach((spacing) => {
+      const btn = createOptionButton({
+        label: spacing.name,
+        extraClass: 'text-opt',
+        onClick: () => {
+          setActive(spacingHost, btn);
+          state.api.setSideBezelSide(side, { spacing: spacing.id });
+        },
+      });
+      btn.dataset.optionId = spacing.id;
+      spacingHost.appendChild(btn);
+    });
+
+  const applyStoneSize = debounce((value) => state.api.setSideBezelSide(side, { stoneSize: value }), 60);
+  slider.addEventListener('input', (event) => {
+    const value = parseFloat(event.target.value);
+    valueLbl.textContent = value.toFixed(2);
+    applyStoneSize(value);
+  });
+}
+
+function syncSideStoneSection() {
+  const setting = state.api.getSideSetting();
+  const option   = state.api.getAvailableSideSettingOptions().find((o) => o.id === setting);
+
+  $('side-setting-value').textContent = option ? option.name : (setting === 'none' ? 'None' : setting);
+
+  $$('#side-setting-opts .opt').forEach((btn) => {
+    btn.classList.toggle('active', btn.dataset.optionId === setting);
+  });
+
+  $('side-stones-extra').style.display = setting === 'none' ? 'none' : 'block';
+  if (setting === 'none') return;
+
+  syncSideStonePanels();
+}
+
+function syncSideStonePanels() {
+  const bezel = state.api.getSideBezel();
+
+  $$('#side-sides-opts .opt').forEach((btn) => {
+    btn.classList.toggle('active', btn.dataset.optionId === bezel.sides);
+  });
+
+  $('side-left-panel').style.display  = (bezel.sides === 'left'  || bezel.sides === 'both') ? 'block' : 'none';
+  $('side-right-panel').style.display = (bezel.sides === 'right' || bezel.sides === 'both') ? 'block' : 'none';
+
+  syncSideBezelPanelValues('left', bezel.left);
+  syncSideBezelPanelValues('right', bezel.right);
+}
+
+function syncSideBezelPanelValues(side, cfg) {
+  $$(`#side-${side}-span-opts .opt`).forEach((btn) => {
+    btn.classList.toggle('active', btn.dataset.optionId === cfg.span);
+  });
+  $$(`#side-${side}-spacing-opts .opt`).forEach((btn) => {
+    btn.classList.toggle('active', btn.dataset.optionId === cfg.spacing);
+  });
+  $(`side-${side}-stone-slider`).value      = cfg.stoneSize;
+  $(`side-${side}-stone-value`).textContent = cfg.stoneSize.toFixed(2);
+}
+
+
+/* ══════════════════════════════════════════════════════════════════
+ *  GROOVES — separation joint (material-boundary groove)
+ * ══════════════════════════════════════════════════════════════════ */
+
+function buildSeparationGrooveEditor() {
+  const limits = state.api.getLimits();
+
+  state.toggleSepGroove = makeToggle(
+    $('toggle-sep-groove'),
+    false,
+    async (on) => {
+      $('sep-groove-field').style.display = on ? 'block' : 'none';
+      await state.api.setSeparationGroove({ enabled: on });
+      renderSeparationBoundaries();
+    },
+  );
+
+  const typeHost = $('sep-type-opts');
+  state.api.getAvailableGrooveTypes().forEach((type) => {
+    const btn = createOptionButton({
+      label: type.name,
+      iconUrl: type.iconUrl,
+      extraClass: type.iconUrl ? '' : 'text-opt',
+      onClick: () => {
+        setActive(typeHost, btn);
+        state.api.setSeparationGroove({ type: type.id });
+      },
+    });
+    btn.dataset.optionId = type.id;
+    typeHost.appendChild(btn);
+  });
+
+  $('sep-width-slider').min  = limits.grooveWidth.min;
+  $('sep-width-slider').max  = limits.grooveWidth.max;
+  $('sep-width-slider').step = limits.grooveWidth.step || 0.01;
+  const applyWidth = debounce((value) => state.api.setSeparationGroove({ width: value }), 60);
+  $('sep-width-slider').addEventListener('input', (event) => {
+    const value = parseFloat(event.target.value);
+    $('sep-width-value').textContent = value.toFixed(2) + ' mm';
+    applyWidth(value);
+  });
+
+  $('sep-depth-slider').min  = limits.grooveDepth.min;
+  $('sep-depth-slider').max  = limits.grooveDepth.max;
+  $('sep-depth-slider').step = limits.grooveDepth.step || 0.01;
+  const applyDepth = debounce((value) => state.api.setSeparationGroove({ depth: value }), 60);
+  $('sep-depth-slider').addEventListener('input', (event) => {
+    const value = parseFloat(event.target.value);
+    $('sep-depth-value').textContent = value.toFixed(2) + ' mm';
+    applyDepth(value);
+  });
+
+  $('sep-angle-slider').min = limits.grooveAngle.min;
+  $('sep-angle-slider').max = limits.grooveAngle.max;
+  const applyAngle = debounce((value) => state.api.setSeparationGroove({ angle: value }), 60);
+  $('sep-angle-slider').addEventListener('input', (event) => {
+    const value = parseFloat(event.target.value);
+    $('sep-angle-value').textContent = Math.round(value) + '°';
+    applyAngle(value);
+  });
+
+  const finishHost = $('sep-finish-opts');
+  state.api.getAvailableGrooveFinishes().forEach((finish) => {
+    const btn = createOptionButton({
+      label: finish.name,
+      extraClass: 'text-opt',
+      onClick: () => {
+        setActive(finishHost, btn);
+        state.api.setSeparationGroove({ finish: finish.id });
+      },
+    });
+    btn.dataset.optionId = finish.id;
+    finishHost.appendChild(btn);
+  });
+}
+
+function renderSeparationBoundaries() {
+  const host      = $('sep-boundary-opts');
+  const materials = state.api.getMaterials();
+  const partition = materials ? materials.partition : 1;
+  const count     = Math.max(partition - 1, 0);
+  const groove    = state.api.getSeparationGroove();
+
+  host.innerHTML = '';
+  if (count === 0) return;
+
+  for (let i = 0; i < count; i += 1) {
+    const isOn = groove.boundaries[i] !== false;
+    const btn = createOptionButton({
+      label: `Joint ${i + 1}`,
+      extraClass: 'text-opt' + (isOn ? ' active' : ''),
+      onClick: () => {
+        const boundaries = state.api.getSeparationGroove().boundaries.slice();
+        while (boundaries.length < count) boundaries.push(true);
+        boundaries[i] = !btn.classList.contains('active');
+        btn.classList.toggle('active');
+        state.api.setSeparationGroove({ boundaries });
+      },
+    });
+    host.appendChild(btn);
+  }
+}
+
+function syncSeparationGrooveSection() {
+  const groove = state.api.getSeparationGroove();
+
+  if (state.toggleSepGroove) state.toggleSepGroove._set(groove.enabled);
+  $('sep-groove-field').style.display = groove.enabled ? 'block' : 'none';
+
+  $$('#sep-type-opts .opt').forEach((btn) => btn.classList.toggle('active', btn.dataset.optionId === groove.type));
+  $('sep-width-slider').value      = groove.width;
+  $('sep-width-value').textContent = groove.width.toFixed(2) + ' mm';
+  $('sep-depth-slider').value      = groove.depth;
+  $('sep-depth-value').textContent = groove.depth.toFixed(2) + ' mm';
+  $('sep-angle-slider').value      = groove.angle;
+  $('sep-angle-value').textContent = Math.round(groove.angle) + '°';
+  $$('#sep-finish-opts .opt').forEach((btn) => btn.classList.toggle('active', btn.dataset.optionId === groove.finish));
+
+  renderSeparationBoundaries();
+}
+
+
+/* ══════════════════════════════════════════════════════════════════
+ *  GROOVES — design grooves (freely placed decorative grooves)
+ * ══════════════════════════════════════════════════════════════════ */
+
+function buildDesignGrooveEditor() {
+  $('design-groove-add-btn').addEventListener('click', () => {
+    state.api.addDesignGroove();
+    renderDesignGrooves();
+  });
+
+  $('design-groove-clear-btn').addEventListener('click', () => {
+    state.api.clearDesignGrooves();
+    renderDesignGrooves();
+  });
+}
+
+function renderDesignGrooves() {
+  const host       = $('design-groove-list');
+  const grooves    = state.api.getDesignGrooves();
+  const limits     = state.api.getLimits();
+  const types      = state.api.getAvailableGrooveTypes();
+  const directions = state.api.getAvailableGrooveDirections();
+  const finishes   = state.api.getAvailableGrooveFinishes();
+
+  $('design-groove-count').textContent = grooves.length;
+  host.innerHTML = '';
+
+  const SLIDER_LABEL = { position: 'Position', positionAngle: 'Position Angle', width: 'Width', depth: 'Depth' };
+
+  grooves.forEach((groove, index) => {
+    const card = document.createElement('div');
+    card.className = 'mini-card';
+
+    const optionsHtml = (list, selected) => list.map((entry) =>
+      `<option value="${entry.id}"${entry.id === selected ? ' selected' : ''}>${entry.name}</option>`).join('');
+
+    const isHorizontal = groove.orientation === 'horizontal';
+
+    card.innerHTML =
+      '<div class="mini-card-row">'
+      + `<span class="mini-card-title">Groove ${index + 1}</span>`
+      + '<div class="mini-card-actions"><button data-action="remove" title="Remove">×</button></div>'
+      + '</div>'
+      + '<div class="mini-card-body">'
+      + `<select class="select-input" data-field="type">${optionsHtml(types, groove.type)}</select>`
+      + `<select class="select-input" data-field="orientation">${optionsHtml(directions, groove.orientation)}</select>`
+      + `<div data-role="position-row"><span class="mini-card-sub-label">Position ${groove.position.toFixed(2)} mm</span>`
+      + `<input type="range" class="slider" data-field="position" min="-3" max="3" step="0.05" value="${groove.position}"></div>`
+      + `<div data-role="angle-row" style="display:${isHorizontal ? 'block' : 'none'}"><span class="mini-card-sub-label">Position Angle ${Math.round(groove.positionAngle || 0)}°</span>`
+      + `<input type="range" class="slider" data-field="positionAngle" min="${limits.positionAngle.min}" max="${limits.positionAngle.max}" step="1" value="${groove.positionAngle || 0}"></div>`
+      + `<span class="mini-card-sub-label">Width ${groove.width.toFixed(2)} mm</span>`
+      + `<input type="range" class="slider" data-field="width" min="${limits.grooveWidth.min}" max="${limits.grooveWidth.max}" step="0.01" value="${groove.width}">`
+      + `<span class="mini-card-sub-label">Depth ${groove.depth.toFixed(2)} mm</span>`
+      + `<input type="range" class="slider" data-field="depth" min="${limits.grooveDepth.min}" max="${limits.grooveDepth.max}" step="0.01" value="${groove.depth}">`
+      + `<select class="select-input" data-field="finish">${optionsHtml(finishes, groove.finish)}</select>`
+      + '</div>';
+
+    card.querySelector('[data-action="remove"]').addEventListener('click', () => {
+      state.api.removeDesignGroove(index);
+      renderDesignGrooves();
+    });
+
+    card.querySelector('[data-field="type"]').addEventListener('change', (event) => {
+      state.api.updateDesignGroove(index, { type: event.target.value });
+    });
+
+    card.querySelector('[data-field="orientation"]').addEventListener('change', (event) => {
+      state.api.updateDesignGroove(index, { orientation: event.target.value });
+      renderDesignGrooves();
+    });
+
+    card.querySelector('[data-field="finish"]').addEventListener('change', (event) => {
+      state.api.updateDesignGroove(index, { finish: event.target.value });
+    });
+
+    ['position', 'positionAngle', 'width', 'depth'].forEach((field) => {
+      const slider = card.querySelector(`[data-field="${field}"]`);
+      if (!slider) return;
+      const label = slider.previousElementSibling;
+      const apply = debounce((value) => state.api.updateDesignGroove(index, { [field]: value }), 60);
+      slider.addEventListener('input', () => {
+        const value  = parseFloat(slider.value);
+        const suffix = field === 'positionAngle' ? '°' : ' mm';
+        const shown  = field === 'positionAngle' ? Math.round(value) : value.toFixed(2);
+        label.textContent = `${SLIDER_LABEL[field]} ${shown}${suffix}`;
+        apply(value);
+      });
+    });
+
+    host.appendChild(card);
+  });
+}
+
+
+/* ══════════════════════════════════════════════════════════════════
+ *  RINGS — compilation (add / remove / reorder / metal / visibility)
+ * ══════════════════════════════════════════════════════════════════ */
+
+function buildRingsSection() {
+  renderRingCatalog('engagement', $('engagement-catalog-opts'));
+  renderRingCatalog('memoire', $('memoire-catalog-opts'));
+  renderRings();
+}
+
+function renderRingCatalog(type, host) {
+  const catalog = state.api.getRingCatalog(type);
+  host.innerHTML = '';
+
+  catalog.forEach((entry) => {
+    const btn = createOptionButton({
+      label:   entry.name,
+      iconUrl: entry.thumbnail,
+      onClick: async () => {
+        try {
+          await state.api.addRing(type, entry.id);
+          renderRings();
+        } catch (err) {
+          showToast('Add ring failed: ' + err.message, 'err');
+        }
+      },
+    });
+    host.appendChild(btn);
+  });
+}
+
+function renderRings() {
+  const host   = $('rings-list');
+  const rings  = state.api.getRings();
+  const metals = state.api.getAvailableMetals();
+
+  host.innerHTML = '';
+
+  rings.forEach((ring) => {
+    const card = document.createElement('div');
+    card.className = 'mini-card';
+
+    const isWedding = ring.type === 'wedding';
+    const canRemove = !isWedding || rings.filter((r) => r.type === 'wedding').length > 1;
+
+    const metalSwatches = isWedding ? '' : metals.map((metal) =>
+      `<button class="opt sq" data-metal="${metal.id}" style="width:32px;height:32px;padding:2px" title="${metal.name}">`
+      + `<span class="swatch-dot" style="width:100%;height:100%;background-image:url(${metal.iconUrl || metal.thumbnail || ''})"></span>`
+      + '</button>').join('');
+
+    card.innerHTML =
+      '<div class="mini-card-row">'
+      + `<span class="mini-card-title">${ring.name}</span>`
+      + `<span class="mini-card-badge">${ring.type}</span>`
+      + '</div>'
+      + '<div class="mini-card-actions" style="margin-top:8px">'
+      + '<button data-action="focus" title="Focus">◎</button>'
+      + '<button data-action="left" title="Move left">←</button>'
+      + '<button data-action="right" title="Move right">→</button>'
+      + `<button data-action="visible" title="Show/Hide">${ring.visible === false ? '☐' : '☑'}</button>`
+      + '<button data-action="rename" title="Rename">✎</button>'
+      + `<button data-action="remove" title="Remove"${canRemove ? '' : ' disabled'}>×</button>`
+      + '</div>'
+      + (metalSwatches ? `<div class="mini-card-body"><div class="opt-row">${metalSwatches}</div></div>` : '');
+
+    card.querySelector('[data-action="focus"]').addEventListener('click', () => state.api.focusRing(ring.id));
+    card.querySelector('[data-action="left"]').addEventListener('click', () => { state.api.moveRing(ring.id, 'left'); renderRings(); });
+    card.querySelector('[data-action="right"]').addEventListener('click', () => { state.api.moveRing(ring.id, 'right'); renderRings(); });
+    card.querySelector('[data-action="visible"]').addEventListener('click', () => {
+      state.api.setRingVisible(ring.id, ring.visible === false);
+      renderRings();
+    });
+    card.querySelector('[data-action="rename"]').addEventListener('click', () => {
+      const next = window.prompt('Rename ring', ring.name);
+      if (next && next.trim()) {
+        state.api.renameRing(ring.id, next.trim());
+        renderRings();
+      }
+    });
+    card.querySelector('[data-action="remove"]').addEventListener('click', () => {
+      if (!canRemove) return;
+      state.api.removeRing(ring.id);
+      renderRings();
+    });
+
+    card.querySelectorAll('[data-metal]').forEach((btn) => {
+      btn.addEventListener('click', async () => {
+        await state.api.setRingMetal(ring.id, btn.dataset.metal);
+      });
+    });
+
+    host.appendChild(card);
+  });
+}
+
+
+/* ══════════════════════════════════════════════════════════════════
+ *  THEME
+ * ══════════════════════════════════════════════════════════════════ */
+
+const THEME_SWATCH_COLORS = {
+  'default':        '#1a1a1a',
+  'luxury-gold':    '#8B7355',
+  'modern-minimal': '#000000',
+  'dark':           '#E0D5C5',
+  'rose-elegant':   '#9E7B70',
+  'coral-modern':   '#E04E5E',
+  'fresh-teal':     '#5ABFBF',
+  'minimal-blue':   '#0071E3',
+  'warm-beige':     '#6B9AC4',
+  'ijewel':         '#6E73F2',
+  'classic-gold':   '#B8860B',
+};
+
+function buildThemeSection() {
+  const host = $('theme-opts');
+
+  state.api.getAvailableThemes().forEach((name) => {
+    const btn = document.createElement('button');
+    btn.className = 'theme-swatch';
+    btn.dataset.optionId = name;
+    btn.innerHTML =
+      `<span class="theme-swatch-dot" style="background:${THEME_SWATCH_COLORS[name] || '#999'}"></span>`
+      + `<span class="theme-swatch-lbl">${formatThemeName(name)}</span>`;
+    btn.addEventListener('click', () => applyTheme(name));
+    host.appendChild(btn);
+  });
+
+  $('theme-cycle-btn').addEventListener('click', () => {
+    const next = state.api.cycleTheme();
+    syncThemeSection(next);
+  });
+
+  syncThemeSection('default');
+}
+
+function formatThemeName(id) {
+  return id.split('-').map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+}
+
+function applyTheme(name) {
+  state.api.setTheme(name);
+  syncThemeSection(name);
+  applyThemeToHostPage();
+}
+
+function applyThemeToHostPage() {
+  const vars = state.api.getThemeCSSVariables();
+  const root = document.documentElement.style;
+  if (vars['--rb-color-primary'])    root.setProperty('--accent', vars['--rb-color-primary']);
+  if (vars['--rb-color-text'])       root.setProperty('--ink', vars['--rb-color-text']);
+  if (vars['--rb-color-background']) root.setProperty('--bg', vars['--rb-color-background']);
+  if (vars['--rb-color-surface'])    root.setProperty('--surface', vars['--rb-color-surface']);
+  if (vars['--rb-color-border'])     root.setProperty('--line', vars['--rb-color-border']);
+}
+
+function syncThemeSection(name) {
+  $('theme-value').textContent = formatThemeName(name);
+  $$('#theme-opts .theme-swatch').forEach((btn) => {
+    btn.classList.toggle('active', btn.dataset.optionId === name);
+  });
+}
+
+
+/* ══════════════════════════════════════════════════════════════════
  *  SYNC UI FROM CONTROLLER SNAPSHOT
  *  Called on boot and after every import / band switch.
  * ══════════════════════════════════════════════════════════════════ */
@@ -1454,6 +2293,11 @@ function syncUIFromSnapshot() {
   syncDiamondSection(snap);
   syncEngravingSection(snap);
   syncGroovesSection();
+
+  syncSideStoneSection();
+  syncSeparationGrooveSection();
+  renderDesignGrooves();
+  if (state.toggleSmoothSeats) state.toggleSmoothSeats._set(state.api.getSmoothSeats());
 
   syncMaterialUIForActiveSlot();
 
@@ -1514,6 +2358,8 @@ function syncPartitionAndMaterial(snap) {
   if (materials.splitAtGroove != null && state.toggleSplit) {
     state.toggleSplit._set(materials.splitAtGroove);
   }
+
+  renderDivisionOptions();
 }
 
 function syncEdgeSection(snap) {
@@ -1544,6 +2390,7 @@ function syncDiamondSection(snap) {
     $('diamond-extra').style.display = 'none';
     $('diamond-hint').style.display = 'flex';
     $$('#setting-opts .opt').forEach((btn, index) => btn.classList.toggle('active', index === 0));
+    updateDiamondTypeFieldVisibility('none');
     return;
   }
 
@@ -1597,6 +2444,25 @@ function syncDiamondSection(snap) {
   const posLabel = position <= -0.9 ? 'Left' : position >= 0.9 ? 'Right' : Math.abs(position) < 0.05 ? 'Center' : `${(position * 100).toFixed(0)}%`;
   $('position-value').textContent     = posLabel;
   $('position-snap-value').textContent = posLabel;
+
+  updateDiamondTypeFieldVisibility(diamonds.settingType);
+
+  const diamondRawState = state.api.getRawState();
+  if (diamondRawState) {
+    if (diamondRawState.diamondPositionAngle != null) {
+      $('position-angle-slider').value      = diamondRawState.diamondPositionAngle;
+      $('position-angle-value').textContent = Math.round(diamondRawState.diamondPositionAngle) + '°';
+    }
+    if (diamondRawState.tensionBridgeWidth != null) {
+      $('bridge-width-slider').value      = diamondRawState.tensionBridgeWidth;
+      $('bridge-width-value').textContent = diamondRawState.tensionBridgeWidth.toFixed(2) + ' mm';
+    }
+    if (diamondRawState.eyeOrientDeg != null) {
+      $$('#eye-orient-opts .opt').forEach((btn) => {
+        btn.classList.toggle('active', btn.dataset.optionId === String(diamondRawState.eyeOrientDeg));
+      });
+    }
+  }
 }
 
 function syncEngravingSection(snap) {
@@ -1751,6 +2617,14 @@ function subscribeToEvents() {
       `${data.field}: clamped to ${data.corrected} (sent ${data.provided})`,
       'warn',
     );
+  });
+
+  events.on('rings:changed', () => renderRings());
+
+  events.on('material:changed', () => syncDivisionSection());
+
+  events.on('compatibility:resolved', (data) => {
+    if (data && data.message) showToast(data.message, 'warn');
   });
 
   events.on('error', (data) => {

@@ -31,7 +31,7 @@
         href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter:wght@300;400;500;600;700&family=Sacramento&family=Dancing+Script:wght@400;600&family=Montserrat:wght@400;500;600&family=Nunito&family=Aboreto&display=swap"
       />
     </noscript>
-    <link rel="stylesheet" href="https://drive-weur-1.ijewel3d.com/files/style_d5f0f7b4c7.css?h=ijewel3d.com" />
+    <link rel="stylesheet" href="./style.css" />
   </head>
   <body>
     <div id="loading">
@@ -85,6 +85,8 @@
           <button class="tab" data-tab="design">Diamonds</button>
           <button class="tab" data-tab="grooves">Grooves</button>
           <button class="tab" data-tab="engraving">Engraving</button>
+          <button class="tab" data-tab="rings">Rings</button>
+          <button class="tab" data-tab="theme">Theme</button>
         </nav>
 
         <div class="panel-body">
@@ -221,6 +223,36 @@
                 </div>
               </div>
             </div>
+
+            <div class="field" id="division-field" style="display:none">
+              <div class="field-head">
+                <span class="field-label">Color Boundary</span>
+                <span class="field-value" id="division-value">-</span>
+              </div>
+              <div class="opt-row" id="division-opts"></div>
+            </div>
+
+            <div id="division-params-field" style="display:none">
+              <div class="field" id="division-freq-row" style="display:none">
+                <div class="field-head">
+                  <span class="field-label">Boundary Frequency</span>
+                  <span class="field-value" id="division-freq-value">6</span>
+                </div>
+                <input type="range" class="slider" id="division-freq-slider" min="1" max="12" step="1" value="6" />
+              </div>
+              <div class="field" id="division-amp-row" style="display:none">
+                <div class="field-head">
+                  <span class="field-label">Boundary Amplitude</span>
+                  <span class="field-value" id="division-amp-value">0.30</span>
+                </div>
+                <input type="range" class="slider" id="division-amp-slider" min="0" max="1" step="0.05" value="0.3" />
+              </div>
+            </div>
+
+            <div class="field" id="segment-widths-field" style="display:none">
+              <div class="field-head"><span class="field-label">Segment Widths (mm)</span></div>
+              <div id="segment-widths-list"></div>
+            </div>
           </section>
 
           <!-- DIAMONDS ───────────────────────────────── -->
@@ -244,7 +276,7 @@
 
             <div class="field" id="diamond-extra" style="display:none">
               <!-- Diamond Span -->
-              <div class="field">
+              <div class="field" id="span-field">
                 <div class="field-head">
                   <span class="field-label">Diamond Span</span>
                   <span class="field-value" id="span-value">Full Ring</span>
@@ -270,7 +302,7 @@
               </div>
 
               <!-- Diamond Spacing -->
-              <div class="field">
+              <div class="field" id="spacing-field">
                 <div class="field-head">
                   <span class="field-label">Diamond Spacing</span>
                   <span class="field-value" id="spacing-value">Stone to Stone</span>
@@ -279,7 +311,7 @@
               </div>
 
               <!-- Stone Size -->
-              <div class="field">
+              <div class="field" id="stone-size-field">
                 <div class="field-head">
                   <span class="field-label">Stone Size</span>
                   <span class="field-value" id="stone-value">1.50</span>
@@ -312,6 +344,94 @@
                   <circle cx="8" cy="12" r="0.5" fill="currentColor" stroke="none" />
                 </svg>
                 <span>Diamond position is fixed when wavy grooves are enabled</span>
+              </div>
+
+              <!-- Position Angle (Cross / Tension / Eye settings) -->
+              <div class="field" id="position-angle-field" style="display:none">
+                <div class="field-head">
+                  <span class="field-label">Position Angle</span>
+                  <span class="field-value" id="position-angle-value">0°</span>
+                </div>
+                <input type="range" class="slider" id="position-angle-slider" min="0" max="360" step="1" value="0" />
+              </div>
+
+              <!-- Bridge Width (Tension settings) -->
+              <div class="field" id="bridge-width-field" style="display:none">
+                <div class="field-head">
+                  <span class="field-label">Bridge Width</span>
+                  <span class="field-value" id="bridge-width-value">-</span>
+                </div>
+                <input type="range" class="slider" id="bridge-width-slider" min="0.5" max="4" step="0.05" value="2" />
+              </div>
+
+              <!-- Eye Orientation (Eye setting) -->
+              <div class="field" id="eye-orient-field" style="display:none">
+                <div class="field-head"><span class="field-label">Eye Orientation</span></div>
+                <div class="opt-row" id="eye-orient-opts"></div>
+              </div>
+            </div>
+
+            <!-- Free Stones (Free setting) -->
+            <div class="field" id="free-stones-field" style="display:none">
+              <div class="field-head">
+                <span class="field-label">Free Stones</span>
+                <span class="field-value" id="free-stones-count">0</span>
+              </div>
+              <div class="opt-row" id="free-preset-opts"></div>
+              <div id="free-stones-list"></div>
+              <div class="row-inline" style="margin-top:10px">
+                <button class="btn-ghost full" id="free-add-btn">Add Stone</button>
+                <button class="btn-ghost full" id="free-clear-btn">Clear All</button>
+              </div>
+            </div>
+
+            <!-- Smooth Seats -->
+            <div class="field">
+              <div class="toggle-panel">
+                <div class="toggle-row">
+                  <span class="toggle-label">Smooth Seats</span>
+                  <div class="toggle" id="toggle-smooth-seats"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Side Stones (independent of the top setting) -->
+            <div class="field">
+              <div class="field-head">
+                <span class="field-label">Side Stones</span>
+                <span class="field-value" id="side-setting-value">None</span>
+              </div>
+              <div class="opt-row" id="side-setting-opts"></div>
+            </div>
+
+            <div id="side-stones-extra" style="display:none">
+              <div class="field">
+                <div class="field-head"><span class="field-label">Sides</span></div>
+                <div class="opt-row" id="side-sides-opts"></div>
+              </div>
+
+              <div class="field" id="side-left-panel">
+                <div class="field-head">
+                  <span class="field-label">Left Side</span>
+                  <span class="field-value" id="side-left-stone-value">1.50</span>
+                </div>
+                <div class="opt-row" id="side-left-span-opts"></div>
+                <div class="opt-row" id="side-left-spacing-opts" style="margin-top:8px"></div>
+                <input type="range" class="slider" id="side-left-stone-slider" min="0.5" max="3" step="0.05" value="1.5" style="margin-top:8px" />
+              </div>
+
+              <div class="field" id="side-right-panel">
+                <div class="field-head">
+                  <span class="field-label">Right Side</span>
+                  <span class="field-value" id="side-right-stone-value">1.50</span>
+                </div>
+                <div class="opt-row" id="side-right-span-opts"></div>
+                <div class="opt-row" id="side-right-spacing-opts" style="margin-top:8px"></div>
+                <input type="range" class="slider" id="side-right-stone-slider" min="0.5" max="3" step="0.05" value="1.5" style="margin-top:8px" />
+              </div>
+
+              <div class="field">
+                <button class="btn-ghost full" id="side-copy-btn">Copy Left → Right</button>
               </div>
             </div>
           </section>
@@ -359,6 +479,65 @@
                 </div>
               </div>
             </div>
+
+            <!-- Separation Groove (material-boundary joint) -->
+            <div class="field">
+              <div class="toggle-panel">
+                <div class="toggle-row">
+                  <span class="toggle-label">Separation Groove</span>
+                  <div class="toggle" id="toggle-sep-groove"></div>
+                </div>
+              </div>
+            </div>
+
+            <div id="sep-groove-field" style="display:none">
+              <div class="field">
+                <div class="field-head"><span class="field-label">Groove Type</span></div>
+                <div class="opt-row" id="sep-type-opts"></div>
+              </div>
+              <div class="field">
+                <div class="field-head">
+                  <span class="field-label">Width</span>
+                  <span class="field-value" id="sep-width-value">-</span>
+                </div>
+                <input type="range" class="slider" id="sep-width-slider" min="0.05" max="1" step="0.01" value="0.3" />
+              </div>
+              <div class="field">
+                <div class="field-head">
+                  <span class="field-label">Depth</span>
+                  <span class="field-value" id="sep-depth-value">-</span>
+                </div>
+                <input type="range" class="slider" id="sep-depth-slider" min="0.02" max="0.5" step="0.01" value="0.1" />
+              </div>
+              <div class="field">
+                <div class="field-head">
+                  <span class="field-label">Angle</span>
+                  <span class="field-value" id="sep-angle-value">-</span>
+                </div>
+                <input type="range" class="slider" id="sep-angle-slider" min="20" max="160" step="1" value="90" />
+              </div>
+              <div class="field">
+                <div class="field-head"><span class="field-label">Finish</span></div>
+                <div class="opt-row" id="sep-finish-opts"></div>
+              </div>
+              <div class="field">
+                <div class="field-head"><span class="field-label">Boundaries</span></div>
+                <div class="opt-row" id="sep-boundary-opts"></div>
+              </div>
+            </div>
+
+            <!-- Design Grooves (freely placed decorative grooves) -->
+            <div class="field">
+              <div class="field-head">
+                <span class="field-label">Design Grooves</span>
+                <span class="field-value" id="design-groove-count">0</span>
+              </div>
+              <div id="design-groove-list"></div>
+              <div class="row-inline" style="margin-top:10px">
+                <button class="btn-ghost full" id="design-groove-add-btn">Add Groove</button>
+                <button class="btn-ghost full" id="design-groove-clear-btn">Clear All</button>
+              </div>
+            </div>
           </section>
 
           <!-- ENGRAVING ───────────────────────────────── -->
@@ -404,6 +583,38 @@
               <div class="symbol-grid" id="symbol-grid"></div>
             </div>
           </section>
+
+          <!-- RINGS ───────────────────────────────── -->
+          <section class="tab-pane" data-pane="rings">
+            <div class="field">
+              <div class="field-head"><span class="field-label">Compilation</span></div>
+              <div id="rings-list"></div>
+            </div>
+
+            <div class="field">
+              <div class="field-head"><span class="field-label">Add Engagement Ring</span></div>
+              <div class="opt-row" id="engagement-catalog-opts"></div>
+            </div>
+
+            <div class="field">
+              <div class="field-head"><span class="field-label">Add Memoire Ring</span></div>
+              <div class="opt-row" id="memoire-catalog-opts"></div>
+            </div>
+          </section>
+
+          <!-- THEME ───────────────────────────────── -->
+          <section class="tab-pane" data-pane="theme">
+            <div class="field">
+              <div class="field-head">
+                <span class="field-label">Theme</span>
+                <span class="field-value" id="theme-value">Default</span>
+              </div>
+              <div class="opt-row" id="theme-opts"></div>
+            </div>
+            <div class="field">
+              <button class="btn-ghost full" id="theme-cycle-btn">Cycle Theme</button>
+            </div>
+          </section>
         </div>
 
         <div class="price-bar">
@@ -431,7 +642,10 @@
     <div id="toast"></div>
 
     <script src="https://releases.ijewel3d.com/libs/webgi-v0/bundle-0.22.0.js"></script>
-    <script src="https://releases.ijewel3d.com/libs/mini-viewer/0.6.11/bundle.nowebgi.iife.js"></script>
+    <!-- @ijewel3d/mini-viewer 0.6.12 — first release with Wedding Band Builder
+     Phase 2 (multi-ring compilations, side stones, free stones, design and
+     separation grooves, wavy/diagonal divisions, theming). -->
+  <script src="https://releases.ijewel3d.com/libs/mini-viewer/0.6.12/bundle.nowebgi.iife.js"></script>
     <script src="./script-drive.js"></script>
   </body>
 </html>

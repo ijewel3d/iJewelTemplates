@@ -123,6 +123,42 @@
           />
         </div>
 
+        <!-- DIMENSION EXTENSIONS — capability-detected on newer embeds. -->
+        <div class="card" id="height-card" hidden>
+          <div class="card-head">
+            <span class="card-label">Thickness</span>
+            <span class="card-value" id="height-value">—</span>
+          </div>
+          <input type="range" id="height-slider" class="slider" min="0.5" max="1.5" step="0.05" value="1" />
+        </div>
+
+        <div class="card" id="ring-size-card" hidden>
+          <div class="card-head">
+            <span class="card-label">Ring Size</span>
+            <span class="card-value" id="ring-size-value">—</span>
+          </div>
+          <input type="range" id="ring-size-slider" class="slider" min="7.02" max="11.16" step="0.01" value="8.67" />
+        </div>
+
+        <!-- PROFILE EXTENSIONS ───────────────────────────────────── -->
+        <div class="card" id="edge-card" hidden>
+          <div class="card-head">
+            <span class="card-label">Edge</span>
+            <span class="card-value" id="edge-value">—</span>
+          </div>
+          <div class="opt-row" id="edge-opts"></div>
+          <div class="opt-row edge-sides" id="edge-side-opts"></div>
+        </div>
+
+        <!-- MATERIAL EXTENSIONS ─────────────────────────────────── -->
+        <div class="card" id="partition-card" hidden>
+          <div class="card-head">
+            <span class="card-label">Color Partition</span>
+            <span class="card-value" id="partition-value">—</span>
+          </div>
+          <div class="opt-row" id="partition-opts"></div>
+        </div>
+
         <!-- DIAMONDS ───────────────────────────────────────────── -->
         <div class="card">
           <div class="card-head">
@@ -132,6 +168,41 @@
           <div class="opt-row" id="setting-opts">
             <div class="muted-hint">Loading settings…</div>
           </div>
+        </div>
+
+        <div class="card" id="diamond-detail-card" hidden>
+          <div class="card-head">
+            <span class="card-label">Diamond Details</span>
+          </div>
+          <div class="opt-row" id="diamond-span-opts"></div>
+          <div class="opt-row" id="diamond-spacing-opts"></div>
+          <label class="range-label" for="diamond-size-slider">Stone size <span id="diamond-size-value">—</span></label>
+          <input type="range" id="diamond-size-slider" class="slider" min="0.5" max="3" step="0.05" value="1" />
+        </div>
+
+        <!-- COLOR BOUNDARY ─────────────────────────────────────────
+             Newer WBB API. The card hides itself when the embedded
+             viewer is on a build that does not expose the method. -->
+        <div class="card" id="division-card" hidden>
+          <div class="card-head">
+            <span class="card-label">Color Boundary</span>
+            <span class="card-value" id="division-value">—</span>
+          </div>
+          <div class="opt-row" id="division-opts"></div>
+        </div>
+
+        <!-- SEPARATION GROOVE ─────────────────────────────────────── -->
+        <div class="card" id="sep-groove-card" hidden>
+          <div class="card-head">
+            <span class="card-label">Separation Groove</span>
+            <span class="card-value" id="sep-groove-value">—</span>
+          </div>
+          <div class="opt-row" id="sep-groove-opts"></div>
+        </div>
+
+        <div class="card" id="design-grooves-card" hidden>
+          <div class="card-head"><span class="card-label">Design Grooves</span></div>
+          <div class="opt-row" id="design-grooves-opts"></div>
         </div>
 
         <!-- ENGRAVING ──────────────────────────────────────────── -->
@@ -147,6 +218,22 @@
             maxlength="30"
             placeholder="Enter text…"
           />
+        </div>
+
+        <div class="card" id="engraving-detail-card" hidden>
+          <div class="card-head"><span class="card-label">Engraving Style</span></div>
+          <div class="opt-row" id="engraving-font-opts"></div>
+          <label class="range-label" for="engraving-size-slider">Font size <span id="engraving-size-value">—</span></label>
+          <input type="range" id="engraving-size-slider" class="slider" min="8" max="160" step="1" value="80" />
+        </div>
+
+        <!-- RINGS ─────────────────────────────────────────────────── -->
+        <div class="card" id="rings-card" hidden>
+          <div class="card-head">
+            <span class="card-label">Rings</span>
+            <span class="card-value" id="rings-value">—</span>
+          </div>
+          <div class="opt-row" id="rings-opts"></div>
         </div>
 
         <!-- PRICE ──────────────────────────────────────────────── -->

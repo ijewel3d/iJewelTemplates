@@ -149,6 +149,11 @@ function resetState() {
   $('finish-opts').innerHTML   = '<div class="muted-hint">Waiting for ready…</div>';
   $('setting-opts').innerHTML  = '<div class="muted-hint">Waiting for ready…</div>';
   $('price-value').textContent = '—';
+  [
+    'height-card', 'ring-size-card', 'edge-card', 'partition-card',
+    'diamond-detail-card', 'division-card', 'sep-groove-card',
+    'design-grooves-card', 'engraving-detail-card', 'rings-card',
+  ].forEach((id) => { $(id).hidden = true; });
 }
 
 function setStatus(kind, label) {
@@ -249,6 +254,10 @@ function handleViewerEvent(name, data) {
     case 'material:changed': return onMaterialChanged(data);
     case 'diamonds:changed': return onDiamondsChanged(data);
     case 'engraving:changed':return onEngravingChanged(data);
+    case 'rings:changed':    return onRingsChanged(data);
+    case 'compatibility:resolved':
+    case 'validation:warning':
+      return onViewerWarning(data);
     case 'error':            return onViewerError(data);
     default:                 return;
   }
@@ -261,6 +270,7 @@ async function onReady() {
 
   try {
     await populateCatalogs();
+    await populateOptionalCards();
     await refreshSnapshot();
   } catch (err) {
     setStatus('error', 'Catalog load failed: ' + err.message);
@@ -304,6 +314,22 @@ function onEngravingChanged(data) {
   const text = data.text || '';
   $('engrave-input').value = text;
   $('engrave-count').textContent = text.length + '/30';
+}
+
+async function onRingsChanged() {
+  try {
+    const rings = await query('getRings');
+    if (Array.isArray(rings) && rings.length) {
+      renderRingChips(rings);
+      $('rings-card').hidden = false;
+    }
+  } catch (err) {
+    /* Older viewer build — nothing to refresh. */
+  }
+}
+
+function onViewerWarning(data) {
+  if (data && data.message) setStatus('ready', data.message);
 }
 
 function onViewerError(data) {
@@ -363,6 +389,34 @@ function applySnapshot(snap) {
     $('width-value').textContent = '×' + mult.toFixed(2);
   }
 
+  if (snap.dimensions && snap.dimensions.heightMm != null && !$('height-card').hidden) {
+    $('height-slider').value = snap.dimensions.heightMm;
+    $('height-value').textContent = '×' + Number(snap.dimensions.heightMm).toFixed(2);
+  }
+
+  if (snap.dimensions && snap.dimensions.radiusMm != null && !$('ring-size-card').hidden) {
+    $('ring-size-slider').value = snap.dimensions.radiusMm;
+    $('ring-size-value').textContent = formatRingSize(snap.dimensions.radiusMm);
+  }
+
+  if (snap.materials && !$('partition-card').hidden) {
+    const partition = snap.materials.partition;
+    if (partition != null) {
+      $('partition-value').textContent = partition + ' Color';
+      $$('#partition-opts .opt').forEach((btn) => {
+        btn.classList.toggle('active', Number((btn.textContent || '').match(/\d+/)?.[0]) === partition);
+      });
+    }
+  }
+
+  if (snap.edge && !$('edge-card').hidden) {
+    const edge = snap.edge;
+    $('edge-value').textContent = edge.type || 'None';
+    $$('#edge-opts .opt').forEach((btn) => {
+      btn.classList.toggle('active', (btn.textContent || '').trim() === edge.type);
+    });
+  }
+
   if (snap.diamonds && snap.diamonds.settingType) {
     $('setting-value').textContent = snap.diamonds.settingType;
     highlightChipByLabel('#setting-opts', snap.diamonds.settingType);
@@ -401,7 +455,6 @@ function capitalize(str) {
   if (!str) return '';
   return str.charAt(0).toUpperCase() + str.slice(1);
 }
-
 
 /* ══════════════════════════════════════════════════════════════════
  *  CONTROL BUILDERS — one per host-page card
@@ -502,6 +555,317 @@ function makeChip(label, onClick) {
   return btn;
 }
 
+
+/* ══════════════════════════════════════════════════════════════════
+ *  NEWER WBB API — optional cards
+ *
+ *  Color boundary, separation groove, and ring compilation
+ *  only exist on newer builds of the embedded viewer. Each card starts
+ *  hidden and is revealed only if its query comes back with data, so
+ *  this page still works unchanged against an older hosted embed.
+ * ══════════════════════════════════════════════════════════════════ */
+
+async function populateOptionalCards() {
+  await Promise.all([
+    buildHeightCard(),
+    buildRingSizeCard(),
+    buildEdgeCard(),
+    buildPartitionCard(),
+    buildDiamondDetailCard(),
+    buildDivisionCard(),
+    buildSeparationGrooveCard(),
+    buildDesignGroovesCard(),
+    buildEngravingDetailCard(),
+    buildRingsCard(),
+  ]);
+}
+
+/** Reveal a card only when the viewer answered with usable data. */
+async function tryOptionalCard(cardId, load) {
+  try {
+    const revealed = await load();
+    if (revealed) $(cardId).hidden = false;
+  } catch (err) {
+    /* Older viewer build — leave the card hidden. */
+  }
+}
+
+function buildDivisionCard() {
+  return tryOptionalCard('division-card', async () => {
+    const divisions = await query('getAvailableDivisionTypes');
+    if (!Array.isArray(divisions) || !divisions.length) return false;
+
+    const host = $('division-opts');
+    host.innerHTML = '';
+
+    divisions.forEach((division) => {
+      const btn = makeChip(division.name || division.id, () => {
+        setActive(host, btn);
+        $('division-value').textContent = division.name || division.id;
+        send('setDivision', [division.id]);
+      });
+      host.appendChild(btn);
+    });
+
+    const current = await query('getDivision');
+    if (current) {
+      $('division-value').textContent = current.name || current.type || current.id || '—';
+      highlightChipByLabel('#division-opts', current.name);
+    }
+    return true;
+  });
+}
+
+function buildHeightCard() {
+  return tryOptionalCard('height-card', async () => {
+    const dimensions = await query('getDimensions');
+    if (!dimensions || dimensions.heightMm == null) return false;
+
+    const slider = $('height-slider');
+    const setHeight = debounce((value) => send('setHeightMultiplier', [value]), 80);
+    slider.value = dimensions.heightMm;
+    $('height-value').textContent = '×' + Number(dimensions.heightMm).toFixed(2);
+    slider.oninput = (event) => {
+      const value = Number(event.target.value);
+      $('height-value').textContent = '×' + value.toFixed(2);
+      setHeight(value);
+    };
+    return true;
+  });
+}
+
+function buildRingSizeCard() {
+  return tryOptionalCard('ring-size-card', async () => {
+    const dimensions = await query('getDimensions');
+    if (!dimensions || dimensions.radiusMm == null) return false;
+
+    const slider = $('ring-size-slider');
+    const setSize = debounce((value) => send('setRingSize', [value]), 80);
+    slider.value = dimensions.radiusMm;
+    $('ring-size-value').textContent = formatRingSize(dimensions.radiusMm);
+    slider.oninput = (event) => {
+      const value = Number(event.target.value);
+      $('ring-size-value').textContent = formatRingSize(value);
+      setSize(value);
+    };
+    return true;
+  });
+}
+
+function formatRingSize(radiusMm) {
+  const diameterMm = Number(radiusMm) * 2;
+  return diameterMm.toFixed(1) + ' mm Ø';
+}
+
+function buildEdgeCard() {
+  return tryOptionalCard('edge-card', async () => {
+    const [types, sides] = await Promise.all([
+      query('getAvailableEdgeTypes'), query('getAvailableEdgeSides'),
+    ]);
+    if (!Array.isArray(types) || !types.length) return false;
+
+    const host = $('edge-opts');
+    const sideHost = $('edge-side-opts');
+    host.innerHTML = '';
+    sideHost.innerHTML = '';
+    let selectedSide = Array.isArray(sides) && sides[0] ? (sides[0].id || sides[0].name || sides[0]) : 'Both';
+
+    (sides || []).forEach((side) => {
+      const id = side.id || side.name || side;
+      const button = makeChip(side.name || id, () => {
+        selectedSide = id;
+        setActive(sideHost, button);
+      });
+      sideHost.appendChild(button);
+    });
+
+    types.forEach((type) => {
+      const id = type.id || type.name || type;
+      const label = type.name || id;
+      const button = makeChip(label, () => {
+        setActive(host, button);
+        $('edge-value').textContent = label;
+        send('setEdge', [id, selectedSide]);
+      });
+      host.appendChild(button);
+    });
+    return true;
+  });
+}
+
+function buildPartitionCard() {
+  return tryOptionalCard('partition-card', async () => {
+    const partitions = await query('getAvailablePartitions');
+    if (!Array.isArray(partitions) || !partitions.length) return false;
+
+    const host = $('partition-opts');
+    host.innerHTML = '';
+    partitions.forEach((partition, index) => {
+      const label = partition.name || partition;
+      const value = partition.id || (String(label).match(/\d+/) || [index + 1])[0];
+      const button = makeChip(label, () => {
+        setActive(host, button);
+        $('partition-value').textContent = label;
+        send('setPartition', [Number(value)]);
+      });
+      host.appendChild(button);
+    });
+    return true;
+  });
+}
+
+function buildDiamondDetailCard() {
+  return tryOptionalCard('diamond-detail-card', async () => {
+    const [spans, spacings, limits] = await Promise.all([
+      query('getAvailableDiamondSpans'),
+      query('getAvailableDiamondSpacings'),
+      query('getLimits'),
+    ]);
+    if ((!Array.isArray(spans) || !spans.length) && (!Array.isArray(spacings) || !spacings.length)) return false;
+
+    buildDiamondPatchChips('diamond-span-opts', spans || [], 'span');
+    buildDiamondPatchChips('diamond-spacing-opts', spacings || [], 'spacing');
+    const size = $('diamond-size-slider');
+    const range = limits && limits.stoneSize;
+    if (range) {
+      size.min = range.min;
+      size.max = range.max;
+      size.step = range.step || 0.05;
+    }
+    const setSize = debounce((value) => send('setDiamonds', [{ stoneSize: value }]), 80);
+    size.oninput = (event) => {
+      const value = Number(event.target.value);
+      $('diamond-size-value').textContent = value.toFixed(2) + ' mm';
+      setSize(value);
+    };
+    $('diamond-size-value').textContent = Number(size.value).toFixed(2) + ' mm';
+    return true;
+  });
+}
+
+function buildDiamondPatchChips(hostId, items, property) {
+  const host = $(hostId);
+  host.innerHTML = '';
+  items.forEach((item) => {
+    const id = item.id != null ? item.id : (item.value != null ? item.value : item);
+    const label = item.name || String(id);
+    const button = makeChip(label, () => {
+      setActive(host, button);
+      send('setDiamonds', [{ [property]: id }]);
+    });
+    host.appendChild(button);
+  });
+}
+
+function buildSeparationGrooveCard() {
+  return tryOptionalCard('sep-groove-card', async () => {
+    const groove = await query('getSeparationGroove');
+    if (!groove) return false;
+
+    const host = $('sep-groove-opts');
+    host.innerHTML = '';
+
+    const onBtn  = makeChip('On',  () => applySeparationGroove(true));
+    const offBtn = makeChip('Off', () => applySeparationGroove(false));
+    host.appendChild(onBtn);
+    host.appendChild(offBtn);
+
+    function applySeparationGroove(enabled) {
+      setActive(host, enabled ? onBtn : offBtn);
+      $('sep-groove-value').textContent = enabled ? 'On' : 'Off';
+      send('setSeparationGroove', [{ enabled: enabled }]);
+    }
+
+    setActive(host, groove.enabled ? onBtn : offBtn);
+    $('sep-groove-value').textContent = groove.enabled ? 'On' : 'Off';
+    return true;
+  });
+}
+
+function buildDesignGroovesCard() {
+  return tryOptionalCard('design-grooves-card', async () => {
+    // A successful getter is the feature check: an empty array is still a
+    // valid, editable design-groove collection.
+    await query('getDesignGrooves');
+    const host = $('design-grooves-opts');
+    host.innerHTML = '';
+    const add = makeChip('Add Groove', () => send('addDesignGroove'));
+    const clear = makeChip('Clear', () => send('clearDesignGrooves'));
+    host.append(add, clear);
+    return true;
+  });
+}
+
+function buildEngravingDetailCard() {
+  return tryOptionalCard('engraving-detail-card', async () => {
+    const [snapshot, fonts] = await Promise.all([
+      query('getSnapshot'), query('getEngravingFonts'),
+    ]);
+    if (!snapshot || !snapshot.engraving) return false;
+    if (!Array.isArray(fonts) || !fonts.length) return false;
+
+    const host = $('engraving-font-opts');
+    host.innerHTML = '';
+    fonts.forEach((font) => {
+      const id = font.id || font.name || font;
+      const label = font.name || id;
+      const button = makeChip(label, async () => {
+        setActive(host, button);
+        const snapshot = await query('getSnapshot');
+        const text = snapshot && snapshot.engraving && snapshot.engraving.text;
+        send('setEngraving', [text || null, id]);
+      });
+      host.appendChild(button);
+    });
+
+    const size = $('engraving-size-slider');
+    size.min = '4';
+    size.max = '72';
+    size.step = '1';
+    const setSize = debounce(async (value) => {
+      const snapshot = await query('getSnapshot');
+      const current = snapshot && snapshot.engraving;
+      send('setEngraving', [
+        (current && current.text) || null,
+        current && current.font,
+        value,
+      ]);
+    }, 120);
+    size.oninput = (event) => {
+      const value = Number(event.target.value);
+      $('engraving-size-value').textContent = Math.round(value) + ' px';
+      setSize(value);
+    };
+    $('engraving-size-value').textContent = Math.round(Number(size.value)) + ' px';
+    return true;
+  });
+}
+
+function buildRingsCard() {
+  return tryOptionalCard('rings-card', async () => {
+    const rings = await query('getRings');
+    if (!Array.isArray(rings) || !rings.length) return false;
+
+    renderRingChips(rings);
+    return true;
+  });
+}
+
+/** One chip per ring in the compilation; clicking focuses that ring. */
+function renderRingChips(rings) {
+  const host = $('rings-opts');
+  host.innerHTML = '';
+
+  $('rings-value').textContent = rings.length + ' in compilation';
+
+  rings.forEach((ring) => {
+    const btn = makeChip(ring.name || ring.id, () => {
+      setActive(host, btn);
+      send('focusRing', [ring.id]);
+    });
+    host.appendChild(btn);
+  });
+}
 
 /* ══════════════════════════════════════════════════════════════════
  *  BAND SWITCH
