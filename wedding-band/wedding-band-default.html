@@ -11,6 +11,10 @@
   <script src="https://releases.ijewel3d.com/libs/mini-viewer/0.6.12/bundle.nowebgi.iife.js"></script>
   </head>
   <body style="margin: 0; padding: 0; width: 100vw; height: 100vh; overflow: hidden;">
+    <!-- Relative path: the templates are served from a repository sub-path on
+         GitHub Pages, so an absolute /-rooted URL would not resolve. -->
+    <img src="./weddingbad-logo.svg" alt="Wedding Band Builder"
+         style="position: fixed; top: 12px; left: 12px; height: 48px; z-index: 10000; opacity: 0.85; pointer-events: none;" />
     <div id="viewer" style="width: 100%; height: 100%;"></div>
     <script>
       /*
@@ -26,8 +30,8 @@
        * https://docs.ijewel3d.com/viewer/connect-to-drive.html#loading-a-specific-model-by-id-loadmodelbyid
        */
       const CONFIG = {
-        fileId: "WsF9jzAESde9Jij21ef8cA",
-        instance: "demo-weur",
+        fileId: "LVLiEhVDSl6QlIITnjyBNg",
+        instance: "demo-apac",
       };
       let viewer, matPlugin;
 

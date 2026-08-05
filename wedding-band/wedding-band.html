@@ -10,7 +10,9 @@
   </style>
 </head>
 <body>
-  <img src="https://drive-weur-1.ijewel3d.com/files/weddingbad_logo_c993bbf149.svg?h=ijewel3d.com" alt="iJewel3D"
+  <!-- Relative path: the templates are served from a repository sub-path on
+       GitHub Pages, so an absolute /-rooted URL would not resolve. -->
+  <img src="./weddingbad-logo.svg" alt="Wedding Band Builder"
        style="position:fixed;top:12px;left:12px;height:48px;z-index:10000;opacity:.85;pointer-events:none">
   <div id="root"></div>
   <script src="https://releases.ijewel3d.com/libs/webgi-v0/bundle-0.22.0.js"></script>
@@ -28,7 +30,7 @@
      * basename supplied by iJewel3D):
      * https://docs.ijewel3d.com/viewer/connect-to-drive.html#loading-a-specific-model-by-id-loadmodelbyid
      */
-    const PROJECT_URL = 'https://drive-weur-1.ijewel3d.com/files/wedding_band_project_f4a009b2f2.json?h=ijewel3d.com';
+    const PROJECT_URL = './wedding_band_project.json';
 
     (async () => {
       const root = document.getElementById('root');

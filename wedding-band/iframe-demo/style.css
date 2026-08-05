@@ -75,6 +75,13 @@ body {
   color: var(--accent);
 }
 
+/* The wordmark already carries the product name, so it replaces .brand-mark. */
+.brand-logo {
+  display: block;
+  height: 30px;
+  width: auto;
+}
+
 .brand-sub {
   font-size: 11px;
   letter-spacing: 0.14em;

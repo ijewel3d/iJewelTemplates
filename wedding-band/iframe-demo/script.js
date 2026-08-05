@@ -27,7 +27,7 @@
  * ══════════════════════════════════════════════════════════════════ */
 
 const DEFAULT_VIEWER_URL =
-  'https://ijewel3d.com/demo-weur/files/WsF9jzAESde9Jij21ef8cA/embedded'
+  'https://ijewel3d.com/demo-apac/files/LVLiEhVDSl6QlIITnjyBNg/embedded'
   + '?hideWbbUi=true&showUiButtons=true&isAutoplay=true';
 
 const REPLY_TIMEOUT_MS = 8000;

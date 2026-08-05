@@ -32,9 +32,11 @@
       <div id="stage">
         <div id="root"></div>
 
+        <!-- Relative path: GitHub Pages serves the templates from a repository
+             sub-path, so an absolute /-rooted URL would not resolve. The
+             wordmark already reads "Wedding Band", so there is no text beside it. -->
         <div id="logo-overlay">
-          <img src="https://drive-weur-1.ijewel3d.com/files/logo_icon_030c98538f.svg?h=ijewel3d.com" alt="logo" decoding="async" />
-          <span class="brand">Wedding Band</span>
+          <img src="../weddingbad-logo.svg" alt="Wedding Band Builder" decoding="async" />
         </div>
 
         <div id="build-badge"><span class="mini-spinner"></span><span>Rebuilding…</span></div>
@@ -44,6 +46,32 @@
 
       <aside id="panel" aria-label="Customisation panel">
         <div class="panel-header">
+          <!-- ── Toolbar: theme picker + undo / redo ──
+               The mini-viewer default UI puts undo/redo beside the ring tabs and
+               has no theme surface of its own; here the theme is a plain
+               dropdown so it costs no tab. -->
+          <div class="panel-toolbar">
+            <div class="toolbar-group">
+              <button class="icon-btn" id="undo-btn" type="button" title="Undo (Ctrl+Z)" aria-label="Undo" disabled>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="15" height="15">
+                  <path d="M9 14L4 9l5-5" />
+                  <path d="M4 9h10a6 6 0 010 12h-3" />
+                </svg>
+              </button>
+              <button class="icon-btn" id="redo-btn" type="button" title="Redo (Ctrl+Shift+Z)" aria-label="Redo" disabled>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="15" height="15">
+                  <path d="M15 14l5-5-5-5" />
+                  <path d="M20 9H10a6 6 0 000 12h3" />
+                </svg>
+              </button>
+            </div>
+
+            <label class="theme-picker">
+              <span class="theme-picker-label">Theme</span>
+              <select class="select-input" id="theme-select" aria-label="Theme"></select>
+            </label>
+          </div>
+
           <!-- ── Band Switch ── -->
           <div class="band-switch" id="band-switch">
             <button data-band="her" class="active">Her Ring</button>
@@ -70,10 +98,9 @@
           <button class="tab" data-tab="dimensions">Size</button>
           <button class="tab" data-tab="material">Material</button>
           <button class="tab" data-tab="design">Diamonds</button>
-          <button class="tab" data-tab="grooves">Grooves</button>
+          <button class="tab" data-tab="grooves">Joints</button>
           <button class="tab" data-tab="engraving">Engraving</button>
           <button class="tab" data-tab="rings">Rings</button>
-          <button class="tab" data-tab="theme">Theme</button>
         </nav>
 
         <div class="panel-body">
@@ -87,19 +114,42 @@
               <div class="opt-row" id="profile-opts"></div>
             </div>
 
-            <div class="field">
+            <!-- Band shape (extrusion path). Hidden unless the project ships
+                 more than the plain circular path. -->
+            <div class="field" id="path-field" style="display:none">
               <div class="field-head">
-                <span class="field-label">Edge Type</span>
-                <span class="field-value" id="edge-value">-</span>
+                <span class="field-label">Shape</span>
+                <span class="field-value" id="path-value">-</span>
               </div>
-              <div class="opt-row" id="edge-opts"></div>
+              <div class="opt-row" id="path-opts"></div>
             </div>
 
-            <div class="field" id="edge-side-field" style="display:none">
-              <div class="field-head">
-                <span class="field-label">Edge Side</span>
+            <!-- Mathematical wave path only: count + depth of the waves. -->
+            <div id="wave-params-field" style="display:none">
+              <div class="field">
+                <div class="field-head">
+                  <span class="field-label">Waves</span>
+                  <span class="field-value" id="wave-freq-value">4</span>
+                </div>
+                <input type="range" class="slider" id="wave-freq-slider" min="1" max="12" step="1" value="4" />
               </div>
-              <div class="opt-row" id="edge-side-opts"></div>
+
+              <div class="field">
+                <div class="field-head">
+                  <span class="field-label">Wave Depth</span>
+                  <span class="field-value" id="wave-amp-value">60%</span>
+                </div>
+                <input type="range" class="slider" id="wave-amp-slider" min="0" max="1" step="0.05" value="0.6" />
+              </div>
+            </div>
+
+            <!-- Any non-circular path: how strongly the path deforms the band. -->
+            <div class="field" id="path-strength-field" style="display:none">
+              <div class="field-head">
+                <span class="field-label">Shape Strength</span>
+                <span class="field-value" id="path-strength-value">50%</span>
+              </div>
+              <input type="range" class="slider" id="path-strength-slider" min="0" max="1" step="0.05" value="0.5" />
             </div>
           </section>
 
@@ -125,6 +175,13 @@
                 <div class="tape-wrap" id="height-tape">
                   <img class="tape-ruler" id="height-ruler" alt="" draggable="false" loading="lazy" decoding="async" />
                   <div class="tape-clip" id="height-clip"><div class="tape-edge"></div></div>
+                </div>
+              </div>
+
+              <div class="toggle-panel" style="margin-top:12px">
+                <div class="toggle-row">
+                  <span class="toggle-label">Auto optimal thickness</span>
+                  <div class="toggle" id="toggle-auto-height"></div>
                 </div>
               </div>
             </div>
@@ -236,9 +293,29 @@
               </div>
             </div>
 
-            <div class="field" id="segment-widths-field" style="display:none">
-              <div class="field-head"><span class="field-label">Segment Widths (mm)</span></div>
-              <div id="segment-widths-list"></div>
+            <!-- Distribution: preset ratios by default, or per-zone millimetres
+                 once "Free width" is on. Meaningless for the axial (inner /
+                 outer) division, which has no across-width ratio. -->
+            <div id="distribution-section" style="display:none">
+              <div class="toggle-panel">
+                <div class="toggle-row">
+                  <span class="toggle-label">Free width</span>
+                  <div class="toggle" id="toggle-free-width"></div>
+                </div>
+              </div>
+
+              <div class="field" id="relationship-field">
+                <div class="field-head">
+                  <span class="field-label">Relationship</span>
+                  <span class="field-value" id="relationship-value">-</span>
+                </div>
+                <div class="opt-row" id="relationship-opts"></div>
+              </div>
+
+              <div class="field" id="segment-widths-field" style="display:none">
+                <div class="field-head"><span class="field-label">Segment Widths (mm)</span></div>
+                <div id="segment-widths-list"></div>
+              </div>
             </div>
           </section>
 
@@ -421,6 +498,16 @@
                 <button class="btn-ghost full" id="side-copy-btn">Copy Left → Right</button>
               </div>
             </div>
+
+            <!-- Stone colour applies to every stone on the band — top and side
+                 alike — so it sits outside both setting blocks. -->
+            <div class="field" id="diamond-color-field" style="display:none">
+              <div class="field-head">
+                <span class="field-label">Diamond Color</span>
+                <span class="field-value" id="diamond-color-value">-</span>
+              </div>
+              <div class="opt-row" id="diamond-color-opts"></div>
+            </div>
           </section>
 
           <!-- GROOVES ───────────────────────────────── -->
@@ -525,6 +612,107 @@
                 <button class="btn-ghost full" id="design-groove-clear-btn">Clear All</button>
               </div>
             </div>
+
+            <!-- Edges — fully independent left and right rims. -->
+            <div class="section-title">Edges</div>
+
+            <div id="edge-sides">
+              <div class="edge-side" data-side="left">
+                <div class="field">
+                  <div class="field-head">
+                    <span class="field-label">Left side</span>
+                    <span class="field-value" id="edge-left-value">-</span>
+                  </div>
+                  <div class="opt-row" id="edge-left-opts"></div>
+                </div>
+                <div id="edge-left-params" style="display:none">
+                  <div class="field">
+                    <div class="field-head">
+                      <span class="field-label">Width</span>
+                      <span class="field-value" id="edge-left-width-value">-</span>
+                    </div>
+                    <input type="range" class="slider" id="edge-left-width-slider" min="0.05" max="1" step="0.01" value="0.3" />
+                  </div>
+                  <div class="field">
+                    <div class="field-head">
+                      <span class="field-label">Depth</span>
+                      <span class="field-value" id="edge-left-depth-value">-</span>
+                    </div>
+                    <input type="range" class="slider" id="edge-left-depth-slider" min="0.02" max="0.5" step="0.01" value="0.1" />
+                  </div>
+                  <div class="field">
+                    <div class="field-head"><span class="field-label">Surface</span></div>
+                    <div class="opt-row" id="edge-left-finish-opts"></div>
+                  </div>
+                </div>
+              </div>
+
+              <hr class="section-divider" />
+
+              <div class="edge-side" data-side="right">
+                <div class="field">
+                  <div class="field-head">
+                    <span class="field-label">Right side</span>
+                    <span class="field-value" id="edge-right-value">-</span>
+                  </div>
+                  <div class="opt-row" id="edge-right-opts"></div>
+                </div>
+                <div id="edge-right-params" style="display:none">
+                  <div class="field">
+                    <div class="field-head">
+                      <span class="field-label">Width</span>
+                      <span class="field-value" id="edge-right-width-value">-</span>
+                    </div>
+                    <input type="range" class="slider" id="edge-right-width-slider" min="0.05" max="1" step="0.01" value="0.3" />
+                  </div>
+                  <div class="field">
+                    <div class="field-head">
+                      <span class="field-label">Depth</span>
+                      <span class="field-value" id="edge-right-depth-value">-</span>
+                    </div>
+                    <input type="range" class="slider" id="edge-right-depth-slider" min="0.02" max="0.5" step="0.01" value="0.1" />
+                  </div>
+                  <div class="field">
+                    <div class="field-head"><span class="field-label">Surface</span></div>
+                    <div class="opt-row" id="edge-right-finish-opts"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Milgrain beads — band-wide, shown whenever any host (edge,
+                 design groove, separation joint) uses a Milgrain type. -->
+            <div id="bead-section" style="display:none">
+              <div class="section-title">Milgrain Beads</div>
+
+              <div class="field">
+                <div class="field-head">
+                  <span class="field-label">Bead Type</span>
+                  <span class="field-value" id="bead-type-value">-</span>
+                </div>
+                <div class="opt-row" id="bead-type-opts"></div>
+              </div>
+
+              <div class="field">
+                <div class="field-head">
+                  <span class="field-label">Bead Size</span>
+                  <span class="field-value" id="bead-size-value">0.35mm</span>
+                </div>
+                <input type="range" class="slider" id="bead-size-slider" min="0.2" max="1.2" step="0.02" value="0.35" />
+              </div>
+
+              <div class="field">
+                <div class="field-head">
+                  <span class="field-label">Bead Spacing</span>
+                  <span class="field-value" id="bead-spacing-value">1.00</span>
+                </div>
+                <input type="range" class="slider" id="bead-spacing-slider" min="0.85" max="1.5" step="0.05" value="1" />
+              </div>
+
+              <div class="field">
+                <button class="btn-ghost full" id="bead-designer-btn">Open Bead Designer</button>
+              </div>
+            </div>
           </section>
 
           <!-- ENGRAVING ───────────────────────────────── -->
@@ -569,6 +757,91 @@
               <div class="field-head"><span class="field-label">Symbols</span></div>
               <div class="symbol-grid" id="symbol-grid"></div>
             </div>
+
+            <!-- Styled engraving: relief and tint of the marks. -->
+            <div class="section-title">Mark Style</div>
+
+            <div class="field">
+              <div class="toggle-panel">
+                <div class="toggle-row">
+                  <span class="toggle-label" title="Relief parallax on bump maps — viewer-wide, also affects bump finishes">Parallax</span>
+                  <div class="toggle" id="toggle-parallax"></div>
+                </div>
+                <div class="toggle-row">
+                  <span class="toggle-label" title="Relief on the marks — off gives a flat printed look">Bump Map</span>
+                  <div class="toggle" id="toggle-engrave-bump"></div>
+                </div>
+                <div class="toggle-row">
+                  <span class="toggle-label" title="Pure relief — no roughness or tint on the marks">Bump Only</span>
+                  <div class="toggle" id="toggle-engrave-bump-only"></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="field">
+              <div class="field-head">
+                <span class="field-label">Bump Scale</span>
+                <span class="field-value" id="engrave-bump-scale-value">0.0020</span>
+              </div>
+              <input type="range" class="slider" id="engrave-bump-scale-slider" min="0" max="0.01" step="0.0002" value="0.002" />
+            </div>
+
+            <div id="engrave-tint-fields">
+              <div class="field">
+                <div class="field-head">
+                  <span class="field-label">Mark Color</span>
+                  <span class="field-value" id="engrave-color-value">#9e9e9e</span>
+                </div>
+                <input type="color" class="color-input" id="engrave-color" value="#9e9e9e"
+                       title="Recolour the monochrome marks — white keeps the original colours" />
+              </div>
+
+              <div class="field">
+                <div class="field-head">
+                  <span class="field-label">Mark Roughness</span>
+                  <span class="field-value" id="engrave-roughness-value">0.50</span>
+                </div>
+                <input type="range" class="slider" id="engrave-roughness-slider" min="0" max="1" step="0.05" value="0.5" />
+              </div>
+            </div>
+
+            <!-- Hidden stone: one flush-set stone in the bore, beside the text. -->
+            <div class="section-title">Hidden Stone</div>
+
+            <div class="field">
+              <div class="toggle-panel">
+                <div class="toggle-row">
+                  <span class="toggle-label">A small flush-set stone inside the ring</span>
+                  <div class="toggle" id="toggle-inner-stone"></div>
+                </div>
+              </div>
+            </div>
+
+            <div id="inner-stone-field" style="display:none">
+              <div class="field">
+                <div class="field-head">
+                  <span class="field-label">Stone Position</span>
+                  <span class="field-value" id="inner-stone-angle-value">310°</span>
+                </div>
+                <input type="range" class="slider" id="inner-stone-angle-slider" min="0" max="360" step="1" value="310" />
+              </div>
+
+              <div class="field">
+                <div class="field-head">
+                  <span class="field-label">Stone Size</span>
+                  <span class="field-value" id="inner-stone-size-value">-</span>
+                </div>
+                <input type="range" class="slider" id="inner-stone-size-slider" min="0.5" max="4" step="0.05" value="2.3" />
+              </div>
+
+              <div class="field">
+                <div class="field-head">
+                  <span class="field-label">Stone Color</span>
+                  <span class="field-value" id="inner-stone-color-value">-</span>
+                </div>
+                <div class="opt-row" id="inner-stone-color-opts"></div>
+              </div>
+            </div>
           </section>
 
           <!-- RINGS ───────────────────────────────── -->
@@ -589,19 +862,6 @@
             </div>
           </section>
 
-          <!-- THEME ───────────────────────────────── -->
-          <section class="tab-pane" data-pane="theme">
-            <div class="field">
-              <div class="field-head">
-                <span class="field-label">Theme</span>
-                <span class="field-value" id="theme-value">Default</span>
-              </div>
-              <div class="opt-row" id="theme-opts"></div>
-            </div>
-            <div class="field">
-              <button class="btn-ghost full" id="theme-cycle-btn">Cycle Theme</button>
-            </div>
-          </section>
         </div>
 
         <div class="price-bar">
@@ -612,18 +872,109 @@
             <span class="total-amount" id="price-total">-</span>
           </div>
 
-          <div class="price-actions">
-            <button class="btn-ghost" id="spec-btn">
+          <div class="price-io">
+            <button class="btn-ghost" id="spec-btn" title="Open the printable spec sheet">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="14" height="14">
                 <path d="M14 3H6C4.9 3 4 3.9 4 5V19C4 20.1 4.9 21 6 21H18C19.1 21 20 20.1 20 19V9L14 3Z"/>
                 <path d="M14 3V9H20"/>
               </svg>
               Spec Sheet
             </button>
-            <button class="btn-primary" id="cta-btn">Add to Cart</button>
+            <button class="btn-ghost" id="download-btn" title="Download the full configuration as JSON">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="14" height="14">
+                <path d="M12 4v12m0 0l-4-4m4 4l4-4"/>
+                <path d="M4 17v2a2 2 0 002 2h12a2 2 0 002-2v-2"/>
+              </svg>
+              Download
+            </button>
+            <button class="btn-ghost" id="loadsave-btn" title="Save this design under a shareable id, or load a saved one">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="14" height="14">
+                <path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/>
+                <path d="M17 21v-8H7v8M7 3v5h8"/>
+              </svg>
+              Load / Save
+            </button>
+            <button class="btn-ghost" id="manufacturing-btn" title="Download the manufacturing data (metrix-compatible) as JSON">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="14" height="14">
+                <circle cx="12" cy="12" r="3"/>
+                <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 11-4 0v-.09a1.65 1.65 0 00-1-1.51 1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 110-4h.09a1.65 1.65 0 001.51-1 1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 112.83-2.83l.06.06a1.65 1.65 0 001.82.33h.09a1.65 1.65 0 001-1.51V3a2 2 0 114 0v.09a1.65 1.65 0 001 1.51h.09a1.65 1.65 0 001.82-.33l.06-.06a2 2 0 112.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82v.09a1.65 1.65 0 001.51 1H21a2 2 0 110 4h-.09a1.65 1.65 0 00-1.51 1z"/>
+              </svg>
+              Manufacturing
+            </button>
+          </div>
+
+          <div class="price-actions">
+            <button class="btn-primary full" id="cta-btn">Add to Cart</button>
           </div>
         </div>
       </aside>
+    </div>
+
+    <!-- ══ Load / Save modal ══ -->
+    <div class="modal-overlay" id="loadsave-modal" hidden>
+      <div class="modal" role="dialog" aria-modal="true" aria-label="Load or save a design">
+        <div class="modal-header">
+          <span class="modal-title">Load / Save</span>
+          <button class="modal-close" id="loadsave-close" type="button" aria-label="Close">×</button>
+        </div>
+        <div class="modal-body">
+          <div class="modal-note" id="loadsave-note" hidden></div>
+
+          <div class="section-title">Save current design</div>
+          <div class="io-row">
+            <input type="text" class="text-input" id="config-save-name" maxlength="60" placeholder="Name of the configuration" />
+            <button class="btn-ghost" id="config-save-btn" type="button">Save</button>
+          </div>
+
+          <div class="section-title">Load by id</div>
+          <div class="io-row">
+            <input type="text" class="text-input" id="config-load-id" placeholder="Enter design id (e.g. WB-BA5A-DZ58)" />
+            <button class="btn-ghost" id="config-load-btn" type="button">Load</button>
+          </div>
+
+          <div id="config-saved-section" hidden>
+            <div class="section-title">Saved designs</div>
+            <div class="config-grid" id="config-list"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ Bead Designer modal ══ -->
+    <div class="modal-overlay" id="bead-modal" hidden>
+      <div class="modal modal-wide" role="dialog" aria-modal="true" aria-label="Bead designer">
+        <div class="modal-header">
+          <span class="modal-title">Bead Designer</span>
+          <button class="modal-close" id="bead-close" type="button" aria-label="Close">×</button>
+        </div>
+        <div class="modal-body bead-grid">
+          <div>
+            <canvas id="bead-preview" class="bead-preview" width="580" height="580"></canvas>
+
+            <div class="field">
+              <div class="field-head"><span class="field-label">Base Shape</span></div>
+              <select class="select-input" id="bead-kind">
+                <option value="cuboid">Cuboid (apex cap)</option>
+                <option value="rounded-cuboid">Rounded Cube</option>
+                <option value="sphere">Sphere</option>
+              </select>
+            </div>
+
+            <div class="section-title">Save as bead type</div>
+            <div class="io-row">
+              <input type="text" class="text-input" id="bead-name" maxlength="24" value="My bead" />
+              <button class="btn-ghost" id="bead-save-btn" type="button">Save</button>
+            </div>
+
+            <div id="bead-saved-section" hidden>
+              <div class="section-title">Saved beads</div>
+              <div id="bead-saved-list"></div>
+            </div>
+          </div>
+
+          <div id="bead-params"></div>
+        </div>
+      </div>
     </div>
 
     <div id="toast"></div>

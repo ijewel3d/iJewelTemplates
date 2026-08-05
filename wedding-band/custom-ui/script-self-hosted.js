@@ -16,7 +16,11 @@
 // The project you host. Everything the configurator offers comes from this
 // file: the catalog, the opening state, and the scene it renders in.
 // Edit it in place, or point this at your own copy.
-const PROJECT_URL = './wedding_band_project.json';
+//
+// The path is relative to this page so the demo works unchanged on GitHub
+// Pages, where the site is served from a repository sub-path. The JSON lives
+// one level up, next to the plain wedding-band templates.
+const PROJECT_URL = '../wedding_band_project.json';
 
 const VIEWER_OPTIONS = {
   showCard:         false,
@@ -77,9 +81,14 @@ const state = {
   toggleSplit:      null,
   toggleWavy:       null,
   toggleWavySplit:  null,
+  toggleAutoHeight: null,
+  toggleFreeWidth:  null,
+  toggleInnerStone: null,
   bandNames:        [],      // all bands registered with the controller
   prices:           {},      // { [bandName]: PriceBreakdown | null }
   sizeSystem:       'EU',    // US | EU | UK
+  beadParams:       null,    // working bead shape while the designer is open
+  beadPreview:      null,    // webgi preview renderer — must be disposed
 };
 
 
@@ -99,11 +108,12 @@ async function init() {
 
   // Profile tab
   buildProfileOptions();
-  buildEdgeOptions();
+  buildPathSection();
 
   // Dimensions tab
   buildDimensionSliders();
   buildRingSizeSlider();
+  buildAutoHeightToggle();
 
   // Material tab
   buildPartitionOptions();
@@ -112,6 +122,7 @@ async function init() {
   buildFinishOptions();
   buildMaterialToggles();
   buildDivisionSection();
+  buildDistributionSection();
 
   // Diamond tab
   buildSettingOptions();
@@ -123,30 +134,37 @@ async function init() {
   buildFreeStoneEditor();
   buildSmoothSeatsToggle();
   buildSideStoneSection();
+  buildDiamondColorRows();
 
-  // Grooves tab
+  // Joints tab
   buildGrooveToggles();
   buildWavySliders();
   buildSeparationGrooveEditor();
   buildDesignGrooveEditor();
+  buildEdgeSides();
+  buildBeadSection();
+  buildBeadDesigner();
 
   // Engraving tab
   buildEngravingInputs();
   buildSymbolGrid();
+  buildEngravingStyleControls();
+  buildInnerStoneSection();
 
   // Rings tab
   buildRingsSection();
-
-  // Theme tab
-  buildThemeSection();
 
   // Shell
   buildTabs();
   buildBandSwitch();
   // buildPosesBar();
+  buildThemePicker();
+  buildHistoryControls();
   buildExportImportButtons();
   buildCtaButton();
   buildSpecSheetButton();
+  buildConfigIoButtons();
+  buildLoadSaveModal();
 
   // Price-bar state (per-band)
   state.bandNames = typeof state.api.getBandNames === 'function'
@@ -355,52 +373,118 @@ function buildPartitionOptions() {
 
 
 /* ══════════════════════════════════════════════════════════════════
- *  EDGE TYPE + SIDE
+ *  PROFILE — band shape (extrusion path)
+ *
+ *  A project that ships only the plain circular path has nothing to
+ *  choose, so the whole section stays hidden. The mathematical `wave`
+ *  path exposes its own frequency/depth; every non-circular path
+ *  exposes the shape-strength blend.
  * ══════════════════════════════════════════════════════════════════ */
 
-function buildEdgeOptions() {
-  const host      = $('edge-opts');
-  const edgeTypes = state.api.getAvailableEdgeTypes();
+function getAvailablePaths() {
+  return typeof state.api.getAvailablePaths === 'function'
+    ? state.api.getAvailablePaths()
+    : [];
+}
 
-  edgeTypes.forEach((edgeType) => {
-    const btn = createOptionButton({
-      label: edgeType.name,
-      extraClass: 'text-opt',
-      onClick: () => {
-        state.api.setEdge(edgeType.id);
-        $('edge-value').textContent = edgeType.name;
-        $('edge-value').dataset.value = edgeType.id;
-        setActive(host, btn);
+function buildPathSection() {
+  const paths = getAvailablePaths();
 
-        // Show/hide edge side field
-        const showSide = edgeType.id !== 'None';
-        $('edge-side-field').style.display = showSide ? 'block' : 'none';
-      },
+  if (paths.length > 1) {
+    const host = $('path-opts');
+
+    paths.forEach((path) => {
+      const btn = createOptionButton({
+        label:      path.name,
+        iconUrl:    path.iconUrl,
+        extraClass: path.iconUrl ? '' : 'text-opt',
+        onClick: async () => {
+          try {
+            await state.api.setPath(path.id);
+            syncPathSection();
+          } catch (err) {
+            showToast('Shape failed: ' + err.message, 'err');
+          }
+        },
+      });
+      btn.dataset.optionId = path.id;
+      host.appendChild(btn);
     });
-    btn.dataset.optionId = edgeType.id;
-    host.appendChild(btn);
+
+    $('path-field').style.display = 'block';
+  }
+
+  const limits = state.api.getLimits();
+
+  const freqSlider = $('wave-freq-slider');
+  freqSlider.min  = limits.waveFrequency.min;
+  freqSlider.max  = limits.waveFrequency.max;
+  freqSlider.step = limits.waveFrequency.step || 1;
+  const applyWaveFrequency = debounce((value) => state.api.setWaveParams({ frequency: value }), 60);
+  freqSlider.addEventListener('input', (event) => {
+    const value = parseInt(event.target.value, 10);
+    $('wave-freq-value').textContent = value;
+    applyWaveFrequency(value);
   });
 
-  // Build edge side options dynamically
-  const sideHost = $('edge-side-opts');
-  const sides = state.api.getAvailableEdgeSides();
-
-  sides.forEach((side) => {
-    const btn = createOptionButton({
-      label: side.name,
-      extraClass: 'text-opt',
-      onClick: () => {
-        setActive(sideHost, btn);
-        const edgeType = $('edge-value').dataset.value;
-        if (edgeType && edgeType !== 'None' && edgeType !== '—') {
-          state.api.setEdge(edgeType, side.id);
-        }
-      },
-    });
-    btn.dataset.optionId = side.id;
-    if (side.id === 'Both') btn.classList.add('active');
-    sideHost.appendChild(btn);
+  // The slider works in 0–1 of the profile's slope-clamped maximum, so the
+  // scale never shifts as the band's width or thickness changes.
+  const ampSlider = $('wave-amp-slider');
+  ampSlider.min  = limits.waveAmplitude.min;
+  ampSlider.max  = limits.waveAmplitude.max;
+  ampSlider.step = limits.waveAmplitude.step || 0.05;
+  const applyWaveAmplitude = debounce((fraction) => {
+    const wave = state.api.getWaveParams();
+    state.api.setWaveParams({ amplitude: fraction * (wave.amplitudeMax || 0.22) });
+  }, 60);
+  ampSlider.addEventListener('input', (event) => {
+    const value = parseFloat(event.target.value);
+    $('wave-amp-value').textContent = Math.round(value * 100) + '%';
+    applyWaveAmplitude(value);
   });
+
+  const strengthSlider = $('path-strength-slider');
+  strengthSlider.min  = limits.pathStrength.min;
+  strengthSlider.max  = limits.pathStrength.max;
+  strengthSlider.step = limits.pathStrength.step || 0.05;
+  const applyPathStrength = debounce((value) => state.api.setPathStrength(value), 60);
+  strengthSlider.addEventListener('input', (event) => {
+    const value = parseFloat(event.target.value);
+    $('path-strength-value').textContent = Math.round(value * 100) + '%';
+    applyPathStrength(value);
+  });
+
+  syncPathSection();
+}
+
+function syncPathSection() {
+  const raw    = state.api.getRawState() || {};
+  const pathId = raw.pathId || 'circular';
+  const paths  = getAvailablePaths();
+  const entry  = paths.find((path) => path.id === pathId);
+
+  $('path-value').textContent = entry ? entry.name : 'Classic';
+  $$('#path-opts .opt').forEach((btn) => {
+    btn.classList.toggle('active', btn.dataset.optionId === pathId);
+  });
+
+  const wave = (pathId === 'wave' && typeof state.api.getWaveParams === 'function')
+    ? state.api.getWaveParams()
+    : null;
+
+  $('wave-params-field').style.display = wave ? 'block' : 'none';
+  if (wave) {
+    const fraction = wave.amplitudeMax > 0 ? wave.amplitude / wave.amplitudeMax : 0.6;
+    $('wave-freq-slider').value      = wave.frequency;
+    $('wave-freq-value').textContent = wave.frequency;
+    $('wave-amp-slider').value       = fraction;
+    $('wave-amp-value').textContent  = Math.round(fraction * 100) + '%';
+  }
+
+  const strength = raw.pathStrength != null ? raw.pathStrength : 0.5;
+  $('path-strength-field').style.display  = pathId !== 'circular' ? 'block' : 'none';
+  $('path-strength-slider').value         = strength;
+  $('path-strength-value').textContent    = Math.round(strength * 100) + '%';
 }
 
 
@@ -973,6 +1057,32 @@ function buildDimensionSliders() {
 
 
 /* ══════════════════════════════════════════════════════════════════
+ *  DIMENSIONS — auto optimal thickness
+ *  While on, the controller derives the thickness from the width, so
+ *  the tape becomes read-only rather than disappearing.
+ * ══════════════════════════════════════════════════════════════════ */
+
+function buildAutoHeightToggle() {
+  const initial = typeof state.api.getAutoOptimalHeight === 'function'
+    ? state.api.getAutoOptimalHeight()
+    : false;
+
+  state.toggleAutoHeight = makeToggle($('toggle-auto-height'), initial, (on) => {
+    state.api.setAutoOptimalHeight(on);
+    applyAutoHeightUI(on);
+  });
+
+  applyAutoHeightUI(initial);
+}
+
+function applyAutoHeightUI(on) {
+  const wrap = $('height-tape');
+  wrap.style.opacity      = on ? '.4' : '1';
+  wrap.style.pointerEvents = on ? 'none' : 'auto';
+}
+
+
+/* ══════════════════════════════════════════════════════════════════
  *  RING SIZE — tape-ruler slider (mirrors mini-viewer's WBB)
  *  Snaps to standard jeweler sizes (US/EU/UK) and drives the
  *  controller with a radius value in mm.
@@ -1283,8 +1393,18 @@ function renderSpecSheetHtml(bandNames) {
       `<li><strong>${slot.metal}</strong> — ${slot.finish}</li>`
     ).join('');
 
-    const edgeHtml = (snapshot.edge && snapshot.edge.type && snapshot.edge.type !== 'None')
-      ? `<section><h3>Edge</h3><p>${snapshot.edge.type} · ${snapshot.edge.side}</p></section>`
+    // Edges are per-side since Phase 2, so read them from getEdges rather than
+    // the legacy single-edge snapshot field.
+    const edges = typeof state.api.getEdges === 'function' ? state.api.getEdges(bandName) : null;
+    const edgeLines = edges
+      ? ['left', 'right']
+        .filter((side) => edges[side].type !== 'None')
+        .map((side) => `<li><strong>${capitalize(side)}</strong> — ${edges[side].type}`
+          + ` · ${edges[side].width.toFixed(2)} × ${edges[side].depth.toFixed(2)} mm`
+          + ` · ${edges[side].finish}</li>`)
+      : [];
+    const edgeHtml = edgeLines.length
+      ? `<section><h3>Edges</h3><ul>${edgeLines.join('')}</ul></section>`
       : '';
 
     let diamondsHtml = '';
@@ -1444,7 +1564,7 @@ function buildDivisionSection() {
   const applyParams = debounce(() => {
     const frequency = parseInt($('division-freq-slider').value, 10);
     const amplitude = parseFloat($('division-amp-slider').value);
-    state.api.setDivisionParams({ frequency, amplitude });
+    state.api.setDivisionParams(frequency, amplitude);
   }, 60);
 
   $('division-freq-slider').addEventListener('input', (event) => {
@@ -1467,7 +1587,9 @@ function renderDivisionOptions() {
   if (types.length < 2) {
     $('division-field').style.display = 'none';
     $('division-params-field').style.display = 'none';
-    $('segment-widths-field').style.display = 'none';
+    // The distribution still applies — it depends on the colour count, not on
+    // how many division orientations the project offers.
+    syncDistributionSection();
     return;
   }
 
@@ -1518,7 +1640,85 @@ function syncDivisionSection() {
   $('division-amp-slider').value       = current.amplitude;
   $('division-amp-value').textContent  = current.amplitude.toFixed(2);
 
-  renderSegmentWidths();
+  syncDistributionSection();
+}
+
+
+/* ══════════════════════════════════════════════════════════════════
+ *  MATERIAL — distribution (preset ratios or free per-zone widths)
+ *
+ *  Preset ratio pills are the default; "Free width" swaps them for the
+ *  millimetre sliders. Neither applies to the axial division, which
+ *  splits inner/outer and so has no across-width ratio.
+ * ══════════════════════════════════════════════════════════════════ */
+
+function buildDistributionSection() {
+  state.toggleFreeWidth = makeToggle($('toggle-free-width'), false, () => syncDistributionSection());
+  syncDistributionSection();
+}
+
+function currentPartitionCount() {
+  const materials = state.api.getMaterials();
+  return (materials && materials.partition) || 1;
+}
+
+function syncDistributionSection() {
+  const numColors = currentPartitionCount();
+  const division  = state.api.getDivision().division;
+  const show      = numColors > 1 && division !== 'axial';
+
+  $('distribution-section').style.display = show ? 'block' : 'none';
+  if (!show) return;
+
+  const freeWidth = !!(state.toggleFreeWidth && state.toggleFreeWidth.classList.contains('on'));
+
+  $('relationship-field').style.display   = freeWidth ? 'none' : 'block';
+  $('segment-widths-field').style.display = freeWidth ? 'block' : 'none';
+
+  if (freeWidth) renderSegmentWidths();
+  else renderRelationshipOptions(numColors);
+}
+
+// 2 significant digits, without trailing zeros — "1", "1.5", "1.33".
+function formatRatio(value) {
+  return Number.isInteger(value)
+    ? String(value)
+    : String(parseFloat(value.toFixed(2)));
+}
+
+function renderRelationshipOptions(numColors) {
+  const host = $('relationship-opts');
+
+  const presets = typeof state.api.getRelationshipPresets === 'function'
+    ? state.api.getRelationshipPresets(numColors)
+    : [];
+  const current = typeof state.api.getRelationship === 'function'
+    ? state.api.getRelationship()
+    : [];
+
+  // A dragged (fractional) ratio matches no preset, so no pill highlights.
+  const currentKey = current.join(':');
+
+  $('relationship-value').textContent = current.length
+    ? current.map(formatRatio).join(' : ')
+    : '—';
+
+  host.innerHTML = '';
+
+  presets.forEach((preset) => {
+    const key = preset.ratios.join(':');
+    const btn = createOptionButton({
+      label:      preset.name,
+      extraClass: 'text-opt' + (key === currentKey ? ' active' : ''),
+      onClick: async () => {
+        setActive(host, btn);
+        await state.api.setRelationship(preset.ratios);
+        syncDistributionSection();
+      },
+    });
+    btn.dataset.optionId = key;
+    host.appendChild(btn);
+  });
 }
 
 function renderSegmentWidths() {
@@ -1532,7 +1732,6 @@ function renderSegmentWidths() {
     return;
   }
 
-  $('segment-widths-field').style.display = 'block';
   host.innerHTML = '';
   const total = widths.reduce((sum, mm) => sum + mm, 0);
 
@@ -1741,6 +1940,7 @@ function buildSideStoneSection() {
         state.api.setSideSetting(option.id);
         $('side-stones-extra').style.display = option.id === 'none' ? 'none' : 'block';
         if (option.id !== 'none') syncSideStonePanels();
+        syncDiamondColorField();
       },
     });
     btn.dataset.optionId = option.id;
@@ -1826,9 +2026,13 @@ function syncSideStoneSection() {
   });
 
   $('side-stones-extra').style.display = setting === 'none' ? 'none' : 'block';
-  if (setting === 'none') return;
+  if (setting === 'none') {
+    syncDiamondColorField();
+    return;
+  }
 
   syncSideStonePanels();
+  syncDiamondColorField();
 }
 
 function syncSideStonePanels() {
@@ -1858,6 +2062,83 @@ function syncSideBezelPanelValues(side, cfg) {
 
 
 /* ══════════════════════════════════════════════════════════════════
+ *  DIAMONDS — stone colour
+ *  One colour per band, applied to top and side stones alike. The same
+ *  swatch row also drives the hidden bore stone on the Engraving tab.
+ * ══════════════════════════════════════════════════════════════════ */
+
+function getDiamondColors() {
+  return typeof state.api.getDiamondColors === 'function'
+    ? state.api.getDiamondColors()
+    : [];
+}
+
+/* A brilliant-cut stone seen from the table, filled with the colour, so the
+ * chip reads as a gem rather than a paint dot. Mirrors the mini-viewer swatch. */
+function diamondSwatchIconUri(fill) {
+  const stroke = '#909090';
+  const facets = [0, 45, 90, 135, 180, 225, 270, 315].map((angle) => {
+    const rad = (angle * Math.PI) / 180;
+    return `<line x1="${(Math.cos(rad) * 5.6).toFixed(1)}" y1="${(Math.sin(rad) * 5.6).toFixed(1)}"`
+      + ` x2="${(Math.cos(rad) * 10.5).toFixed(1)}" y2="${(Math.sin(rad) * 10.5).toFixed(1)}"`
+      + ` stroke="${stroke}" stroke-width="0.7"/>`;
+  }).join('');
+
+  const svg = '<svg xmlns="http://www.w3.org/2000/svg" width="63" height="26" viewBox="0 0 63 26" fill="none">'
+    + '<g transform="translate(31.5,13) scale(1.05)">'
+    + `<circle cx="0" cy="0" r="10.5" fill="${fill}" stroke="${stroke}" stroke-width="1.3"/>`
+    + `<circle cx="0" cy="0" r="5.6" fill="none" stroke="${stroke}" stroke-width="0.9"/>`
+    + facets
+    + '</g></svg>';
+
+  return 'data:image/svg+xml,' + encodeURIComponent(svg);
+}
+
+function buildDiamondColorRows() {
+  buildDiamondColorRow('diamond-color-opts', 'diamond-color-value',
+    (colorId) => state.api.setDiamondColor(colorId));
+
+  buildDiamondColorRow('inner-stone-color-opts', 'inner-stone-color-value',
+    (colorId) => state.api.setInnerStone({ color: colorId }));
+}
+
+function buildDiamondColorRow(hostId, valueId, onSelect) {
+  const host   = $(hostId);
+  const colors = getDiamondColors();
+
+  host.innerHTML = '';
+
+  colors.forEach((color) => {
+    const btn = createOptionButton({
+      label:   color.name,
+      iconUrl: color.iconUrl || diamondSwatchIconUri(color.swatch || '#ffffff'),
+      onClick: () => {
+        setActive(host, btn);
+        $(valueId).textContent = color.name;
+        onSelect(color.id);
+      },
+    });
+    btn.dataset.optionId = color.id;
+    host.appendChild(btn);
+  });
+}
+
+function syncDiamondColorRow(hostId, valueId, selectedId) {
+  const colors = getDiamondColors();
+  if (!colors.length) return;
+
+  // An empty id means "the model's own material", which the first entry is.
+  const selected = selectedId || colors[0].id;
+  const entry    = colors.find((color) => color.id === selected);
+
+  $(valueId).textContent = entry ? entry.name : '—';
+  $$(`#${hostId} .opt`).forEach((btn) => {
+    btn.classList.toggle('active', btn.dataset.optionId === selected);
+  });
+}
+
+
+/* ══════════════════════════════════════════════════════════════════
  *  GROOVES — separation joint (material-boundary groove)
  * ══════════════════════════════════════════════════════════════════ */
 
@@ -1883,6 +2164,7 @@ function buildSeparationGrooveEditor() {
       onClick: () => {
         setActive(typeHost, btn);
         state.api.setSeparationGroove({ type: type.id });
+        syncBeadSection();
       },
     });
     btn.dataset.optionId = type.id;
@@ -2043,6 +2325,7 @@ function renderDesignGrooves() {
 
     card.querySelector('[data-field="type"]').addEventListener('change', (event) => {
       state.api.updateDesignGroove(index, { type: event.target.value });
+      syncBeadSection();
     });
 
     card.querySelector('[data-field="orientation"]').addEventListener('change', (event) => {
@@ -2066,6 +2349,724 @@ function renderDesignGrooves() {
         label.textContent = `${SLIDER_LABEL[field]} ${shown}${suffix}`;
         apply(value);
       });
+    });
+
+    host.appendChild(card);
+  });
+
+  // A groove switching to (or away from) a Milgrain type changes whether the
+  // band-wide bead settings apply.
+  syncBeadSection();
+}
+
+
+/* ══════════════════════════════════════════════════════════════════
+ *  JOINTS — edges (fully independent left / right rims)
+ * ══════════════════════════════════════════════════════════════════ */
+
+const EDGE_SIDES = ['left', 'right'];
+
+function buildEdgeSides() {
+  EDGE_SIDES.forEach(buildEdgeSide);
+  syncEdgeSides();
+}
+
+function buildEdgeSide(side) {
+  const limits     = state.api.getLimits();
+  const typeHost   = $(`edge-${side}-opts`);
+  const finishHost = $(`edge-${side}-finish-opts`);
+
+  const types = typeof state.api.getAvailableSideEdgeTypes === 'function'
+    ? state.api.getAvailableSideEdgeTypes()
+    : state.api.getAvailableEdgeTypes();
+
+  types.forEach((type) => {
+    const btn = createOptionButton({
+      label:      type.name,
+      iconUrl:    type.iconUrl,
+      extraClass: type.iconUrl ? '' : 'text-opt',
+      onClick: () => {
+        setActive(typeHost, btn);
+        state.api.setEdgeSide(side, { type: type.id });
+        syncEdgeSides();
+      },
+    });
+    btn.dataset.optionId = type.id;
+    typeHost.appendChild(btn);
+  });
+
+  state.api.getAvailableGrooveFinishes().forEach((finish) => {
+    const btn = createOptionButton({
+      label:      finish.name,
+      extraClass: 'text-opt',
+      onClick: () => {
+        setActive(finishHost, btn);
+        state.api.setEdgeSide(side, { finish: finish.id });
+      },
+    });
+    btn.dataset.optionId = finish.id;
+    finishHost.appendChild(btn);
+  });
+
+  const widthSlider = $(`edge-${side}-width-slider`);
+  widthSlider.min  = limits.grooveWidth.min;
+  widthSlider.max  = limits.grooveWidth.max;
+  widthSlider.step = limits.grooveWidth.step || 0.01;
+  const applyWidth = debounce((value) => {
+    state.api.setEdgeSide(side, { width: value });
+    syncBeadSection();
+  }, 60);
+  widthSlider.addEventListener('input', (event) => {
+    const value = parseFloat(event.target.value);
+    $(`edge-${side}-width-value`).textContent = value.toFixed(2) + ' mm';
+    applyWidth(value);
+  });
+
+  const depthSlider = $(`edge-${side}-depth-slider`);
+  depthSlider.min  = limits.grooveDepth.min;
+  depthSlider.max  = limits.grooveDepth.max;
+  depthSlider.step = limits.grooveDepth.step || 0.01;
+  const applyDepth = debounce((value) => state.api.setEdgeSide(side, { depth: value }), 60);
+  depthSlider.addEventListener('input', (event) => {
+    const value = parseFloat(event.target.value);
+    $(`edge-${side}-depth-value`).textContent = value.toFixed(2) + ' mm';
+    applyDepth(value);
+  });
+}
+
+function syncEdgeSides() {
+  const edges = typeof state.api.getEdges === 'function' ? state.api.getEdges() : null;
+  if (!edges) return;
+
+  EDGE_SIDES.forEach((side) => {
+    const cfg = edges[side];
+
+    $(`edge-${side}-value`).textContent = cfg.type;
+    $$(`#edge-${side}-opts .opt`).forEach((btn) => {
+      btn.classList.toggle('active', btn.dataset.optionId === cfg.type);
+    });
+
+    $(`edge-${side}-params`).style.display = cfg.type !== 'None' ? 'block' : 'none';
+
+    $(`edge-${side}-width-slider`).value      = cfg.width;
+    $(`edge-${side}-width-value`).textContent = cfg.width.toFixed(2) + ' mm';
+    $(`edge-${side}-depth-slider`).value      = cfg.depth;
+    $(`edge-${side}-depth-value`).textContent = cfg.depth.toFixed(2) + ' mm';
+
+    $$(`#edge-${side}-finish-opts .opt`).forEach((btn) => {
+      btn.classList.toggle('active', btn.dataset.optionId === cfg.finish);
+    });
+  });
+
+  syncBeadSection();
+}
+
+
+/* ══════════════════════════════════════════════════════════════════
+ *  JOINTS — milgrain beads
+ *  Band-wide bead style. Placement comes from the host itself (a
+ *  Milgrain edge, design groove, or separation joint), so the section
+ *  only appears once at least one host uses a Milgrain type.
+ * ══════════════════════════════════════════════════════════════════ */
+
+const MILGRAIN_GROOVE_TYPES = ['milgrain', 'milgrain2'];
+const MILGRAIN_EDGE_TYPES   = ['Milgrain', 'Double Milgrain'];
+
+function hasMilgrainHost() {
+  const edges = typeof state.api.getEdges === 'function' ? state.api.getEdges() : null;
+  if (edges && (MILGRAIN_EDGE_TYPES.indexOf(edges.left.type) >= 0
+             || MILGRAIN_EDGE_TYPES.indexOf(edges.right.type) >= 0)) {
+    return true;
+  }
+
+  if (MILGRAIN_GROOVE_TYPES.indexOf(state.api.getSeparationGroove().type) >= 0) return true;
+
+  return state.api.getDesignGrooves()
+    .some((groove) => MILGRAIN_GROOVE_TYPES.indexOf(groove.type) >= 0);
+}
+
+function getBeadTypes() {
+  return typeof state.api.getBeadTypes === 'function' ? state.api.getBeadTypes() : [];
+}
+
+function buildBeadSection() {
+  renderBeadTypes();
+
+  const applySize = debounce((value) => state.api.setMilgrain({ sizeMm: value }), 60);
+  $('bead-size-slider').addEventListener('input', (event) => {
+    const value = parseFloat(event.target.value);
+    $('bead-size-value').textContent = value.toFixed(2) + 'mm';
+    applySize(value);
+  });
+
+  const applySpacing = debounce((value) => state.api.setMilgrain({ spacingFactor: value }), 60);
+  $('bead-spacing-slider').addEventListener('input', (event) => {
+    const value = parseFloat(event.target.value);
+    $('bead-spacing-value').textContent = value.toFixed(2);
+    applySpacing(value);
+  });
+
+  $('bead-designer-btn').addEventListener('click', openBeadDesigner);
+
+  syncBeadSection();
+}
+
+function renderBeadTypes() {
+  const host = $('bead-type-opts');
+  host.innerHTML = '';
+
+  getBeadTypes().forEach((bead) => {
+    const btn = createOptionButton({
+      label:      bead.name,
+      extraClass: 'text-opt',
+      onClick: () => {
+        setActive(host, btn);
+        $('bead-type-value').textContent = bead.name;
+        state.api.setMilgrain({ beadType: bead.id });
+      },
+    });
+    btn.dataset.optionId = bead.id;
+    host.appendChild(btn);
+  });
+}
+
+function syncBeadSection() {
+  const show = typeof state.api.setMilgrain === 'function' && hasMilgrainHost();
+  $('bead-section').style.display = show ? 'block' : 'none';
+  if (!show) return;
+
+  const raw      = state.api.getRawState() || {};
+  const beadType = raw.milgrainBeadType || 'classic';
+  const entry    = getBeadTypes().find((bead) => bead.id === beadType);
+
+  $('bead-type-value').textContent = entry ? entry.name : capitalize(beadType);
+  $$('#bead-type-opts .opt').forEach((btn) => {
+    btn.classList.toggle('active', btn.dataset.optionId === beadType);
+  });
+
+  const size = raw.milgrainSizeMm != null ? raw.milgrainSizeMm : 0.35;
+  $('bead-size-slider').value      = size;
+  $('bead-size-value').textContent = size.toFixed(2) + 'mm';
+
+  const spacing = raw.milgrainSpacing != null ? raw.milgrainSpacing : 1;
+  $('bead-spacing-slider').value      = spacing;
+  $('bead-spacing-value').textContent = spacing.toFixed(2);
+}
+
+
+/* ══════════════════════════════════════════════════════════════════
+ *  JOINTS — bead designer modal
+ *  A live webgi bead preview plus the shape parameters. Every change
+ *  also lands on the band through setMilgrain, so the modal is a
+ *  zoomed-in view of the real thing rather than a detached editor.
+ * ══════════════════════════════════════════════════════════════════ */
+
+const BEAD_DEFAULTS = {
+  kind:       'cuboid',
+  apexLift:   0.35,
+  inset:      0,
+  edgeSmooth: 0.65,
+  width:      1,
+  depth:      1,
+  height:     0.55,
+  tiltDeg:    0,
+};
+
+const formatBeadRatio = (value) => value.toFixed(2);
+const formatBeadTimes = (value) => value.toFixed(2) + '×';
+
+// Shape-specific parameters, keyed by base shape. A sphere has none.
+const BEAD_SHAPE_PARAMS = {
+  'cuboid': [
+    { key: 'apexLift',   label: 'Apex Lift',      min: 0,   max: 1,   step: 0.05, format: formatBeadRatio },
+    { key: 'inset',      label: 'Top Inset',      min: 0,   max: 0.8, step: 0.05, format: formatBeadRatio },
+    { key: 'edgeSmooth', label: 'Edge Smoothing', min: 0,   max: 1,   step: 0.05, format: formatBeadRatio },
+  ],
+  'rounded-cuboid': [
+    { key: 'edgeSmooth', label: 'Corner Radius',  min: 0.1, max: 1,   step: 0.05,
+      format: (value) => (value * 0.5).toFixed(2) + '×side' },
+  ],
+  'sphere': [],
+};
+
+// Proportions of the bead size — they apply to every base shape.
+const BEAD_COMMON_PARAMS = [
+  { key: 'width',   label: 'Width (along)',  min: 0.4, max: 1.6, step: 0.05, format: formatBeadTimes },
+  { key: 'depth',   label: 'Depth (across)', min: 0.4, max: 1.6, step: 0.05, format: formatBeadTimes },
+  { key: 'height',  label: 'Height',         min: 0.2, max: 1,   step: 0.05, format: formatBeadTimes },
+  { key: 'tiltDeg', label: 'Tilt',           min: -60, max: 60,  step: 5,
+    format: (value) => Math.round(value) + '°' },
+];
+
+function buildBeadDesigner() {
+  $('bead-close').addEventListener('click', closeBeadDesigner);
+  $('bead-modal').addEventListener('click', (event) => {
+    if (event.target === $('bead-modal')) closeBeadDesigner();
+  });
+
+  $('bead-kind').addEventListener('change', (event) => {
+    applyBeadParams({ kind: event.target.value });
+    renderBeadParams();
+  });
+
+  $('bead-save-btn').addEventListener('click', () => {
+    const name = $('bead-name').value.trim() || 'My bead';
+    const id   = state.api.saveBeadType(name, state.beadParams);
+    state.api.setMilgrain({ beadType: id });
+    renderBeadTypes();
+    syncBeadSection();
+    renderSavedBeads();
+    showToast(`Saved bead "${name}"`);
+  });
+}
+
+function openBeadDesigner() {
+  if (typeof state.api.createBeadPreview !== 'function') {
+    showToast('This viewer build has no bead preview', 'err');
+    return;
+  }
+
+  const raw = state.api.getRawState() || {};
+  state.beadParams = Object.assign({}, BEAD_DEFAULTS, raw.milgrainBead || {});
+
+  $('bead-kind').value = state.beadParams.kind;
+  $('bead-modal').hidden = false;
+
+  state.beadPreview = state.api.createBeadPreview($('bead-preview'));
+  state.beadPreview.update(state.beadParams);
+
+  renderBeadParams();
+  renderSavedBeads();
+}
+
+function closeBeadDesigner() {
+  $('bead-modal').hidden = true;
+
+  // The preview owns a webgi context — it must be released on close.
+  if (state.beadPreview) {
+    state.beadPreview.dispose();
+    state.beadPreview = null;
+  }
+}
+
+function applyBeadParams(patch) {
+  state.beadParams = Object.assign({}, state.beadParams, patch);
+  if (state.beadPreview) state.beadPreview.update(state.beadParams);
+  state.api.setMilgrain({ bead: state.beadParams });
+}
+
+function renderBeadParams() {
+  const host   = $('bead-params');
+  const fields = (BEAD_SHAPE_PARAMS[state.beadParams.kind] || []).concat(BEAD_COMMON_PARAMS);
+
+  host.innerHTML = '';
+
+  fields.forEach((field) => {
+    const value = state.beadParams[field.key] != null
+      ? state.beadParams[field.key]
+      : BEAD_DEFAULTS[field.key];
+
+    const row = document.createElement('div');
+    row.className = 'field';
+    row.innerHTML =
+      '<div class="field-head">'
+      + `<span class="field-label">${field.label}</span>`
+      + `<span class="field-value">${field.format(value)}</span>`
+      + '</div>'
+      + `<input type="range" class="slider" min="${field.min}" max="${field.max}" step="${field.step}" value="${value}">`;
+
+    const slider   = row.querySelector('input');
+    const valueLbl = row.querySelector('.field-value');
+    const apply    = debounce((next) => applyBeadParams({ [field.key]: next }), 40);
+
+    slider.addEventListener('input', () => {
+      const next = parseFloat(slider.value);
+      valueLbl.textContent = field.format(next);
+      apply(next);
+    });
+
+    host.appendChild(row);
+  });
+}
+
+function renderSavedBeads() {
+  const host   = $('bead-saved-list');
+  const custom = getBeadTypes().filter((bead) => bead.custom);
+  const raw    = state.api.getRawState() || {};
+
+  $('bead-saved-section').hidden = custom.length === 0;
+  host.innerHTML = '';
+
+  custom.forEach((bead) => {
+    const row = document.createElement('div');
+    row.className = 'bead-saved-row';
+
+    const pick = createOptionButton({
+      label:      bead.name,
+      extraClass: 'text-opt' + (raw.milgrainBeadType === bead.id ? ' active' : ''),
+      onClick: () => {
+        state.api.setMilgrain({ beadType: bead.id });
+        syncBeadSection();
+        renderSavedBeads();
+      },
+    });
+
+    const remove = createOptionButton({
+      label:      '✕',
+      extraClass: 'text-opt',
+      onClick: () => {
+        state.api.deleteBeadType(bead.id);
+        renderBeadTypes();
+        renderSavedBeads();
+      },
+    });
+
+    row.append(pick, remove);
+    host.appendChild(row);
+  });
+}
+
+
+/* ══════════════════════════════════════════════════════════════════
+ *  ENGRAVING — mark style (relief, tint, roughness)
+ * ══════════════════════════════════════════════════════════════════ */
+
+function buildEngravingStyleControls() {
+  const limits = state.api.getLimits();
+
+  const parallaxOn = typeof state.api.getParallaxEnabled === 'function'
+    ? state.api.getParallaxEnabled()
+    : true;
+
+  state.toggleParallax = makeToggle($('toggle-parallax'), parallaxOn,
+    (on) => state.api.setParallaxEnabled(on));
+
+  state.toggleEngraveBump = makeToggle($('toggle-engrave-bump'), true, (on) => {
+    state.api.setEngravingStyle(undefined, undefined, undefined, undefined, undefined, undefined, on);
+  });
+
+  state.toggleEngraveBumpOnly = makeToggle($('toggle-engrave-bump-only'), false, (on) => {
+    state.api.setEngravingStyle(undefined, undefined, undefined, on);
+    $('engrave-tint-fields').style.display = on ? 'none' : 'block';
+  });
+
+  const bumpScale = $('engrave-bump-scale-slider');
+  bumpScale.min  = limits.engravingBumpScale.min;
+  bumpScale.max  = limits.engravingBumpScale.max;
+  bumpScale.step = limits.engravingBumpScale.step || 0.0002;
+  const applyBumpScale = debounce(
+    (value) => state.api.setEngravingStyle(undefined, undefined, undefined, undefined, value), 60);
+  bumpScale.addEventListener('input', (event) => {
+    const value = parseFloat(event.target.value);
+    $('engrave-bump-scale-value').textContent = value.toFixed(4);
+    applyBumpScale(value);
+  });
+
+  const roughness = $('engrave-roughness-slider');
+  roughness.min  = limits.engravingRoughness.min;
+  roughness.max  = limits.engravingRoughness.max;
+  roughness.step = limits.engravingRoughness.step || 0.05;
+  const applyRoughness = debounce((value) => state.api.setEngravingStyle(undefined, value), 60);
+  roughness.addEventListener('input', (event) => {
+    const value = parseFloat(event.target.value);
+    $('engrave-roughness-value').textContent = value.toFixed(2);
+    applyRoughness(value);
+  });
+
+  const applyColor = debounce((value) => state.api.setEngravingStyle(value), 80);
+  $('engrave-color').addEventListener('input', (event) => {
+    $('engrave-color-value').textContent = event.target.value;
+    applyColor(event.target.value);
+  });
+}
+
+function syncEngravingStyleSection() {
+  const raw = state.api.getRawState();
+  if (!raw) return;
+
+  if (state.toggleParallax && typeof state.api.getParallaxEnabled === 'function') {
+    state.toggleParallax._set(state.api.getParallaxEnabled());
+  }
+
+  const bump = raw.engravingBump !== false;
+  if (state.toggleEngraveBump) state.toggleEngraveBump._set(bump);
+
+  const bumpOnly = !!raw.engravingBumpOnly;
+  if (state.toggleEngraveBumpOnly) state.toggleEngraveBumpOnly._set(bumpOnly);
+  $('engrave-tint-fields').style.display = bumpOnly ? 'none' : 'block';
+
+  const bumpScale = raw.engravingBumpScale != null ? raw.engravingBumpScale : 0.002;
+  $('engrave-bump-scale-slider').value      = bumpScale;
+  $('engrave-bump-scale-value').textContent = bumpScale.toFixed(4);
+
+  const roughness = raw.engravingRoughness != null ? raw.engravingRoughness : 0.5;
+  $('engrave-roughness-slider').value      = roughness;
+  $('engrave-roughness-value').textContent = roughness.toFixed(2);
+
+  const color = raw.engravingColor || '#9e9e9e';
+  $('engrave-color').value            = color;
+  $('engrave-color-value').textContent = color;
+}
+
+
+/* ══════════════════════════════════════════════════════════════════
+ *  ENGRAVING — hidden bore stone
+ *  One flush-set stone inside the ring, beside the engraving. Its
+ *  angle is set directly rather than tracking the text.
+ * ══════════════════════════════════════════════════════════════════ */
+
+function buildInnerStoneSection() {
+  const limits = state.api.getLimits();
+
+  state.toggleInnerStone = makeToggle($('toggle-inner-stone'), false, async (on) => {
+    $('inner-stone-field').style.display = on ? 'block' : 'none';
+    // Enabling seeds the stone's angle, size and colour, so read them back
+    // rather than leaving the freshly revealed fields blank.
+    await state.api.setInnerStone({ enabled: on });
+    syncInnerStoneSection();
+  });
+
+  const angle = $('inner-stone-angle-slider');
+  angle.min  = limits.positionAngle.min;
+  angle.max  = limits.positionAngle.max;
+  angle.step = limits.positionAngle.step || 1;
+  const applyAngle = debounce((value) => state.api.setInnerStone({ angleDeg: value }), 60);
+  angle.addEventListener('input', (event) => {
+    const value = parseFloat(event.target.value);
+    $('inner-stone-angle-value').textContent = Math.round(value) + '°';
+    applyAngle(value);
+  });
+
+  const size = $('inner-stone-size-slider');
+  size.min  = limits.innerStoneSize.min;
+  size.max  = limits.innerStoneSize.max;
+  size.step = limits.innerStoneSize.step || 0.05;
+  const applySize = debounce((value) => state.api.setInnerStone({ stoneSize: value }), 60);
+  size.addEventListener('input', (event) => {
+    const value = parseFloat(event.target.value);
+    $('inner-stone-size-value').textContent = formatCarats(value);
+    applySize(value);
+  });
+}
+
+function formatCarats(stoneSize) {
+  return state.api.getDiamondSizeInfo(stoneSize).carats.toFixed(3) + ' ct';
+}
+
+function syncInnerStoneSection() {
+  const raw = state.api.getRawState();
+  if (!raw) return;
+
+  const on = !!raw.innerStone;
+  if (state.toggleInnerStone) state.toggleInnerStone._set(on);
+  $('inner-stone-field').style.display = on ? 'block' : 'none';
+  if (!on) return;
+
+  const angle = raw.innerStoneAngleDeg != null ? raw.innerStoneAngleDeg : 310;
+  $('inner-stone-angle-slider').value      = angle;
+  $('inner-stone-angle-value').textContent = Math.round(angle) + '°';
+
+  const size = raw.innerStoneSize != null ? raw.innerStoneSize : 2.3;
+  $('inner-stone-size-slider').value      = size;
+  $('inner-stone-size-value').textContent = formatCarats(size);
+
+  syncDiamondColorRow('inner-stone-color-opts', 'inner-stone-color-value', raw.innerStoneColor);
+}
+
+
+/* ══════════════════════════════════════════════════════════════════
+ *  HISTORY — undo / redo
+ * ══════════════════════════════════════════════════════════════════ */
+
+function buildHistoryControls() {
+  $('undo-btn').addEventListener('click', () => state.api.undo());
+  $('redo-btn').addEventListener('click', () => state.api.redo());
+
+  // Ctrl/Cmd+Z and Ctrl+Shift+Z (or Ctrl+Y). Ignored while typing, so text
+  // fields keep their own native undo stack.
+  document.addEventListener('keydown', (event) => {
+    if (!(event.ctrlKey || event.metaKey)) return;
+
+    const target = event.target;
+    if (target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable)) {
+      return;
+    }
+
+    const key = event.key.toLowerCase();
+    if (key === 'z' && !event.shiftKey) {
+      event.preventDefault();
+      state.api.undo();
+    } else if (key === 'y' || (key === 'z' && event.shiftKey)) {
+      event.preventDefault();
+      state.api.redo();
+    }
+  });
+
+  syncHistoryControls();
+}
+
+function syncHistoryControls() {
+  $('undo-btn').disabled = !(typeof state.api.canUndo === 'function' && state.api.canUndo());
+  $('redo-btn').disabled = !(typeof state.api.canRedo === 'function' && state.api.canRedo());
+}
+
+
+/* ══════════════════════════════════════════════════════════════════
+ *  CONFIG I/O — full download, manufacturing export, load / save
+ * ══════════════════════════════════════════════════════════════════ */
+
+function downloadJson(payload, filename) {
+  const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+  const url  = URL.createObjectURL(blob);
+
+  const a = document.createElement('a');
+  a.href     = url;
+  a.download = filename;
+  a.click();
+
+  URL.revokeObjectURL(url);
+}
+
+function timestampSuffix() {
+  return new Date().toISOString().replace(/[:.]/g, '-');
+}
+
+function buildConfigIoButtons() {
+  // Friendly snapshots + exact dimensions + the ring compilation + the complete
+  // raw state, so nothing (side settings, free stones, divisions…) is lost.
+  $('download-btn').addEventListener('click', () => {
+    const bands = state.api.getBandNames();
+    const payload = {
+      format:     'ijewel-wbb-config',
+      version:    1,
+      exportedAt: new Date().toISOString(),
+      snapshots:  state.api.exportConfig(),
+      actualDimensionsMm: bands.reduce((acc, name) => {
+        acc[name] = state.api.getActualDimensionsMm(name);
+        return acc;
+      }, {}),
+      rings: state.api.getRings(),
+      state: typeof state.api.toJSON === 'function' ? state.api.toJSON() : null,
+    };
+
+    downloadJson(payload, `wbb-config-${timestampSuffix()}.json`);
+    showToast('Configuration downloaded');
+  });
+
+  // Bare manufacturing data — the file handed to the manufacturer, without the
+  // WBB-internal state around it.
+  $('manufacturing-btn').addEventListener('click', () => {
+    let data;
+    try {
+      data = state.api.exportManufacturing();
+    } catch (err) {
+      // exportManufacturing already publishes a validation:warning naming the
+      // unsupported feature, and that handler raises the toast.
+      return;
+    }
+    if (!data) return;
+
+    downloadJson(data, `wbb-manufacturing-${timestampSuffix()}.json`);
+    showToast('Manufacturing data downloaded');
+  });
+
+  $('loadsave-btn').addEventListener('click', openLoadSaveModal);
+}
+
+function buildLoadSaveModal() {
+  $('loadsave-close').addEventListener('click', closeLoadSaveModal);
+  $('loadsave-modal').addEventListener('click', (event) => {
+    if (event.target === $('loadsave-modal')) closeLoadSaveModal();
+  });
+
+  $('config-save-btn').addEventListener('click', saveConfiguration);
+  $('config-save-name').addEventListener('keydown', (event) => {
+    if (event.key === 'Enter') saveConfiguration();
+  });
+
+  $('config-load-btn').addEventListener('click', () => loadConfiguration($('config-load-id').value));
+  $('config-load-id').addEventListener('keydown', (event) => {
+    if (event.key === 'Enter') loadConfiguration($('config-load-id').value);
+  });
+}
+
+function openLoadSaveModal() {
+  $('loadsave-modal').hidden = false;
+  setLoadSaveNote(null);
+  renderSavedConfigurations();
+}
+
+function closeLoadSaveModal() {
+  $('loadsave-modal').hidden = true;
+}
+
+function setLoadSaveNote(html, kind) {
+  const note = $('loadsave-note');
+  if (!html) {
+    note.hidden = true;
+    note.innerHTML = '';
+    return;
+  }
+  note.hidden = false;
+  note.className = 'modal-note' + (kind ? ' ' + kind : '');
+  note.innerHTML = html;
+}
+
+async function saveConfiguration() {
+  const name = $('config-save-name').value;
+
+  const result = await state.api.saveConfiguration(name);
+  if (!result || !result.id) {
+    setLoadSaveNote('Could not save the configuration', 'err');
+    return;
+  }
+
+  $('config-save-name').value = '';
+  setLoadSaveNote(`Saved as <code>${result.id}</code>`);
+  renderSavedConfigurations();
+}
+
+async function loadConfiguration(id) {
+  const key = (id || '').trim();
+  if (!key) return;
+
+  const ok = await state.api.loadConfiguration(key);
+  if (!ok) {
+    setLoadSaveNote(`No saved design found for "${key}"`, 'err');
+    return;
+  }
+
+  closeLoadSaveModal();
+}
+
+async function renderSavedConfigurations() {
+  const host  = $('config-list');
+  const items = await state.api.listConfigurations();
+
+  $('config-saved-section').hidden = !items || items.length === 0;
+  host.innerHTML = '';
+  if (!items || !items.length) return;
+
+  items.forEach((item) => {
+    const card = document.createElement('div');
+    card.className = 'config-card';
+
+    const thumb = item.thumbnail
+      ? `<img class="config-thumb" src="${item.thumbnail}" alt="${item.name}">`
+      : '<div class="config-thumb"></div>';
+
+    card.innerHTML =
+      '<button class="config-card-x" type="button" title="Delete this saved design">×</button>'
+      + `<button class="config-card-body" type="button" title="Load ${item.name} (${item.id})">`
+      + thumb
+      + `<span class="config-card-name">${item.name}</span>`
+      + `<span class="config-card-id">${item.id}</span>`
+      + '</button>';
+
+    card.querySelector('.config-card-body').addEventListener('click', () => loadConfiguration(item.id));
+    card.querySelector('.config-card-x').addEventListener('click', async () => {
+      await state.api.deleteConfiguration(item.id);
+      renderSavedConfigurations();
     });
 
     host.appendChild(card);
@@ -2123,6 +3124,15 @@ function renderRings() {
       + `<span class="swatch-dot" style="width:100%;height:100%;background-image:url(${metal.iconUrl || metal.thumbnail || ''})"></span>`
       + '</button>').join('');
 
+    // Loaded catalog rings are pre-modelled, not parametric: the only shape
+    // choice is swapping to another model of the same type.
+    const catalog = isWedding ? [] : state.api.getRingCatalog(ring.type);
+    const modelOptions = catalog.map((entry) =>
+      `<button class="opt${entry.id === ring.catalogId ? ' active' : ''}" data-catalog="${entry.id}" title="${entry.name}">`
+      + (entry.thumbnail ? `<img src="${entry.thumbnail}" alt="${entry.name}" loading="lazy" decoding="async">` : '')
+      + `<span class="opt-lbl">${entry.name}</span>`
+      + '</button>').join('');
+
     card.innerHTML =
       '<div class="mini-card-row">'
       + `<span class="mini-card-title">${ring.name}</span>`
@@ -2136,7 +3146,27 @@ function renderRings() {
       + '<button data-action="rename" title="Rename">✎</button>'
       + `<button data-action="remove" title="Remove"${canRemove ? '' : ' disabled'}>×</button>`
       + '</div>'
-      + (metalSwatches ? `<div class="mini-card-body"><div class="opt-row">${metalSwatches}</div></div>` : '');
+      + (modelOptions
+        ? '<div class="mini-card-body"><span class="mini-card-sub-label">Model</span>'
+          + `<div class="opt-row">${modelOptions}</div></div>`
+        : '')
+      + (metalSwatches
+        ? '<div class="mini-card-body"><span class="mini-card-sub-label">Metal</span>'
+          + `<div class="opt-row">${metalSwatches}</div></div>`
+        : '');
+
+    card.querySelectorAll('[data-catalog]').forEach((btn) => {
+      btn.addEventListener('click', async () => {
+        if (btn.dataset.catalog === ring.catalogId) return;
+        try {
+          // In-place swap: the current model stays until the new one is loaded.
+          await state.api.swapRingModel(ring.id, btn.dataset.catalog);
+          renderRings();
+        } catch (err) {
+          showToast('Model swap failed: ' + err.message, 'err');
+        }
+      });
+    });
 
     card.querySelector('[data-action="focus"]').addEventListener('click', () => state.api.focusRing(ring.id));
     card.querySelector('[data-action="left"]').addEventListener('click', () => { state.api.moveRing(ring.id, 'left'); renderRings(); });
@@ -2171,42 +3201,30 @@ function renderRings() {
 
 /* ══════════════════════════════════════════════════════════════════
  *  THEME
+ *  A dropdown in the panel toolbar rather than a tab of its own — the
+ *  theme is chrome, not part of configuring the band.
  * ══════════════════════════════════════════════════════════════════ */
 
-const THEME_SWATCH_COLORS = {
-  'default':        '#1a1a1a',
-  'luxury-gold':    '#8B7355',
-  'modern-minimal': '#000000',
-  'dark':           '#E0D5C5',
-  'rose-elegant':   '#9E7B70',
-  'coral-modern':   '#E04E5E',
-  'fresh-teal':     '#5ABFBF',
-  'minimal-blue':   '#0071E3',
-  'warm-beige':     '#6B9AC4',
-  'ijewel':         '#6E73F2',
-  'classic-gold':   '#B8860B',
-};
+function buildThemePicker() {
+  const select = $('theme-select');
+  const themes = state.api.getAvailableThemes();
 
-function buildThemeSection() {
-  const host = $('theme-opts');
-
-  state.api.getAvailableThemes().forEach((name) => {
-    const btn = document.createElement('button');
-    btn.className = 'theme-swatch';
-    btn.dataset.optionId = name;
-    btn.innerHTML =
-      `<span class="theme-swatch-dot" style="background:${THEME_SWATCH_COLORS[name] || '#999'}"></span>`
-      + `<span class="theme-swatch-lbl">${formatThemeName(name)}</span>`;
-    btn.addEventListener('click', () => applyTheme(name));
-    host.appendChild(btn);
+  themes.forEach((name) => {
+    const option = document.createElement('option');
+    option.value       = name;
+    option.textContent = formatThemeName(name);
+    select.appendChild(option);
   });
 
-  $('theme-cycle-btn').addEventListener('click', () => {
-    const next = state.api.cycleTheme();
-    syncThemeSection(next);
-  });
+  select.addEventListener('change', () => applyTheme(select.value));
 
-  syncThemeSection('default');
+  // Honour the theme the project ships with, the way the built-in UI does.
+  const projectTheme = state.manifest && state.manifest.theme;
+  const initial = typeof projectTheme === 'string' && themes.indexOf(projectTheme) >= 0
+    ? projectTheme
+    : themes[0] || 'default';
+
+  applyTheme(initial);
 }
 
 function formatThemeName(id) {
@@ -2215,7 +3233,7 @@ function formatThemeName(id) {
 
 function applyTheme(name) {
   state.api.setTheme(name);
-  syncThemeSection(name);
+  $('theme-select').value = name;
   applyThemeToHostPage();
 }
 
@@ -2229,13 +3247,6 @@ function applyThemeToHostPage() {
   if (vars['--rb-color-border'])     root.setProperty('--line', vars['--rb-color-border']);
 }
 
-function syncThemeSection(name) {
-  $('theme-value').textContent = formatThemeName(name);
-  $$('#theme-opts .theme-swatch').forEach((btn) => {
-    btn.classList.toggle('active', btn.dataset.optionId === name);
-  });
-}
-
 
 /* ══════════════════════════════════════════════════════════════════
  *  SYNC UI FROM CONTROLLER SNAPSHOT
@@ -2247,19 +3258,28 @@ function syncUIFromSnapshot() {
   if (!snap) return;
 
   syncProfileSection(snap);
+  syncPathSection();
   syncDimensionSection(snap);
   syncPartitionAndMaterial(snap);
-  syncEdgeSection(snap);
   syncDiamondSection(snap);
   syncEngravingSection(snap);
+  syncEngravingStyleSection();
+  syncInnerStoneSection();
   syncGroovesSection();
 
   syncSideStoneSection();
   syncSeparationGrooveSection();
   renderDesignGrooves();
+  syncEdgeSides();
   if (state.toggleSmoothSeats) state.toggleSmoothSeats._set(state.api.getSmoothSeats());
+  if (state.toggleAutoHeight && typeof state.api.getAutoOptimalHeight === 'function') {
+    const autoHeight = state.api.getAutoOptimalHeight();
+    state.toggleAutoHeight._set(autoHeight);
+    applyAutoHeightUI(autoHeight);
+  }
 
   syncMaterialUIForActiveSlot();
+  syncHistoryControls();
 
   // Refresh all band prices from the controller (not just snap.pricing,
   // which is only the active band).
@@ -2290,8 +3310,10 @@ function syncDimensionSection(snap) {
   $('width-value').textContent  = `×${widthMult.toFixed(2)}`;
   $('height-value').textContent = `×${heightMult.toFixed(2)}`;
 
-  $('dim-w').textContent = widthMult.toFixed(2);
-  $('dim-h').textContent = heightMult.toFixed(2);
+  // snap.dimensions carries multipliers; the readout wants real millimetres.
+  const actual = state.api.getActualDimensionsMm();
+  $('dim-w').textContent = actual.widthMm.toFixed(2)  + ' mm';
+  $('dim-h').textContent = actual.heightMm.toFixed(2) + ' mm';
   $('dim-r').textContent = radiusMm.toFixed(2) + ' mm';
 
   if (state.tapeWidth  && dims.widthMm  != null) state.tapeWidth.sync(dims.widthMm);
@@ -2322,24 +3344,18 @@ function syncPartitionAndMaterial(snap) {
   renderDivisionOptions();
 }
 
-function syncEdgeSection(snap) {
-  const edge = snap.edge || {};
-  const edgeType = state.api.getAvailableEdgeTypes().find((option) => option.id === edge.type);
-  $('edge-value').textContent = edgeType ? edgeType.name : (edge.type || 'None');
-  $('edge-value').dataset.value = edge.type || 'None';
+/* Stone colour applies to top and side stones alike, so the row shows as soon
+ * as either surface carries stones. */
+function syncDiamondColorField() {
+  const raw       = state.api.getRawState() || {};
+  const hasTop    = !!raw.settingType && raw.settingType !== 'none';
+  const sideBezel = state.api.getSideBezel();
+  const hasSide   = sideBezel.setting !== 'none'
+    && (sideBezel.leftCount + sideBezel.rightCount) > 0;
 
-  $$('#edge-opts .opt').forEach((btn) => {
-    btn.classList.toggle('active', btn.dataset.optionId === (edge.type || 'None'));
-  });
-
-  // Show/hide edge side field
-  const showSide = edge.type && edge.type !== 'None';
-  $('edge-side-field').style.display = showSide ? 'block' : 'none';
-
-  $$('#edge-side-opts .opt').forEach((btn) => {
-    btn.classList.toggle('active', btn.dataset.optionId === (edge.side || 'Both'));
-  });
-
+  const show = getDiamondColors().length > 0 && (hasTop || hasSide);
+  $('diamond-color-field').style.display = show ? 'block' : 'none';
+  if (show) syncDiamondColorRow('diamond-color-opts', 'diamond-color-value', raw.diamondColor);
 }
 
 function syncDiamondSection(snap) {
@@ -2351,6 +3367,7 @@ function syncDiamondSection(snap) {
     $('diamond-hint').style.display = 'flex';
     $$('#setting-opts .opt').forEach((btn, index) => btn.classList.toggle('active', index === 0));
     updateDiamondTypeFieldVisibility('none');
+    syncDiamondColorField();
     return;
   }
 
@@ -2423,6 +3440,8 @@ function syncDiamondSection(snap) {
       });
     }
   }
+
+  syncDiamondColorField();
 }
 
 function syncEngravingSection(snap) {
@@ -2557,6 +3576,18 @@ function subscribeToEvents() {
   events.on('build:started',  () => $('build-badge').classList.add('show'));
   events.on('build:complete', () => $('build-badge').classList.remove('show'));
 
+  events.on('history:changed', () => syncHistoryControls());
+  events.on('path:changed',    () => syncPathSection());
+  events.on('edge:changed',    () => syncEdgeSides());
+  events.on('milgrain:changed', () => syncBeadSection());
+
+  // A restored configuration replaces every band state and the compilation.
+  events.on('config:loaded', (data) => {
+    syncUIFromSnapshot();
+    renderRings();
+    showToast(`Loaded "${(data && data.name) || 'design'}"`);
+  });
+
   events.on('price:updated', (data) => {
     if (data && data.bandName) {
       state.prices[data.bandName] = data.pricing || null;
@@ -2565,16 +3596,24 @@ function subscribeToEvents() {
   });
 
   events.on('dimensions:changed', () => {
-    const dims = state.api.getDimensions();
-    if (!dims) return;
-    $('dim-w').textContent = dims.widthMm.toFixed(2)  + ' mm';
-    $('dim-h').textContent = dims.heightMm.toFixed(2) + ' mm';
-    $('dim-r').textContent = dims.radiusMm.toFixed(2) + ' mm';
+    // getDimensions returns multipliers; the readout wants real millimetres.
+    const actual = state.api.getActualDimensionsMm();
+    const dims   = state.api.getDimensions();
+    if (!actual || !dims) return;
+
+    $('dim-w').textContent = actual.widthMm.toFixed(2)  + ' mm';
+    $('dim-h').textContent = actual.heightMm.toFixed(2) + ' mm';
+    $('dim-r').textContent = dims.radiusMm.toFixed(2)   + ' mm';
+
+    // Auto-optimal thickness moves the height under the tape.
+    if (state.tapeHeight) state.tapeHeight.sync(dims.heightMm);
   });
 
   events.on('validation:warning', (data) => {
+    // Rule warnings (unsupported manufacturing features, bead sizes clamped by
+    // their host…) carry a written message; plain range clamps do not.
     showToast(
-      `${data.field}: clamped to ${data.corrected} (sent ${data.provided})`,
+      data.message || `${data.field}: clamped to ${data.corrected} (sent ${data.provided})`,
       'warn',
     );
   });
