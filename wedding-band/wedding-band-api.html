@@ -150,7 +150,11 @@
        * ("drive" for standard accounts, or the one supplied to enterprise accounts).
        * https://docs.ijewel3d.com/viewer/connect-to-drive.html#loading-a-specific-model-by-id-loadmodelbyid
        */
-      const CONFIG = { fileId: 'LVLiEhVDSl6QlIITnjyBNg', instance: 'demo-apac' };
+      const CONFIG = {
+        fileId: 'E3j8eClwR7iWMFNmGi5HoQ',
+        instance: 'drive',
+        layout: 'panel',
+      };
 
       ijewelViewer.loadModelById(CONFIG.fileId, CONFIG.instance, document.getElementById('viewer'), {
         showCard: false,
@@ -303,6 +307,7 @@
 
       window.addEventListener('ijewel-viewer-ready', async ({ detail }) => {
         const api = await whenWeddingBandReady(detail.viewer);
+        api.setLayout(CONFIG.layout);
         window.wbb = api; // available in the browser console
 
         // Clamped values and unsupported combinations are reported here, with the

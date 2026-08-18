@@ -8,7 +8,7 @@
  *  fileId is the unique ID of the published Wedding Band project. Find it in
  *  Drive through Share and copy the value between /files/ and /view.
  *  instance is the Drive basename: normally "drive", or the basename supplied
- *  to enterprise accounts. The demo URL below uses "demo-weur".
+ *  to enterprise accounts. The demo URL below uses the shared "drive" alias.
  *
  *  https://docs.ijewel3d.com/viewer/tutorial-embed-drive.html#find-the-model-id
  *  https://docs.ijewel3d.com/wedding-band-builder/integration-iframe.html
@@ -27,7 +27,7 @@
  * ══════════════════════════════════════════════════════════════════ */
 
 const DEFAULT_VIEWER_URL =
-  'https://ijewel3d.com/demo-apac/files/LVLiEhVDSl6QlIITnjyBNg/embedded'
+  'https://ijewel3d.com/drive/files/E3j8eClwR7iWMFNmGi5HoQ/embedded'
   + '?hideWbbUi=true&showUiButtons=true&isAutoplay=true';
 
 const REPLY_TIMEOUT_MS = 8000;

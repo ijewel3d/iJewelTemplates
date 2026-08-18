@@ -19,10 +19,10 @@
 
 const CONFIG = {
   // Drive file ID of the published Wedding Band project.
-  fileId: 'LVLiEhVDSl6QlIITnjyBNg',
+  fileId: 'E3j8eClwR7iWMFNmGi5HoQ',
 
   // Your Drive instance / basename.
-  instance: 'demo-apac',
+  instance: 'drive',
 };
 
 const VIEWER_OPTIONS = {

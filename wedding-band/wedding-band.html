@@ -27,45 +27,44 @@
   <script src="https://releases.ijewel3d.com/libs/mini-viewer/0.6.17/bundle.nowebgi.iife.js"></script>
   <script>
     /*
-     * This self-hosted-project variant loads a JSON URL directly, so it does
-     * not use loadModelById's fileId or instance arguments.
+     * The Boutique and Panel layouts share one hosted project. This entrypoint
+     * selects Panel after the Wedding Band controller becomes ready.
      *
-     * For Drive loading, fileId is the published project's unique Drive ID and
-     * instance is the Drive basename (normally "drive", or the enterprise
-     * basename supplied by iJewel3D):
+     * fileId is the published project's unique Drive ID and instance is the
+     * Drive basename:
      * https://docs.ijewel3d.com/viewer/connect-to-drive.html#loading-a-specific-model-by-id-loadmodelbyid
      */
-    const PROJECT_URL = './wedding_band_project.json';
+    const CONFIG = {
+      fileId: 'E3j8eClwR7iWMFNmGi5HoQ',
+      instance: 'drive',
+      layout: 'panel',
+    };
 
-    (async () => {
-      const root = document.getElementById('root');
-      const project = await fetch(PROJECT_URL).then(r => r.json());
+    const root = document.getElementById('root');
 
-      // Mobile: bump model scale by 20%
-      const isMobile = window.matchMedia('(max-width: 768px)').matches;
-      if (isMobile) {
-        const wbb = project?.plugins?.WeddingBandBuilder;
-        if (wbb?.defaults) {
-          wbb.defaults.rootScale = (wbb.defaults.rootScale ?? 0.1) * 1.2;
-        }
+    window.addEventListener('ijewel-viewer-ready', async ({ detail }) => {
+      try {
+        const plugin = detail.viewer.getPluginByType('WeddingBandBuilder');
+        const controller = await plugin?.whenReady();
+        controller?.setLayout(CONFIG.layout);
+      } catch (error) {
+        root.innerHTML = `<div style="color:red;padding:20px;font-family:monospace">Unable to select Panel layout: ${error.message}</div>`;
       }
+    });
 
-      const viewerOptions = {
+    try {
+      ijewelViewer.loadModelById(CONFIG.fileId, CONFIG.instance, root, {
         showCard: false,
         showSwitchNode: false,
         showUiButtons: true,
         showConfigurator: false,
         showZoomButtons: false,
         enableZoom: true,
-        hideWbbUi: false
-      };
-
-      if (window.ijewelViewer?.Viewer) {
-        new window.ijewelViewer.Viewer(root, project, viewerOptions);
-      } else {
-        root.innerHTML = '<div style="color:red;padding:20px;font-family:monospace">mini-viewer IIFE bundle failed to load.</div>';
-      }
-    })();
+        hideWbbUi: false,
+      });
+    } catch (error) {
+      root.innerHTML = `<div style="color:red;padding:20px;font-family:monospace">Unable to start Panel layout: ${error.message}</div>`;
+    }
   </script>
 </body>
 </html>

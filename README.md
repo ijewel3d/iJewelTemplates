@@ -10,9 +10,9 @@ For API references, integration guides, and platform documentation, visit the [o
 
 | Template | Description | Links |
 | --- | --- | --- |
-| Wedding Band Builder | Loads the schema-v2 material project with the standard iJewel3D interface. | [View live](https://ijewel3d.github.io/iJewelTemplates/wedding-band/wedding-band.html) · [Source](wedding-band/wedding-band.html) |
-| Default Viewer | Minimal `loadModelById` integration with the built-in Wedding Band controls. | [View live](https://ijewel3d.github.io/iJewelTemplates/wedding-band/wedding-band-default.html) · [Source](wedding-band/wedding-band-default.html) |
-| Modern Metals | Runs the focused Modern Metals layout with one neutral ring. | [View live](https://ijewel3d.github.io/iJewelTemplates/wedding-band/wedding-band-modern-metals.html) · [Source](wedding-band/wedding-band-modern-metals.html) |
+| Wedding Band Builder | Loads the hosted Boutique project in the standard Panel layout. | [View live](https://ijewel3d.github.io/iJewelTemplates/wedding-band/wedding-band.html) · [Source](wedding-band/wedding-band.html) |
+| Boutique Viewer | Minimal `loadModelById` integration using the hosted Boutique layout. | [View live](https://ijewel3d.github.io/iJewelTemplates/wedding-band/wedding-band-default.html) · [Source](wedding-band/wedding-band-default.html) |
+| Modern Metals | Loads the hosted Modern Metals project with one neutral ring. | [View live](https://ijewel3d.github.io/iJewelTemplates/wedding-band/wedding-band-modern-metals.html) · [Source](wedding-band/wedding-band-modern-metals.html) |
 | Headless API Guide | Interactive controller examples for materials, variants, outside features, pricing, and complete state. | [View live](https://ijewel3d.github.io/iJewelTemplates/wedding-band/wedding-band-api.html) · [Source](wedding-band/wedding-band-api.html) |
 | Custom UI — Drive Model ID | Headless storefront UI loading a published Drive project with `loadModelById`. | [View live](https://ijewel3d.github.io/iJewelTemplates/wedding-band/custom-ui/model-by-id.html) · [Source](wedding-band/custom-ui/model-by-id.html) |
 | Custom UI — Self Hosted | The same headless UI loading the repository's adjacent Wedding Band project JSON directly. | [View live](https://ijewel3d.github.io/iJewelTemplates/wedding-band/custom-ui/self-hosted.html) · [Source](wedding-band/custom-ui/self-hosted.html) |

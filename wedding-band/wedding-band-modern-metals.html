@@ -23,14 +23,32 @@
     <div id="viewer"></div>
     <div id="error" hidden></div>
     <script>
-      const PROJECT_URL = './wedding_band_modern_metals_project.json';
+      const CONFIG = {
+        fileId: 'KW7xJIcGT8eKgmLnZKqUGg',
+        instance: 'drive',
+        layout: 'modern-metals',
+      };
 
-      async function start() {
-        const response = await fetch(PROJECT_URL);
-        if (!response.ok) throw new Error(`Project request failed: ${response.status}`);
-        const project = await response.json();
+      const viewerElement = document.getElementById('viewer');
+      const errorElement = document.getElementById('error');
 
-        new window.ijewelViewer.Viewer(document.getElementById('viewer'), project, {
+      function showError(error) {
+        errorElement.hidden = false;
+        errorElement.textContent = `Unable to start Modern Metals: ${error.message}`;
+      }
+
+      window.addEventListener('ijewel-viewer-ready', async ({ detail }) => {
+        try {
+          const plugin = detail.viewer.getPluginByType('WeddingBandBuilder');
+          const controller = await plugin?.whenReady();
+          controller?.setLayout(CONFIG.layout);
+        } catch (error) {
+          showError(error);
+        }
+      });
+
+      try {
+        ijewelViewer.loadModelById(CONFIG.fileId, CONFIG.instance, viewerElement, {
           showCard: false,
           showSwitchNode: false,
           showUiButtons: true,
@@ -39,13 +57,9 @@
           enableZoom: true,
           hideWbbUi: false,
         });
+      } catch (error) {
+        showError(error);
       }
-
-      start().catch((error) => {
-        const box = document.getElementById('error');
-        box.hidden = false;
-        box.textContent = `Unable to start Modern Metals: ${error.message}`;
-      });
     </script>
   </body>
 </html>
