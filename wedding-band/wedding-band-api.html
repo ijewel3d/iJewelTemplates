@@ -1,0 +1,354 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>Wedding Band Builder - headless API guide</title>
+    <meta property="og:image" content="https://docs.ijewel3d.com/assets/images/og-wbb.webp" />
+    <meta property="og:image:width" content="2400" />
+    <meta property="og:image:height" content="1260" />
+    <meta property="og:image:alt" content="iJewel3D Wedding Band Builder" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content="https://docs.ijewel3d.com/assets/images/og-wbb.webp" />
+
+    <script src="https://releases.ijewel3d.com/libs/webgi-v0/bundle-0.22.0.js"></script>
+    <!-- @ijewel3d/mini-viewer 0.6.17 - material schema v2 and outside features. -->
+    <script src="https://releases.ijewel3d.com/libs/mini-viewer/0.6.17/bundle.nowebgi.iife.js"></script>
+
+    <style>
+      * { box-sizing: border-box; margin: 0; padding: 0; }
+      body { font: 14px/1.6 'Inter', system-ui, -apple-system, sans-serif; color: #1a1a1a; }
+      #viewer { position: fixed; inset: 0; }
+
+      /* The built-in Wedding Band panel occupies the right edge, so the guide sits
+         on the left. The model stays orbitable in the gap around the card. */
+      #guide {
+        position: fixed; top: 16px; left: 16px; bottom: 16px; width: 380px;
+        max-width: calc(100vw - 32px);
+        display: flex; flex-direction: column; z-index: 20;
+        background: rgba(255, 255, 255, .93); backdrop-filter: blur(8px);
+        border: 1px solid #e6e2db; border-radius: 12px;
+        box-shadow: 0 12px 40px rgba(20, 18, 14, .12);
+        overflow: hidden;
+      }
+      #guide.collapsed { bottom: auto; }
+      #guide.collapsed .scroll, #guide.collapsed .readout { display: none; }
+
+      .head { display: flex; align-items: center; gap: 10px; padding: 13px 16px; border-bottom: 1px solid #eee; }
+      .head img { height: 24px; width: auto; }
+      .head h1 { font-size: 13.5px; font-weight: 600; flex: 1; }
+      .head button {
+        border: 1px solid #e0dcd5; background: #fff; border-radius: 6px;
+        width: 26px; height: 26px; cursor: pointer; color: #666; font-size: 15px; line-height: 1;
+      }
+      .head button:hover { border-color: #1a1a1a; color: #1a1a1a; }
+
+      .scroll { overflow-y: auto; padding: 14px 16px 16px; flex: 1; }
+      .intro { font-size: 12.5px; color: #55504a; margin-bottom: 8px; }
+      .intro strong { color: #1a1a1a; font-weight: 600; }
+      .intro code, .note code {
+        font-family: ui-monospace, monospace; font-size: 11.5px;
+        background: #f2efea; padding: 1px 4px; border-radius: 3px;
+      }
+
+      h2 { font-size: 10px; letter-spacing: .16em; text-transform: uppercase; color: #8b6f3a; margin: 20px 0 5px; }
+      .note { font-size: 11.5px; color: #6a6460; margin-bottom: 8px; }
+      .row { display: flex; flex-wrap: wrap; gap: 6px; }
+
+      .op {
+        font: 11.5px ui-monospace, monospace; text-align: left;
+        padding: 6px 9px; border: 1px solid #e0dcd5; border-radius: 6px;
+        background: #fff; color: #33302c; cursor: pointer; transition: all .12s;
+      }
+      .op:hover { border-color: #1a1a1a; }
+      .op:active { transform: translateY(1px); }
+      .op.busy { opacity: .45; cursor: progress; }
+
+      .readout { border-top: 1px solid #eee; padding: 10px 16px 12px; background: #fbfaf7; }
+      .readout .lbl { font-size: 9px; letter-spacing: .16em; text-transform: uppercase; color: #a09a92; }
+      .readout .call { font: 11.5px/1.55 ui-monospace, monospace; color: #8b6f3a; margin-top: 4px; }
+      .readout .val {
+        font: 11.5px/1.55 ui-monospace, monospace; white-space: pre-wrap; word-break: break-word;
+        max-height: 128px; overflow: auto; color: #33302c;
+      }
+      .readout .val.err { color: #b23b3b; }
+
+      .links { display: flex; flex-direction: column; gap: 3px; margin-top: 6px; }
+      .links a { font-size: 12px; color: #8b6f3a; text-decoration: none; }
+      .links a:hover { text-decoration: underline; }
+      .links .sub { color: #8a8a8a; }
+
+      @media (max-width: 900px) {
+        #guide { top: auto; bottom: 8px; left: 8px; right: 8px; width: auto; max-height: 55vh; }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="viewer"></div>
+
+    <aside id="guide">
+      <div class="head">
+        <h1>Headless API guide</h1>
+        <button id="toggle" type="button" title="Collapse / expand" aria-label="Collapse">-</button>
+      </div>
+
+      <div class="scroll">
+        <p class="intro">
+          The panel on the right is the <strong>built-in</strong> Wedding Band UI, loaded from
+          iJewel Drive by <code>fileId</code>. Every button below configures the same band through
+          the <strong>headless controller</strong> - the API your own storefront UI would use.
+        </p>
+        <p class="intro">
+          Watch both respond together: the controller is the single source of truth, so the model
+          and the built-in panel stay in step whichever one makes the change. That is what lets you
+          build a completely custom interface on top of the same engine.
+        </p>
+        <p class="intro">
+          Each button is labelled with the exact call it makes, so anything here can be copied
+          straight into your own code. Results and warnings appear at the bottom, and the live
+          controller is available as <code>window.wbb</code> in the browser console.
+        </p>
+
+        <div id="ops"></div>
+
+        <h2>Documentation</h2>
+        <div class="links">
+          <a href="https://docs.ijewel3d.com/wedding-band-builder/" target="_blank" rel="noreferrer">Wedding Band Builder - overview</a>
+          <a href="https://docs.ijewel3d.com/wedding-band-builder/api-reference.html" target="_blank" rel="noreferrer">API reference <span class="sub">- every method used here</span></a>
+          <a href="https://docs.ijewel3d.com/wedding-band-builder/headless-api.html" target="_blank" rel="noreferrer">Headless API <span class="sub">- driving it from your own UI</span></a>
+          <a href="https://docs.ijewel3d.com/wedding-band-builder/integration-direct.html" target="_blank" rel="noreferrer">Script-tag integration</a>
+          <a href="https://docs.ijewel3d.com/wedding-band-builder/templates.html" target="_blank" rel="noreferrer">Starter templates</a>
+          <a href="https://docs.ijewel3d.com/wedding-band-builder/theming.html" target="_blank" rel="noreferrer">Theming &amp; branding</a>
+          <a href="https://docs.ijewel3d.com/wedding-band-builder/spec-sheet.html" target="_blank" rel="noreferrer">Spec sheet &amp; manufacturing export</a>
+          <a href="https://docs.ijewel3d.com/viewer/connect-to-drive.html#loading-a-specific-model-by-id-loadmodelbyid" target="_blank" rel="noreferrer">Loading a model by ID <span class="sub">- fileId &amp; instance</span></a>
+        </div>
+
+        <h2>Other templates here</h2>
+        <div class="links">
+          <a href="./wedding-band-default.html">wedding-band-default.html <span class="sub">- built-in UI, Drive</span></a>
+          <a href="./wedding-band.html">wedding-band.html <span class="sub">- built-in UI, self-hosted JSON</span></a>
+          <a href="./wedding-band-modern-metals.html">wedding-band-modern-metals.html <span class="sub">- single-ring Modern Metals layout</span></a>
+          <a href="./custom-ui/index.html">custom-ui/index.html <span class="sub">- full custom panel, Drive</span></a>
+          <a href="./custom-ui/self-hosted.html">custom-ui/self-hosted.html <span class="sub">- full custom panel, self-hosted</span></a>
+          <a href="./iframe-demo/index.html">iframe-demo/index.html <span class="sub">- cross-origin postMessage bridge</span></a>
+          <a href="./wedding_band_project.json">wedding_band_project.json <span class="sub">- the project manifest</span></a>
+        </div>
+      </div>
+
+      <div class="readout">
+        <span class="lbl">Result</span>
+        <div class="call" id="out-call">-</div>
+        <div class="val" id="out-val">Loading the builder…</div>
+      </div>
+    </aside>
+
+    <script>
+      /*
+       * fileId is the published project's Drive ID - in Drive choose Share and copy
+       * the value between /files/ and /view. instance is the Drive basename
+       * ("drive" for standard accounts, or the one supplied to enterprise accounts).
+       * https://docs.ijewel3d.com/viewer/connect-to-drive.html#loading-a-specific-model-by-id-loadmodelbyid
+       */
+      const CONFIG = { fileId: 'LVLiEhVDSl6QlIITnjyBNg', instance: 'demo-apac' };
+
+      ijewelViewer.loadModelById(CONFIG.fileId, CONFIG.instance, document.getElementById('viewer'), {
+        showCard: false,
+        showSwitchNode: false,
+        showUiButtons: true,
+        showConfigurator: false,
+        showZoomButtons: false,
+        enableZoom: true,
+        hideWbbUi: false, // show the built-in panel alongside the API calls
+      });
+
+      /*
+       * Every operation is one line of API source, shown on the button and run when
+       * you press it.
+       *
+       * The ids below come from this project's manifest. Discover them at runtime
+       * with getAvailableProfiles(), getAvailableMaterials(usage),
+       * getAvailableVariants(base), getAvailableFinishesFor(base),
+       * getAvailableSettingTypes() and getDiamondColors().
+       */
+      const GROUPS = [
+        {
+          title: 'Which band',
+          note: 'Her and His hold separate states. Every setter below applies to the active band; pass a band name as the last argument to change the other one without switching to it.',
+          ops: [`api.switchBand('her')`, `api.switchBand('his')`],
+        },
+        {
+          title: 'Profile',
+          note: 'The cross-section. The index matches getAvailableProfiles() - 0 D-Shape, 1 Flat, 3 Round, 5 Beveled. The band is remodelled, so the call returns a promise.',
+          ops: [`api.setProfile(0)`, `api.setProfile(1)`, `api.setProfile(3)`, `api.setProfile(5)`],
+        },
+        {
+          title: 'Material, quality & finish',
+          note: 'setMaterialRef(slot, { base, variant, finish }) selects a complete schema-v2 material reference. Slot 1 is the only active slot on a single-colour band.',
+          ops: [
+            `api.setMaterialRef(1, { base: 'yellow', variant: '14k', finish: 'polished' })`,
+            `api.setMaterialRef(1, { base: 'yellow', variant: '22k', finish: 'hammered' })`,
+            `api.setMaterialRef(1, { base: 'white', variant: '18k', finish: 'brush' })`,
+            `api.setMaterialRef(1, { base: 'rose', variant: '18k', finish: 'polished' })`,
+            `api.setMaterialRef(1, { base: 'carbon', variant: '1' })`,
+          ],
+        },
+        {
+          title: 'Two-tone',
+          note: 'Partition splits the band into colour zones, then each slot takes its own metal. Set the partition first, so the slot you are assigning exists.',
+          ops: [
+            `api.setPartition(2)`,
+            `api.setMaterialRef(2, { base: 'rose', variant: '18k', finish: 'polished' })`,
+            `api.setRelationship([2, 1])`,
+            `api.setPartition(1)`,
+          ],
+        },
+        {
+          title: 'Role-aware material catalog',
+          note: 'The manifest decides which bases can be used for the band body, an inlay, an overlay, or a sleeve. Variants and finishes are sparse rather than a forced matrix.',
+          ops: [
+            `api.getAvailableMaterials('band')`,
+            `api.getAvailableMaterials('inlay')`,
+            `api.getAvailableVariants('yellow')`,
+            `api.getAvailableFinishesFor('yellow')`,
+            `api.getAvailableFinishesFor('wood')`,
+          ],
+        },
+        {
+          title: 'Outside & inside materials',
+          note: 'Inlays and overlays color outer surface regions; a sleeve colors the bore. They are available on circular bands with a vertical-style division.',
+          ops: [
+            `api.setInlay(0, { centerZ: 0, widthMm: 1, metal: 'wood', variant: '1' })`,
+            `api.setOverlay('left', { widthMm: 0.8, metal: 'rose', variant: '18k', finish: 'polished', rimCoverage: 0.5 })`,
+            `api.setSleeve({ enabled: true, metal: 'yellow', variant: '18k', finish: 'polished', full: true })`,
+            `api.getInlays()`,
+            `api.getOverlays()`,
+            `api.getSleeve()`,
+            `api.setOutsideFeatures({ inlays: [], overlays: [], sleeve: null })`,
+          ],
+        },
+        {
+          title: 'Dimensions',
+          note: 'These take real millimetres. Values outside the manufacturable range are clamped to the nearest valid size and reported on the validation:warning event, so the band always stays makeable.',
+          ops: [`api.setWidthMm(3)`, `api.setWidthMm(5)`, `api.setHeightMm(1.6)`, `api.setRingSize(9.1)`],
+        },
+        {
+          title: 'Diamonds',
+          note: 'One call configures the whole setting. Span "half" covers half the circumference, "full" goes all the way around. Pass null to remove every stone.',
+          ops: [
+            `api.setDiamonds({ settingType: 'Channel', span: 'half' })`,
+            `api.setDiamonds({ settingType: 'Prong', span: 'full' })`,
+            `api.setDiamonds({ stoneSize: 2 })`,
+            `api.setDiamondColor('black')`,
+            `api.setDiamonds(null)`,
+          ],
+        },
+        {
+          title: 'Engraving',
+          note: 'Engraved on the inside of the band. Fonts come from getEngravingFonts(). Pass null to clear it.',
+          ops: [
+            `api.setEngraving('Forever', 'Sacramento')`,
+            `api.setEngraving('10.06.2026', 'Inter')`,
+            `api.setEngraving(null)`,
+          ],
+        },
+        {
+          title: 'Reading state',
+          note: 'getSnapshot and exportConfig return readable summaries. toJSON returns complete restorable state, including variants and outside features.',
+          ops: [
+            `api.getPrice()`,
+            `api.getActualDimensionsMm()`,
+            `api.getSnapshot()`,
+            `api.exportConfig()`,
+            `api.toJSON()`,
+          ],
+        },
+        {
+          title: 'Undo / redo',
+          note: 'The controller keeps one history for every change, whether it came from this page or from the built-in panel on the right.',
+          ops: [`api.undo()`, `api.redo()`],
+        },
+      ];
+
+      const outCall = document.getElementById('out-call');
+      const outVal = document.getElementById('out-val');
+
+      function show(call, value, isError) {
+        outCall.textContent = call;
+        outVal.textContent = value === undefined ? 'ok' : (isError ? String(value) : JSON.stringify(value, null, 1));
+        outVal.className = 'val' + (isError ? ' err' : '');
+      }
+
+      document.getElementById('toggle').addEventListener('click', (event) => {
+        const collapsed = document.getElementById('guide').classList.toggle('collapsed');
+        event.target.textContent = collapsed ? '+' : '-';
+      });
+
+      /* Resolves once the Wedding Band project has finished loading and its
+       * controller is ready to take calls. */
+      function whenWeddingBandReady(viewer) {
+        return new Promise((resolve) => {
+          const plugin = viewer.getPluginByType('WeddingBandBuilder');
+
+          const withController = () => {
+            const api = plugin.controller;
+            if (api.isReady) resolve(api);
+            else api.events.on('ready', () => resolve(api));
+          };
+
+          if (plugin.isProcessed && plugin.controller) withController();
+          else plugin.addEventListener('weddingBandProcessed', withController);
+        });
+      }
+
+      window.addEventListener('ijewel-viewer-ready', async ({ detail }) => {
+        const api = await whenWeddingBandReady(detail.viewer);
+        window.wbb = api; // available in the browser console
+
+        // Clamped values and unsupported combinations are reported here, with the
+        // explanation in `message`.
+        api.events.on('validation:warning', (data) =>
+          show('validation:warning', data.message || `${data.field}: ${data.provided} → ${data.corrected}`, true));
+
+        for (const group of GROUPS) {
+          const heading = document.createElement('h2');
+          heading.textContent = group.title;
+
+          const note = document.createElement('p');
+          note.className = 'note';
+          note.textContent = group.note;
+
+          const row = document.createElement('div');
+          row.className = 'row';
+
+          for (const code of group.ops) {
+            const btn = document.createElement('button');
+            btn.className = 'op';
+            btn.type = 'button';
+            btn.textContent = code;
+
+            // The label compiled into a handler, so each button runs the call it shows.
+            const run = new Function('api', `return ${code}`);
+
+            btn.addEventListener('click', async () => {
+              btn.classList.add('busy');
+              try {
+                show(code, await run(api), false);
+              } catch (error) {
+                show(code, error.message || error, true);
+              } finally {
+                btn.classList.remove('busy');
+              }
+            });
+
+            row.appendChild(btn);
+          }
+
+          document.getElementById('ops').append(heading, note, row);
+        }
+
+        show('ready', `${api.getBandNames().join(' + ')} - pick an operation above`, false);
+      });
+    </script>
+  </body>
+</html>

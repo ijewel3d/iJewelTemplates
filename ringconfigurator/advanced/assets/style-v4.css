@@ -1,0 +1,909 @@
+/* ===================================================================
+   Ring Builder v4 — Figma-driven layout (rebuilt sidebar)
+   =================================================================== */
+
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+
+:root {
+    --line: rgb(237, 237, 237);
+    --line-soft: rgb(245, 245, 245);
+    --ink: rgb(28, 27, 27);
+    --ink-soft: rgb(28, 27, 31);
+    --muted: rgb(184, 184, 184);
+    --muted-2: rgb(195, 195, 195);
+    --label: rgb(130, 111, 70);
+    --accent: rgb(186, 163, 112);
+    --bg: rgb(255, 255, 255);
+    --surface-1: rgb(249, 249, 249);
+    --surface-2: rgb(217, 217, 217);
+    /* Metal discs — single linear-gradient sweep (322.7deg) with a
+       light specular band in the middle. Spec'd by the catalog so each
+       metal disc reads consistently across the product line. White
+       gold and platinum share the same cool-grey sweep (the catalog
+       uses the white-gold gradient for both SKUs); yellow gold mirrors
+       the rose-gold structure with the yellow palette. */
+    --metal-white-gold: linear-gradient(322.7deg, #C4C4C4 15.2%, #F9F9F9 50.17%, #B8B8B8 85.84%);
+    --metal-gold:       linear-gradient(322.7deg, #C79A2A 15.2%, #FFF4C2 50.17%, #C79A2A 85.84%);
+    --metal-rose-gold:  linear-gradient(322.7deg, #D6A079 15.2%, #FFE9DA 50.17%, #D6A079 85.84%);
+    --metal-platinum:   linear-gradient(322.7deg, #C4C4C4 15.2%, #F9F9F9 50.17%, #B8B8B8 85.84%);
+}
+
+body {
+    font-family: "Segoe UI", "Segoe UI Variable", -apple-system, system-ui, "Helvetica Neue", Arial, sans-serif;
+    color: var(--ink);
+    background: var(--bg);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    height: 100vh;
+    overflow: hidden;
+}
+
+/* ── Header ───────────────────────────────────────────────────── */
+.app-header {
+    position: relative;
+    height: 64px;
+    border-bottom: 1px solid var(--line);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 24px;
+    background: #fff;
+}
+
+.brand-mark {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-family: "Segoe UI", serif;
+    font-weight: 400;
+    font-size: 22px;
+    letter-spacing: 0.18em;
+    color: #111;
+}
+.brand-mark img { height: 32px; display: block; }
+.brand-mark .brand-glyph { width: 30px; height: 30px; display: inline-flex; }
+
+.header-actions {
+    position: absolute;
+    right: 24px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    align-items: center;
+    gap: 24px;
+}
+.header-actions .icon-btn {
+    width: 22px; height: 22px;
+    background: none; border: 0; padding: 0;
+    color: #000; cursor: pointer;
+    display: inline-flex; align-items: center; justify-content: center;
+}
+.header-actions .icon-btn svg { width: 100%; height: 100%; display: block; }
+.header-actions .icon-btn:hover { opacity: 0.55; }
+
+/* ── Main grid ────────────────────────────────────────────────── */
+.app-main {
+    display: grid;
+    grid-template-columns: 1fr 380px;
+    height: calc(100vh - 64px);
+    width: 100%;
+}
+
+/* ── Viewer pane ──────────────────────────────────────────────── */
+.viewer-pane {
+    position: relative;
+    border-right: 1px solid var(--line);
+    overflow: hidden;
+    background: #fff;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+}
+/* Canvas area — grows to fill the pane minus the action bar below. The
+   3D viewer and the logo/heart overlays anchor to this wrapper, so the
+   action bar can live below in normal flow without overlapping them. */
+.viewer-canvas {
+    position: relative;
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow: hidden;
+}
+#viewer-container { position: absolute; inset: 0; width: 100%; height: 100%; }
+
+/* Fullscreen-only close button. Hidden unless `.viewer-pane` (or any
+   ancestor) is the active fullscreen element. The native ESC key still
+   works; this is a visible affordance for touch / non-keyboard users. */
+.fullscreen-close {
+    display: none;
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    width: 36px; height: 36px;
+    border: 0;
+    padding: 0;
+    background: rgba(20, 20, 20, 0.6);
+    color: #fff;
+    border-radius: 50%;
+    cursor: pointer;
+    z-index: 20;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    transition: background .15s;
+}
+.fullscreen-close:hover { background: rgba(20, 20, 20, 0.85); }
+.fullscreen-close svg { width: 18px; height: 18px; display: block; }
+.viewer-pane:fullscreen .fullscreen-close,
+.viewer-pane:-webkit-full-screen .fullscreen-close {
+    display: inline-flex;
+}
+
+/* ── Try-On overlay controls (flip camera + exit) ───────────────
+   Shown over the canvas only while AR try-on is running. Styled
+   to match `.fullscreen-close` (dark blurred pill) so the overlay
+   chrome reads as a coherent set. */
+.tryon-controls {
+    display: none;
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    gap: 8px;
+    z-index: 21;
+    align-items: center;
+}
+body.tryon-active .tryon-controls {
+    display: inline-flex;
+}
+.tryon-ctrl-btn {
+    width: 36px; height: 36px;
+    border: 0;
+    padding: 0;
+    background: rgba(20, 20, 20, 0.6);
+    color: #fff;
+    border-radius: 50%;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    transition: background .15s;
+}
+.tryon-ctrl-btn:hover { background: rgba(20, 20, 20, 0.85); }
+.tryon-ctrl-btn svg { width: 18px; height: 18px; display: block; }
+
+/* Hover tooltip for overlay buttons (flip, exit, fullscreen-close).
+   CSS-only — the parent button has `data-tooltip="…"` and we mirror
+   the dark-pill style used by `.swatch-popover`. Anchors below the
+   button so it doesn't drift off the top edge of the viewer.
+   `:where()` keeps the relative-positioning rule at zero specificity
+   so buttons that already declare `position: absolute` (like
+   `.fullscreen-close`) keep their own positioning. */
+:where([data-tooltip]) { position: relative; }
+[data-tooltip]::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(28, 27, 27, 0.94);
+    color: #fff;
+    font-family: "Segoe UI", inherit;
+    font-size: 11px;
+    font-weight: 500;
+    line-height: 1;
+    padding: 5px 9px;
+    border-radius: 4px;
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity .12s ease;
+    z-index: 9999;
+}
+[data-tooltip]:hover::after,
+[data-tooltip]:focus-visible::after {
+    opacity: 1;
+}
+/* When fullscreen is also active, shift the tryon row left so it
+   doesn't sit underneath the fullscreen-close button. */
+.viewer-pane:fullscreen .tryon-controls,
+.viewer-pane:-webkit-full-screen .tryon-controls {
+    right: 60px;
+}
+
+.viewer-corner-fav {
+    position: absolute;
+    top: 21px;
+    right: 21px;
+    width: 30px; height: 30px;
+    border: 0;
+    background: rgba(255, 255, 255, 0.72);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    color: #000;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    z-index: 5;
+    transition: background .15s;
+}
+.viewer-corner-fav:hover { background: #fff; }
+.viewer-corner-fav svg { width: 19px; height: 17px; display: block; }
+
+.viewer-logo {
+    position: absolute;
+    top: 14px; left: 16px;
+    height: 38px;
+    opacity: 0.7;
+    z-index: 5;
+    pointer-events: none;
+}
+
+/* ── Footer action bar (below viewer) ─────────────────────────── */
+.viewer-actions {
+    flex: 0 0 auto;
+    display: flex;
+    justify-content: space-around;
+    align-items: flex-end;
+    padding: 12px 24px 14px;
+    background-color: #fff;
+}
+.va-btn {
+    position: relative;
+    background: none;
+    border: 0; padding: 0;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    color: var(--ink);
+    font-family: inherit;
+}
+/* Bare glyph — no chip / background box. Color shifts on hover/active. */
+.va-btn .va-icon {
+    width: 20px; height: 20px;
+    color: var(--ink);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: color .15s, opacity .15s;
+}
+.va-btn:hover .va-icon  { opacity: 0.7; }
+.va-btn:active .va-icon { opacity: 0.5; }
+.va-btn.is-on .va-icon  { color: var(--accent, var(--ink)); }
+.va-btn .va-icon svg { display: block; width: 100%; height: 100%; }
+.va-btn .va-label {
+    font-family: "Segoe UI", inherit;
+    font-weight: 300;
+    font-size: 12px;
+    line-height: 1.2;
+    color: var(--ink);
+}
+.va-btn .va-icon.icon-rotate { position: relative; }
+.va-btn .va-icon.icon-rotate .divider {
+    position: absolute;
+    left: 60%; top: 18%;
+    width: 1px; height: 64%;
+    background: var(--ink);
+}
+
+/* ════════════════════════════════════════════════════════════════
+   SIDEBAR — figma-driven
+   ════════════════════════════════════════════════════════════════ */
+.sidebar {
+    background: #fff;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    border-left: 1px solid var(--line);
+}
+.sidebar-scroll {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+.sidebar-scroll::-webkit-scrollbar { width: 6px; }
+.sidebar-scroll::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.12); border-radius: 3px; }
+.sidebar-scroll::-webkit-scrollbar-track { background: transparent; }
+
+/* ───── Main group (Head / Shank / Band) ───── */
+.group {
+    border-top: 1px solid var(--line);
+}
+.group:last-of-type { border-bottom: 1px solid var(--line); }
+.group + .group { border-top: 1px solid var(--line); }
+.group-header {
+    width: 100%;
+    height: 63px;
+    background: none;
+    border: 0;
+    padding: 0 30px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    font-family: inherit;
+}
+.group-title {
+    /* Semi-bold for the top-level section labels (Head / Shank / Band).
+       Using "Segoe UI Semibold" first ensures the dedicated weight face
+       is picked when present, rather than the browser synthesizing 600
+       from regular. */
+    font-family: "Segoe UI Semibold", "Segoe UI", inherit;
+    font-weight: 700;
+    font-size: 16px;
+    color: #000;
+    letter-spacing: 0;
+}
+
+/* +/- toggle (used by both group and subgroup) */
+.toggle-icon {
+    width: 11px;
+    height: 11px;
+    position: relative;
+    color: var(--ink);
+    flex-shrink: 0;
+}
+.toggle-icon::before,
+.toggle-icon::after {
+    content: "";
+    position: absolute;
+    background: currentColor;
+    border-radius: 0.5px;
+}
+.toggle-icon::before {  /* horizontal */
+    left: 0; right: 0; top: 50%;
+    height: 1.4px;
+    transform: translateY(-50%);
+}
+.toggle-icon::after {   /* vertical (hidden when open) */
+    top: 0; bottom: 0; left: 50%;
+    width: 1.4px;
+    transform: translateX(-50%);
+    transition: transform .2s ease;
+}
+.group.open > .group-header .toggle-icon::after {
+    transform: translateX(-50%) scaleY(0);
+}
+
+.group-body {
+    overflow: hidden;
+    max-height: 0;
+    transition: max-height .35s ease;
+}
+.group.open > .group-body { max-height: 4000px; }
+
+/* ───── Subgroup (Gem Shape / Center Stone / Style) ─────
+   No longer collapsible — the `border-top` on `.subgroup` acts as
+   the visual divider between sections, and content is always shown. */
+.subgroup {
+    border-top: 1px solid var(--line);
+}
+.subgroup-header {
+    width: 100%;
+    padding: 18px 30px 4px;
+    display: flex;
+    align-items: center;
+    font-family: inherit;
+}
+.subgroup-title {
+    /* Figma spec: Segoe UI Semilight, 14px / 100% line, uppercase, 0 tracking. */
+    font-family: "Segoe UI Semilight", "Segoe UI", inherit;
+    font-weight: 350;
+    font-size: 14px;
+    line-height: 100%;
+    letter-spacing: 0;
+    text-transform: uppercase;
+    color: #000;
+}
+.subgroup-body-inner {
+    padding: 6px 30px 18px;
+}
+
+/* ───── Inline row (Carat / Diamond Quality, etc) ───── */
+.inline-row {
+    padding: 14px 30px 18px;
+    border-top: 1px solid var(--line);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+.inline-row.two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+.inline-row .field-block { display: flex; flex-direction: column; gap: 8px; }
+.field-label {
+    /* Tertiary label (Carat, Metal Colour) — lighter weight + smaller
+       size than the group titles so the visual hierarchy reads
+       group > subgroup > field at a glance. */
+    font-family: "Segoe UI", inherit;
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 1.4;
+    color: var(--ink);
+    margin: 0;
+}
+
+/* Native-styled select dropdown */
+.dropdown-native {
+    height: 28px;
+    background: #fff;
+    border: 1px solid var(--line);
+    padding: 0 30px 0 12px;
+    font-family: inherit;
+    font-weight: 600;
+    font-size: 13px;
+    color: #000;
+    cursor: pointer;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6' fill='none' stroke='black' stroke-width='1' stroke-linecap='square'><path d='M1 1 L5 5 L9 1'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    width: 100%;
+    border-radius: 0;
+}
+.dropdown-native:focus { outline: none; border-color: var(--ink); }
+
+/* ───── Swatch grid (gem shape / shank style / band style) ───── */
+.swatch-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    column-gap: 8px;
+    row-gap: 10px;
+    margin-top: 4px;
+}
+.swatch {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    border-radius: 3px;
+    background: #fff;
+    cursor: pointer;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background .15s;
+    border: 0;
+}
+.swatch:hover { background: var(--surface-1); }
+/* Selected state is communicated through the swatch's icon color
+   (see `.swatch.selected .swatch-img.has-local-svg` below) — no border. */
+.swatch.selected { background: #fff; }
+.swatch-img {
+    width: 78%; height: 78%;
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden;
+}
+.swatch-img img {
+    max-width: 100%; max-height: 100%;
+    object-fit: contain;
+    display: block;
+    /* hide alt text while image loads / if it fails */
+    font-size: 0;
+    color: transparent;
+}
+/* Inline-SVG variant (from assets/shape-icons.js): the SVG inherits
+   `currentColor` so it picks up the swatch's ink color. */
+.swatch-img.has-local-svg {
+    color: var(--ink);
+}
+.swatch-img.has-local-svg svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+.swatch.selected .swatch-img.has-local-svg {
+    color: var(--accent);
+}
+.swatch-img.placeholder {
+    width: 78%; height: 78%;
+    background:
+        repeating-linear-gradient(45deg,
+            rgb(245,245,245) 0 6px,
+            rgb(237,237,237) 6px 12px);
+}
+/* The label child is hidden by default — the actual hover popover is
+   a floating singleton (`#swatch-popover`) portaled to <body> by the
+   orchestrator so it escapes the subgroup's `overflow: hidden` clip
+   region. Band-style overrides below restore the visible card caption. */
+.swatch-label {
+    display: none;
+}
+.swatch.loading { opacity: 0.55; pointer-events: none; }
+
+/* Floating popover — anchored to the hovered swatch via `position:
+   fixed` + JS-computed coordinates, so it can render above section
+   headers / subgroup boundaries without being clipped. */
+.swatch-popover {
+    position: fixed;
+    background: rgba(28, 27, 27, 0.94);
+    color: #fff;
+    font-family: "Segoe UI", inherit;
+    font-size: 11px;
+    font-weight: 500;
+    line-height: 1;
+    padding: 5px 9px;
+    border-radius: 4px;
+    white-space: nowrap;
+    pointer-events: none;
+    transform: translate(-50%, -100%);
+    opacity: 0;
+    transition: opacity .12s ease;
+    z-index: 9999;
+}
+.swatch-popover.show { opacity: 1; }
+
+/* ── Try-On lockdown ───────────────────────────────────────────
+   While the AR try-on is running, only Gem Colour and Metal Colour
+   stay interactive — every other sidebar control is greyed out and
+   click-blocked so the user can't swap geometry mid-session
+   (which would un-attach the fitted ring from the hand model). */
+body.tryon-active .subgroup:not([data-subgroup="center-stone"]):not([data-subgroup="shank-metal"]),
+body.tryon-active .inline-row {
+    opacity: 0.4;
+    pointer-events: none;
+}
+
+/* ── Band-style cards ──────────────────────────────────────────
+   Override the compact swatch grid for the band Style subgroup so
+   the cards match the figma reference: 2 columns, larger artwork,
+   visible label below each card, and a gold rounded border on the
+   selected card's image (not the whole tile). */
+.subgroup[data-subgroup="band-style"] .swatch-grid {
+    grid-template-columns: repeat(2, 1fr);
+    column-gap: 12px;
+    row-gap: 14px;
+}
+.subgroup[data-subgroup="band-style"] .swatch {
+    aspect-ratio: auto;
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    background: transparent;
+    border-radius: 0;
+    overflow: visible;
+}
+.subgroup[data-subgroup="band-style"] .swatch:hover { background: transparent; }
+.subgroup[data-subgroup="band-style"] .swatch.selected { background: transparent; }
+.subgroup[data-subgroup="band-style"] .swatch-img {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    height: auto;
+    background: #fff;
+    border: 1px solid transparent;
+    border-radius: 6px;
+    padding: 6px;
+    box-sizing: border-box;
+    transition: border-color .15s;
+}
+.subgroup[data-subgroup="band-style"] .swatch:hover .swatch-img {
+    background: var(--surface-1);
+}
+.subgroup[data-subgroup="band-style"] .swatch.selected .swatch-img {
+    border-color: rgb(212, 175, 55);
+    background: #fff;
+}
+.subgroup[data-subgroup="band-style"] .swatch-label {
+    /* Stays as the original visible card caption — undo the popover
+       positioning + dark pill that other swatches use. */
+    display: block;
+    position: static;
+    transform: none;
+    background: transparent;
+    color: var(--ink);
+    font-family: "Segoe UI", inherit;
+    font-size: 11px;
+    font-weight: 400;
+    line-height: 1.3;
+    padding: 0 2px;
+    border-radius: 0;
+    white-space: normal;
+    pointer-events: auto;
+    opacity: 1;
+    text-align: center;
+}
+
+/* ───── Color circle grid (gems + metals) ───── */
+.color-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 4px;
+    padding-top: 4px;
+}
+.color-swatch {
+    position: relative;
+    width: 57px;
+    height: 54px;
+    padding: 5px 6px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    background: none;
+    border: 0;
+    font-family: inherit;
+    transition: opacity .15s;
+}
+/* Outer ring is invisible until the swatch is selected (or hovered).
+   The transparent baseline border keeps layout stable so the disc
+   doesn't shift size when the ring appears. */
+.color-swatch-ring {
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1.5px solid transparent;
+    padding: 3px;
+    box-sizing: border-box;
+    transition: border-color .15s;
+}
+.color-swatch.selected .color-swatch-ring { border-color: rgb(212, 175, 55); }
+.color-swatch:hover:not(.selected) .color-swatch-ring { border-color: rgba(212, 175, 55, 0.45); }
+.color-dot {
+    width: 100%; height: 100%;
+    border-radius: 50%;
+    overflow: hidden;
+    background: #ddd;
+    box-sizing: border-box;
+}
+.color-dot img { width: 100%; height: 100%; object-fit: cover; display: block; }
+/* Hidden — the floating `.swatch-popover` element shows the name on
+   hover (see swatch-label note above). Kept in the DOM so JS can read
+   `.textContent` to populate the popover. */
+.color-label {
+    display: none;
+}
+.color-swatch.loading { opacity: 0.55; pointer-events: none; }
+
+/* Metal gradients — domed sphere look, single source of truth in :root. */
+.material-swatch-white-gold { background: var(--metal-white-gold); }
+.material-swatch-gold       { background: var(--metal-gold); }
+.material-swatch-rose-gold  { background: var(--metal-rose-gold); }
+.material-swatch-platinum   { background: var(--metal-platinum); }
+
+/* Gem fallback gradients — richer multi-stop radials with brighter
+   center highlights and deeper rim shadows for more 3D depth. The
+   bright pinpoint at 28%/24% reads as the specular catchlight a
+   polished gem would produce under jewelry photography lighting. */
+.gem-swatch-diamond  { background: radial-gradient(circle at 28% 24%, #ffffff 0%, #f4f7fb 20%, #d5dde5 55%, #8a96a4 90%, #5b6772 100%); }
+.gem-swatch-sapphire { background: radial-gradient(circle at 28% 24%, #c8d6ff 0%, #5478d6 30%, #1f3a9c 65%, #0a1640 100%); }
+.gem-swatch-ruby     { background: radial-gradient(circle at 28% 24%, #ffc4cd 0%, #d63d52 30%, #911227 65%, #420108 100%); }
+.gem-swatch-emerald  { background: radial-gradient(circle at 28% 24%, #b8f0d8 0%, #2da677 30%, #0e6747 65%, #042617 100%); }
+
+/* ───── Gold link (Diamond & Gem Finder / Open Material Library) ───── */
+.gold-link {
+    display: inline-block;
+    margin-top: 14px;
+    background: none;
+    border: 0;
+    padding: 0;
+    font-family: "Segoe UI", inherit;
+    font-weight: 600;
+    font-size: 13px;
+    color: var(--label);
+    text-decoration: underline;
+    cursor: pointer;
+}
+.gold-link:hover { color: var(--accent); }
+
+/* Empty-state helper */
+.field-empty {
+    font-size: 11px;
+    color: var(--muted);
+    padding: 6px 0;
+    font-weight: 400;
+}
+
+/* ── Sidebar footer ───────────────────────────────────────────── */
+.config-readout {
+    border-top: 1px solid var(--line);
+    padding: 12px 30px;
+    background: #fff;
+    font-family: "Segoe UI", inherit;
+    font-size: 11px;
+    color: var(--ink);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+.config-readout .label {
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--muted);
+    font-size: 10px;
+    font-weight: 600;
+}
+.config-readout .value {
+    font-weight: 600;
+    color: var(--ink);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 220px;
+    text-align: right;
+}
+.sidebar-footer {
+    border-top: 1px solid var(--line);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0 30px;
+    height: 59px;
+    background: #fff;
+}
+.btn-exit {
+    background: none;
+    border: 0;
+    padding: 4px 12px;
+    font-family: "Segoe UI", inherit;
+    font-weight: 600;
+    font-size: 14px;
+    color: #000;
+    cursor: pointer;
+    letter-spacing: 0;
+}
+.btn-exit:hover { color: var(--label); }
+
+/* ── Toast (Share link copied / error feedback) ───────────────── */
+.app-toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(14px);
+    background: rgba(28, 27, 27, 0.92);
+    color: #fff;
+    padding: 10px 18px;
+    border-radius: 6px;
+    font-family: "Segoe UI", inherit;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .25s ease, transform .25s ease;
+    z-index: 9999;
+}
+.app-toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}
+
+/* ── Loading toast (bottom-left, while components/materials apply) ── */
+.app-loading-toast {
+    position: fixed;
+    left: 20px;
+    bottom: 24px;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(28, 27, 27, 0.92);
+    color: #fff;
+    padding: 9px 14px;
+    border-radius: 6px;
+    font-family: "Segoe UI", inherit;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(8px);
+    transition: opacity .2s ease, transform .2s ease;
+    z-index: 9999;
+}
+.app-loading-toast.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+.app-loading-toast .alt-spinner {
+    width: 14px; height: 14px;
+    border: 2px solid rgba(255, 255, 255, 0.25);
+    border-top-color: rgb(212, 175, 55);
+    border-radius: 50%;
+    animation: alt-spin 0.85s linear infinite;
+}
+@keyframes alt-spin {
+    to { transform: rotate(360deg); }
+}
+
+/* ─────────────────────────────────────────────────────────────────
+   Responsive — phone & small tablet (single column)
+   At ≤ 900px the sidebar drops below the viewer and the viewer
+   shrinks to ~50vh so the user can scroll into the configuration.
+   ───────────────────────────────────────────────────────────────── */
+@media (max-width: 900px) {
+    body { overflow: auto; }
+
+    .app-header {
+        height: 56px;
+        padding: 0 14px;
+    }
+    .brand-mark { font-size: 18px; gap: 8px; letter-spacing: 0.14em; }
+    .brand-mark img { height: 28px; }
+    .brand-mark .brand-glyph { width: 26px; height: 26px; }
+    .header-actions { right: 14px; gap: 16px; }
+    .header-actions .icon-btn { width: 20px; height: 20px; }
+
+    /* Stack viewer over sidebar, no fixed grid. */
+    .app-main {
+        display: flex;
+        flex-direction: column;
+        height: auto;
+        min-height: calc(100vh - 56px);
+    }
+    .viewer-pane {
+        border-right: 0;
+        border-bottom: 1px solid var(--line);
+        flex: 0 0 auto;
+    }
+    .viewer-canvas {
+        height: 55vh;
+        min-height: 320px;
+    }
+
+    /* Sidebar becomes a flow column under the viewer. */
+    .sidebar {
+        width: 100%;
+        max-width: 100%;
+        height: auto;
+    }
+    .sidebar-scroll {
+        max-height: none;
+        overflow: visible;
+        padding: 0 14px;
+    }
+    .config-readout { padding: 12px 14px; }
+    .sidebar-footer { padding: 0 14px; height: 56px; }
+
+    /* Group / subgroup paddings tighten. */
+    .group-header, .subgroup-header { padding: 14px 0; }
+    .group-title { font-size: 13px; }
+
+    /* Action bar wraps if the row is too narrow. */
+    .viewer-actions {
+        padding: 12px 14px 14px;
+        flex-wrap: wrap;
+        row-gap: 10px;
+        justify-content: space-between;
+    }
+    .va-btn { padding: 4px 6px; }
+    .va-label { font-size: 11px; }
+
+    /* Inline rows can stack on the smallest widths to keep
+       dropdown triggers readable. */
+    .inline-row.two-col {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    /* Toasts stay readable on phones — center the share toast,
+       and inset the loading toast away from the edge. */
+    .app-toast { font-size: 12px; padding: 8px 14px; }
+    .app-loading-toast { left: 12px; bottom: 14px; }
+}
+
+/* Extra-narrow phones: drop the swatch grid density a touch. */
+@media (max-width: 480px) {
+    .swatch-grid {
+        grid-template-columns: repeat(4, 1fr);
+        column-gap: 6px;
+        row-gap: 8px;
+    }
+    .subgroup[data-subgroup="band-style"] .swatch-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .color-swatch { width: 52px; height: 50px; }
+    .color-swatch-ring { width: 40px; height: 40px; }
+}

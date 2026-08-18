@@ -4,6 +4,12 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <title>Wedding Band Builder - Custom UI - Drive Model ID</title>
+    <meta property="og:image" content="https://docs.ijewel3d.com/assets/images/og-wbb.webp" />
+    <meta property="og:image:width" content="2400" />
+    <meta property="og:image:height" content="1260" />
+    <meta property="og:image:alt" content="iJewel3D Wedding Band Builder" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content="https://docs.ijewel3d.com/assets/images/og-wbb.webp" />
     <!--
       Default alias of model-by-id.html.
 
@@ -260,7 +266,15 @@
               <div class="opt-row" id="metal-opts"></div>
             </div>
 
-            <div class="field">
+            <div class="field" id="variant-field" style="display:none">
+              <div class="field-head">
+                <span class="field-label">Quality</span>
+                <span class="field-value" id="variant-value">-</span>
+              </div>
+              <div class="opt-row" id="variant-opts"></div>
+            </div>
+
+            <div class="field" id="finish-field">
               <div class="field-head">
                 <span class="field-label">Surface Finish</span>
                 <span class="field-value" id="finish-value">-</span>
@@ -328,6 +342,32 @@
               <div class="field" id="segment-widths-field" style="display:none">
                 <div class="field-head"><span class="field-label">Segment Widths (mm)</span></div>
                 <div id="segment-widths-list"></div>
+              </div>
+            </div>
+
+            <div class="field" id="outside-features-field">
+              <div class="field-head">
+                <span class="field-label">Outside Features</span>
+                <span class="field-value" id="outside-features-value">None</span>
+              </div>
+              <p class="field-hint-text" id="outside-features-hint">Role-aware inlays and rim overlays use the schema-v2 material catalog.</p>
+              <span class="mini-card-sub-label">Center Inlay</span>
+              <div class="opt-row" id="inlay-material-opts"></div>
+              <span class="mini-card-sub-label">Left Rim Overlay</span>
+              <div class="opt-row" id="overlay-material-opts"></div>
+              <div class="row-inline" style="margin-top:10px">
+                <button class="btn-ghost full" id="clear-outside-btn" type="button">Clear Outside</button>
+              </div>
+            </div>
+
+            <div class="field" id="sleeve-feature-field">
+              <div class="field-head">
+                <span class="field-label">Inside Sleeve</span>
+                <span class="field-value" id="sleeve-feature-value">Off</span>
+              </div>
+              <div class="opt-row" id="sleeve-material-opts"></div>
+              <div class="row-inline" style="margin-top:10px">
+                <button class="btn-ghost full" id="clear-sleeve-btn" type="button">Remove Sleeve</button>
               </div>
             </div>
           </section>
@@ -993,10 +1033,9 @@
     <div id="toast"></div>
 
     <script src="https://releases.ijewel3d.com/libs/webgi-v0/bundle-0.22.0.js"></script>
-    <!-- @ijewel3d/mini-viewer 0.6.12 — first release with Wedding Band Builder
-     Phase 2 (multi-ring compilations, side stones, free stones, design and
-     separation grooves, wavy/diagonal divisions, theming). -->
-  <script src="https://releases.ijewel3d.com/libs/mini-viewer/0.6.12/bundle.nowebgi.iife.js"></script>
+  <!-- @ijewel3d/mini-viewer 0.6.17 — material schema v2, variants, and
+       outside/inside material features. -->
+  <script src="https://releases.ijewel3d.com/libs/mini-viewer/0.6.17/bundle.nowebgi.iife.js"></script>
     <script src="./script-drive.js"></script>
   </body>
 </html>

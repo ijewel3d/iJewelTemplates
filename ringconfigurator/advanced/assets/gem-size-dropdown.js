@@ -70,6 +70,12 @@
             isOpen: false,
             activeIndex: -1,
             loading: false,
+            // `labelMode: 'label'` skips the carat-number reformat entirely and
+            // uses opt.label verbatim — for sizes that aren't carats (e.g. band
+            // widths like "Thin"/"Medium" or ring sizes "5"/"6"). Empty string
+            // hides the trailing "ct" unit suffix in the menu.
+            labelMode: config.labelMode === 'label' ? 'label' : 'auto',
+            unit:      config.unit !== undefined ? config.unit : 'ct',
         };
 
         const onChange = typeof config.onChange === 'function' ? config.onChange : () => {};
@@ -95,10 +101,10 @@
             triggerText.innerHTML = '';
             const selected = findOption(state.value);
             if (selected) {
-                const primary = el('span', {
-                    class: 'gsd-trigger-primary',
-                    text: selected.label || `${formatCarat(selected.value)} ct`
-                });
+                const triggerLabel = state.labelMode === 'label'
+                    ? (selected.label || String(selected.value))
+                    : (selected.label || `${formatCarat(selected.value)} ct`);
+                const primary = el('span', { class: 'gsd-trigger-primary', text: triggerLabel });
                 triggerText.appendChild(primary);
                 if (selected.sub) {
                     triggerText.appendChild(el('span', { class: 'gsd-trigger-secondary', text: selected.sub }));
@@ -128,12 +134,15 @@
                 });
 
                 const main = el('div', { class: 'gsd-opt-main' });
-                const caratNum = parseCarat(opt.value);
-                main.appendChild(el('span', {
-                    class: 'gsd-opt-carat',
-                    text: caratNum ? formatCarat(caratNum) : (opt.label || String(opt.value))
-                }));
-                main.appendChild(el('span', { class: 'gsd-opt-unit', text: 'ct' }));
+                let mainText;
+                if (state.labelMode === 'label') {
+                    mainText = opt.label || String(opt.value);
+                } else {
+                    const caratNum = parseCarat(opt.value);
+                    mainText = caratNum ? formatCarat(caratNum) : (opt.label || String(opt.value));
+                }
+                main.appendChild(el('span', { class: 'gsd-opt-carat', text: mainText }));
+                if (state.unit) main.appendChild(el('span', { class: 'gsd-opt-unit', text: state.unit }));
                 node.appendChild(main);
 
                 if (opt.sub) node.appendChild(el('span', { class: 'gsd-opt-sub', text: opt.sub }));
@@ -158,6 +167,23 @@
         }
 
         // ── Open / close ──
+        // The menu is pinned with `position: fixed` whenever the dropdown
+        // is open so it can escape ancestors that clip via `overflow:
+        // hidden` (e.g. the configurator's accordion sections). The
+        // coordinates are recomputed on scroll/resize.
+        function positionMenu() {
+            const r = trigger.getBoundingClientRect();
+            menu.style.position = 'fixed';
+            menu.style.left     = `${r.left}px`;
+            menu.style.top      = `${r.bottom + 4}px`;
+            menu.style.width    = `${r.width}px`;
+        }
+        function clearMenuPosition() {
+            menu.style.position = '';
+            menu.style.left     = '';
+            menu.style.top      = '';
+            menu.style.width    = '';
+        }
         function open() {
             if (state.isOpen || state.loading) return;
             state.isOpen = true;
@@ -166,8 +192,11 @@
             const selectedIdx = state.options.findIndex(o => String(o.value) === String(state.value));
             state.activeIndex = selectedIdx >= 0 ? selectedIdx : 0;
             renderMenu();
+            positionMenu();
             document.addEventListener('mousedown', onDocMouseDown, true);
             document.addEventListener('keydown', onKeyDown, true);
+            window.addEventListener('scroll', positionMenu, true);
+            window.addEventListener('resize', positionMenu);
         }
         function close() {
             if (!state.isOpen) return;
@@ -177,6 +206,9 @@
             state.activeIndex = -1;
             document.removeEventListener('mousedown', onDocMouseDown, true);
             document.removeEventListener('keydown', onKeyDown, true);
+            window.removeEventListener('scroll', positionMenu, true);
+            window.removeEventListener('resize', positionMenu);
+            clearMenuPosition();
         }
 
         function onDocMouseDown(e) {

@@ -78,6 +78,9 @@ const state = {
   ready:         false,
   activeBand:    'her',
   iconCache:     {},           // optional iconUrl cache from manifest
+  materials:     [],           // schema-v2 band material catalog
+  featureCatalogs: { inlay: [], overlay: [], sleeve: [] },
+  materialRef:   { base: '', variant: '', finish: '' },
 };
 
 
@@ -137,6 +140,9 @@ function loadIframe(url) {
 
 function resetState() {
   state.ready = false;
+  state.materials = [];
+  state.featureCatalogs = { inlay: [], overlay: [], sleeve: [] };
+  state.materialRef = { base: '', variant: '', finish: '' };
   state.pending.forEach(({ reject, timer }) => {
     clearTimeout(timer);
     reject(new Error('iframe reloaded'));
@@ -146,13 +152,18 @@ function resetState() {
 
   $('profile-opts').innerHTML  = '<div class="muted-hint">Waiting for ready…</div>';
   $('metal-opts').innerHTML    = '<div class="muted-hint">Waiting for ready…</div>';
+  $('variant-opts').innerHTML  = '';
   $('finish-opts').innerHTML   = '<div class="muted-hint">Waiting for ready…</div>';
+  $('inlay-opts').innerHTML    = '';
+  $('overlay-opts').innerHTML  = '';
+  $('sleeve-opts').innerHTML   = '';
   $('setting-opts').innerHTML  = '<div class="muted-hint">Waiting for ready…</div>';
   $('price-value').textContent = '—';
   [
     'height-card', 'ring-size-card', 'edge-card', 'partition-card',
     'diamond-detail-card', 'division-card', 'sep-groove-card',
     'design-grooves-card', 'engraving-detail-card', 'rings-card',
+    'variant-card', 'outside-card', 'sleeve-card',
   ].forEach((id) => { $(id).hidden = true; });
 }
 
@@ -252,6 +263,11 @@ function handleViewerEvent(name, data) {
     case 'band:switched':    return onBandSwitched(data);
     case 'profile:changed':  return onProfileChanged(data);
     case 'material:changed': return onMaterialChanged(data);
+    case 'partition:changed':return refreshSnapshot();
+    case 'path:changed':     return refreshOutsideFeatures();
+    case 'inlays:changed':
+    case 'overlays:changed':
+    case 'sleeve:changed':   return refreshOutsideFeatures();
     case 'diamonds:changed': return onDiamondsChanged(data);
     case 'engraving:changed':return onEngravingChanged(data);
     case 'rings:changed':    return onRingsChanged(data);
@@ -299,9 +315,9 @@ function onProfileChanged(data) {
 }
 
 function onMaterialChanged(data) {
-  if (!data || data.slot !== 1) return;
-  $('metal-value').textContent  = data.metal  || '—';
-  $('finish-value').textContent = data.finish || '—';
+  if (!data) return;
+  if (data.slot === 1) refreshSnapshot();
+  else refreshOutsideFeatures();
 }
 
 function onDiamondsChanged(data) {
@@ -342,24 +358,38 @@ function onViewerError(data) {
  * ══════════════════════════════════════════════════════════════════ */
 
 async function populateCatalogs() {
-  const [profiles, metals, finishes, settingTypes] = await Promise.all([
+  const [profiles, materials, settingTypes, inlays, overlays, sleeves] = await Promise.all([
     query('getAvailableProfiles'),
-    query('getAvailableMetals'),
-    query('getAvailableFinishes'),
+    query('getAvailableMaterials', ['band']),
     query('getAvailableSettingTypes'),
+    query('getAvailableMaterials', ['inlay']),
+    query('getAvailableMaterials', ['overlay']),
+    query('getAvailableMaterials', ['sleeve']),
   ]);
 
+  state.materials = materials || [];
+  state.featureCatalogs = {
+    inlay: inlays || [],
+    overlay: overlays || [],
+    sleeve: sleeves || [],
+  };
+
   buildProfileOptions(profiles || []);
-  buildMetalOptions(metals || []);
-  buildFinishOptions(finishes || []);
+  buildMetalOptions(state.materials);
+  buildFeatureOptions();
   buildSettingOptions(settingTypes || []);
 }
 
 async function refreshSnapshot() {
   try {
-    const snap = await query('getSnapshot');
+    const [snap, raw] = await Promise.all([
+      query('getSnapshot'),
+      query('getRawState'),
+    ]);
     if (!snap) return;
     applySnapshot(snap);
+    await refreshMaterialControls(raw || {});
+    await refreshOutsideFeatures(snap.materials);
   } catch (err) {
     /* snapshot is best-effort; controls still work via events */
   }
@@ -374,12 +404,10 @@ function applySnapshot(snap) {
   }
 
   if (snap.materials && Array.isArray(snap.materials.slots)) {
-    const slot1 = snap.materials.slots.find((s) => s.slot === 1);
+    const slot1 = snap.materials.slots.find((entry) => entry.slot === 1);
     if (slot1) {
-      $('metal-value').textContent  = slot1.metal  || '—';
-      $('finish-value').textContent = slot1.finish || '—';
-      highlightChipByLabel('#metal-opts',  slot1.metal);
-      highlightChipByLabel('#finish-opts', slot1.finish);
+      state.materialRef.base = slot1.metal || state.materialRef.base;
+      state.materialRef.finish = slot1.finish || '';
     }
   }
 
@@ -478,47 +506,251 @@ function buildProfileOptions(profiles) {
   });
 }
 
-function buildMetalOptions(metals) {
+function materialById(base) {
+  return state.materials.find((material) =>
+    String(material.id).toLowerCase() === String(base).toLowerCase()
+  );
+}
+
+async function supportedFinishes(material, variantId) {
+  if (!material) return [];
+  const finishes = await query('getAvailableFinishesFor', [material.id]);
+  const variants = material.variants || [];
+  const variant = variants.find((entry) => entry.id === variantId) || variants[0];
+  if (!variant || !variant.files) return [];
+  return (finishes || []).filter((finish) => variant.files[finish.id]);
+}
+
+async function resolveMaterialRef(material, requestedVariant, requestedFinish) {
+  const variants = material.variants || [];
+  const variant = variants.find((entry) => entry.id === requestedVariant)
+    || variants.find((entry) => entry.id === material.defaultVariant)
+    || variants[0];
+  const finishes = await supportedFinishes(material, variant && variant.id);
+  const finish = finishes.find((entry) => entry.id === requestedFinish)
+    || finishes.find((entry) => entry.id === material.defaultFinish)
+    || finishes[0];
+
+  return {
+    base: material.id,
+    variant: variant && variant.id,
+    finish: finish && finish.id,
+  };
+}
+
+async function applyMaterialRef(ref) {
+  await query('setMaterialRef', [1, ref]);
+  await refreshSnapshot();
+}
+
+function buildMetalOptions(materials) {
   const host = $('metal-opts');
   host.innerHTML = '';
-  if (!metals.length) {
-    host.innerHTML = '<div class="muted-hint">No metals returned</div>';
+  if (!materials.length) {
+    host.innerHTML = '<div class="muted-hint">No band materials returned</div>';
     return;
   }
 
-  metals.forEach((metal) => {
-    const btn = makeChip(metal.name, () => {
-      setActive(host, btn);
-      $('metal-value').textContent = metal.name;
-
-      const currentFinish = $('finish-value').textContent;
-      const finish = (currentFinish && currentFinish !== '—') ? currentFinish : 'Polished';
-      send('setMaterial', [1, metal.id || metal.name, finish]);
+  materials.forEach((material) => {
+    const btn = makeChip(material.name, async () => {
+      const ref = await resolveMaterialRef(material, undefined, state.materialRef.finish);
+      await applyMaterialRef(ref);
     });
+    btn.dataset.optionId = material.id;
     host.appendChild(btn);
   });
 }
 
-function buildFinishOptions(finishes) {
-  const host = $('finish-opts');
+async function refreshMaterialControls(raw) {
+  const base = (raw.metals && raw.metals[0]) || state.materialRef.base;
+  const material = materialById(base) || state.materials[0];
+  if (!material) return;
+
+  const requestedVariant = (raw.variants && raw.variants[0])
+    || state.materialRef.variant
+    || material.defaultVariant;
+  const requestedFinish = (raw.surfaces && raw.surfaces[0])
+    || state.materialRef.finish;
+  const ref = await resolveMaterialRef(material, requestedVariant, requestedFinish);
+  state.materialRef = ref;
+
+  $('metal-value').textContent = material.name;
+  $$('#metal-opts .opt').forEach((btn) => {
+    btn.classList.toggle('active', btn.dataset.optionId === ref.base);
+  });
+
+  buildVariantOptions(material, ref);
+  await buildFinishOptions(material, ref);
+}
+
+function buildVariantOptions(material, ref) {
+  const host = $('variant-opts');
+  const variants = material.variants || [];
   host.innerHTML = '';
+  $('variant-card').hidden = variants.length < 2;
+  $('variant-value').textContent =
+    (variants.find((entry) => entry.id === ref.variant) || {}).name || ref.variant || 'Default';
+
+  variants.forEach((variant) => {
+    const btn = makeChip(variant.name, async () => {
+      const next = await resolveMaterialRef(material, variant.id, ref.finish);
+      await applyMaterialRef(next);
+    });
+    btn.dataset.optionId = variant.id;
+    btn.classList.toggle('active', variant.id === ref.variant);
+    host.appendChild(btn);
+  });
+}
+
+async function buildFinishOptions(material, ref) {
+  const host = $('finish-opts');
+  const finishes = await supportedFinishes(material, ref.variant);
+  host.innerHTML = '';
+  $('finish-value').textContent =
+    (finishes.find((entry) => entry.id === ref.finish) || {}).name || ref.finish || 'None';
+
   if (!finishes.length) {
-    host.innerHTML = '<div class="muted-hint">No finishes returned</div>';
+    host.innerHTML = '<div class="muted-hint">This material has no surface-finish axis.</div>';
     return;
   }
 
   finishes.forEach((finish) => {
-    const btn = makeChip(finish.name, () => {
-      setActive(host, btn);
-      $('finish-value').textContent = finish.name;
-
-      const currentMetal = $('metal-value').textContent;
-      const metal = (currentMetal && currentMetal !== '—') ? currentMetal : 'Yellow';
-      send('setMaterial', [1, metal, finish.id || finish.name]);
+    const btn = makeChip(finish.name, async () => {
+      await applyMaterialRef({
+        base: ref.base,
+        variant: ref.variant || undefined,
+        finish: finish.id,
+      });
     });
+    btn.dataset.optionId = finish.id;
+    btn.classList.toggle('active', finish.id === ref.finish);
     host.appendChild(btn);
   });
 }
+
+
+function featureDefaultRef(material) {
+  const variants = material.variants || [];
+  const variant = variants.find((entry) => entry.id === material.defaultVariant) || variants[0];
+  const finish = variant && variant.files
+    ? Object.keys(variant.files).find((id) => id === material.defaultFinish)
+      || Object.keys(variant.files)[0]
+    : undefined;
+  return {
+    base: material.id,
+    variant: variant && variant.id,
+    finish,
+  };
+}
+
+function buildFeatureMaterialChips(hostId, usage, apply) {
+  const host = $(hostId);
+  const materials = state.featureCatalogs[usage] || [];
+  host.innerHTML = '';
+
+  materials.forEach((material) => {
+    const btn = makeChip(material.name, async () => {
+      await apply(featureDefaultRef(material));
+      await refreshOutsideFeatures();
+    });
+    btn.dataset.optionId = material.id;
+    host.appendChild(btn);
+  });
+
+  return materials.length > 0;
+}
+
+function buildFeatureOptions() {
+  const hasInlays = buildFeatureMaterialChips('inlay-opts', 'inlay', async (ref) => {
+    await query('setInlay', [
+      0,
+      {
+        centerZ: 0, widthMm: 1, metal: ref.base,
+        variant: ref.variant, finish: ref.finish,
+      },
+    ]);
+  });
+
+  const hasOverlays = buildFeatureMaterialChips('overlay-opts', 'overlay', async (ref) => {
+    await query('setOverlay', ['left', {
+      widthMm: 0.8, metal: ref.base, variant: ref.variant,
+      finish: ref.finish, rimCoverage: 1,
+    }]);
+  });
+
+  const hasSleeves = buildFeatureMaterialChips('sleeve-opts', 'sleeve', async (ref) => {
+    await query('setSleeve', [{
+      enabled: true, metal: ref.base, variant: ref.variant,
+      finish: ref.finish, full: true,
+    }]);
+  });
+
+  const clearOutside = makeChip('Clear Outside', async () => {
+    await query('setOutsideFeatures', [{ inlays: [], overlays: [] }]);
+    await refreshOutsideFeatures();
+  });
+  $('outside-actions').replaceChildren(clearOutside);
+
+  const clearSleeve = makeChip('Remove Sleeve', async () => {
+    const [inlays, overlays] = await Promise.all([
+      query('getInlays'),
+      query('getOverlays'),
+    ]);
+    await query('setOutsideFeatures', [{ inlays, overlays, sleeve: null }]);
+    await refreshOutsideFeatures();
+  });
+  $('sleeve-opts').appendChild(clearSleeve);
+
+  $('outside-card').hidden = !(hasInlays || hasOverlays);
+  $('sleeve-card').hidden = !hasSleeves;
+}
+
+async function refreshOutsideFeatures(materialSnapshot) {
+  try {
+    const [available, inlays, overlays, sleeve] = await Promise.all([
+      query('areOutsideFeaturesAvailable'),
+      materialSnapshot && materialSnapshot.inlays
+        ? Promise.resolve(materialSnapshot.inlays)
+        : query('getInlays'),
+      materialSnapshot && materialSnapshot.overlays
+        ? Promise.resolve(materialSnapshot.overlays)
+        : query('getOverlays'),
+      materialSnapshot && Object.prototype.hasOwnProperty.call(materialSnapshot, 'sleeve')
+        ? Promise.resolve(materialSnapshot.sleeve)
+        : query('getSleeve'),
+    ]);
+
+    $('outside-value').textContent =
+      `${(inlays || []).length} inlay${(inlays || []).length === 1 ? '' : 's'} · ${(overlays || []).length} overlay${(overlays || []).length === 1 ? '' : 's'}`;
+    $('sleeve-value').textContent = sleeve && sleeve.enabled
+      ? capitalize(sleeve.metal)
+      : 'Off';
+
+    const activeInlay = inlays && inlays[0] && inlays[0].metal;
+    const leftOverlay = (overlays || []).find((entry) => entry.side === 'left');
+    $$('#inlay-opts .opt').forEach((btn) => {
+      btn.classList.toggle('active', btn.dataset.optionId === activeInlay);
+      btn.disabled = !available;
+    });
+    $$('#overlay-opts .opt').forEach((btn) => {
+      btn.classList.toggle('active',
+        btn.dataset.optionId === (leftOverlay && leftOverlay.metal));
+      btn.disabled = !available;
+    });
+    $$('#outside-actions .opt').forEach((btn) => { btn.disabled = !available; });
+    $$('#sleeve-opts .opt').forEach((btn) => {
+      if (btn.dataset.optionId) {
+        btn.disabled = !available;
+        btn.classList.toggle('active',
+          btn.dataset.optionId === (sleeve && sleeve.enabled && sleeve.metal));
+      }
+    });
+  } catch (err) {
+    $('outside-card').hidden = true;
+    $('sleeve-card').hidden = true;
+  }
+}
+
 
 function buildSettingOptions(settingTypes) {
   const host = $('setting-opts');
@@ -935,11 +1167,16 @@ function buildCartButton() {
   $('cart-btn').addEventListener('click', async () => {
     if (!state.ready) return;
     try {
-      const config = await query('exportConfig');
-      logEvent('rep', 'exportConfig (cart payload)', { result: config });
-      console.log('[cart] config:', config);
+      const [stateJson, summary, price] = await Promise.all([
+        query('toJSON'),
+        query('exportConfig'),
+        query('getPrice'),
+      ]);
+      const payload = { state: stateJson, summary, price };
+      logEvent('rep', 'toJSON (cart payload)', { result: payload });
+      console.log('[cart] complete payload:', payload);
     } catch (err) {
-      logEvent('err', 'exportConfig failed', { message: err.message });
+      logEvent('err', 'toJSON failed', { message: err.message });
     }
   });
 }

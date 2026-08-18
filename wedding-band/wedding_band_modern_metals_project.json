@@ -801,8 +801,8 @@
         "autoFit": false,
         "bands": [
           {
-            "name": "her",
-            "displayName": "Her Ring",
+            "name": "ring",
+            "displayName": "Ring",
             "defaultWidthMm": 3.5,
             "defaultHeightMm": 1.8,
             "state": {
@@ -810,69 +810,13 @@
               "profileWidth": 1,
               "profileHeight": 1,
               "ringSize": 8.26,
-              "partition": "2 Color",
+              "partition": "1 Color",
               "activeMetalTab": 0,
               "metals": [
-                "Yellow",
-                "White",
-                "White"
+                "yellow"
               ],
               "surfaces": [
-                "Polished",
-                "Brush",
-                "Brush"
-              ],
-              "diamond": "none",
-              "diamondPlacement": 0.5,
-              "stoneSize": 1.5,
-              "engravingText": "",
-              "engravingFont": "Sacramento",
-              "engravingFontSize": 80,
-              "edgeType": "None",
-              "edgeSide": "Both",
-              "settingType": "Channel",
-              "diamondSpan": "Full Ring",
-              "diamondSpacing": "Stone to Stone",
-              "diamondCount": 0,
-              "insidePolished": true,
-              "splitGroove": true,
-              "wavyGrooves": false,
-              "wavySplit": true,
-              "wavyFrequency": 6,
-              "wavyAmplitude": 0.3
-            },
-            "position": [
-              1,
-              0,
-              1
-            ],
-            "rotation": [
-              0,
-              0.3,
-              0
-            ]
-          },
-          {
-            "name": "his",
-            "displayName": "His Ring",
-            "defaultWidthMm": 5,
-            "defaultHeightMm": 1.9,
-            "state": {
-              "profileIndex": 0,
-              "profileWidth": 1,
-              "profileHeight": 1,
-              "ringSize": 9.45,
-              "partition": "2 Color",
-              "activeMetalTab": 0,
-              "metals": [
-                "Yellow",
-                "White",
-                "White"
-              ],
-              "surfaces": [
-                "Polished",
-                "Brush",
-                "Brush"
+                "polished"
               ],
               "diamond": "none",
               "diamondPlacement": 0.5,
@@ -887,20 +831,25 @@
               "diamondSpacing": "Stone to Stone",
               "diamondCount": 0,
               "insidePolished": true,
-              "splitGroove": true,
+              "splitGroove": false,
               "wavyGrooves": false,
               "wavySplit": true,
               "wavyFrequency": 6,
-              "wavyAmplitude": 0.3
+              "wavyAmplitude": 0.3,
+              "variants": [
+                "18k"
+              ],
+              "inlays": [],
+              "overlays": []
             },
             "position": [
-              14,
+              0,
               0,
               0
             ],
             "rotation": [
               0,
-              1.57,
+              0,
               0
             ]
           }
@@ -950,6 +899,9 @@
             "thumbnail": "https://packs.ijewel3d.com/files/eternity_3_c53a6e3c42.png?h=ijewel3d.com"
           }
         ]
+      },
+      "ui": {
+        "layout": "modern-metals"
       }
     }
   },

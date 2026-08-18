@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Wedding Band Builder — Modern Metals</title>
+    <meta property="og:image" content="https://docs.ijewel3d.com/assets/images/og-wbb.webp" />
+    <meta property="og:image:width" content="2400" />
+    <meta property="og:image:height" content="1260" />
+    <meta property="og:image:alt" content="iJewel3D Wedding Band Builder" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content="https://docs.ijewel3d.com/assets/images/og-wbb.webp" />
+    <script src="https://releases.ijewel3d.com/libs/webgi-v0/bundle-0.22.0.js"></script>
+    <script src="https://releases.ijewel3d.com/libs/mini-viewer/0.6.17/bundle.nowebgi.iife.js"></script>
+    <style>
+      * { box-sizing: border-box; }
+      html, body, #viewer { width: 100%; height: 100%; margin: 0; }
+      body { overflow: hidden; background: #f7f5f0; }
+      #error { position: fixed; inset: 20px; color: #a00; font: 14px/1.5 ui-monospace, monospace; }
+    </style>
+  </head>
+  <body>
+    <div id="viewer"></div>
+    <div id="error" hidden></div>
+    <script>
+      const PROJECT_URL = './wedding_band_modern_metals_project.json';
+
+      async function start() {
+        const response = await fetch(PROJECT_URL);
+        if (!response.ok) throw new Error(`Project request failed: ${response.status}`);
+        const project = await response.json();
+
+        new window.ijewelViewer.Viewer(document.getElementById('viewer'), project, {
+          showCard: false,
+          showSwitchNode: false,
+          showUiButtons: true,
+          showConfigurator: false,
+          showZoomButtons: false,
+          enableZoom: true,
+          hideWbbUi: false,
+        });
+      }
+
+      start().catch((error) => {
+        const box = document.getElementById('error');
+        box.hidden = false;
+        box.textContent = `Unable to start Modern Metals: ${error.message}`;
+      });
+    </script>
+  </body>
+</html>
