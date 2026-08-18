@@ -2,13 +2,14 @@
  *  Wedding Band Builder — iframe Demo
  *
  *  Demonstrates the postMessage bridge between a host page and a
- *  hosted WBB viewer iframe at:
- *     https://ijewel3d.com/{instance}/files/{fileId}/embedded
+ *  WBB viewer iframe. The default points to the repository's own
+ *  mini-viewer template; the URL field can target any compatible hosted
+ *  viewer that exposes the same Wedding Band postMessage API.
  *
  *  fileId is the unique ID of the published Wedding Band project. Find it in
  *  Drive through Share and copy the value between /files/ and /view.
- *  instance is the Drive basename: normally "drive", or the basename supplied
- *  to enterprise accounts. The demo URL below uses the shared "drive" alias.
+ *  The embedded mini-viewer still loads the published project from the shared
+ *  Drive instance, without depending on the Drive application's page shell.
  *
  *  https://docs.ijewel3d.com/viewer/tutorial-embed-drive.html#find-the-model-id
  *  https://docs.ijewel3d.com/wedding-band-builder/integration-iframe.html
@@ -26,9 +27,10 @@
  *  CONFIG
  * ══════════════════════════════════════════════════════════════════ */
 
-const DEFAULT_VIEWER_URL =
-  'https://ijewel3d.com/drive/files/E3j8eClwR7iWMFNmGi5HoQ/embedded'
-  + '?hideWbbUi=true&showUiButtons=true&isAutoplay=true';
+const DEFAULT_VIEWER_URL = new URL(
+  '../wedding-band-default.html?hideWbbUi=true&showUiButtons=true&isAutoplay=true',
+  window.location.href,
+).href;
 
 const REPLY_TIMEOUT_MS = 8000;
 const MAX_LOG_ENTRIES  = 200;
@@ -81,6 +83,7 @@ const state = {
   materials:     [],           // schema-v2 band material catalog
   featureCatalogs: { inlay: [], overlay: [], sleeve: [] },
   materialRef:   { base: '', variant: '', finish: '' },
+  readyProbeTimer: null,
 };
 
 
@@ -99,6 +102,7 @@ function init() {
   buildLogPanel();
 
   window.addEventListener('message', handleIncomingMessage);
+  state.iframe.addEventListener('load', () => probeReady());
 
   loadIframe(DEFAULT_VIEWER_URL);
 }
@@ -126,12 +130,14 @@ function loadIframe(url) {
   resetState();
   setStatus('idle', 'Loading iframe…');
 
-  state.iframe.src = url;
-
   try {
-    const parsed = new URL(url);
-    state.iframeOrigin = parsed.origin;
+    const parsed = new URL(url, window.location.href);
+    state.iframe.src = parsed.href;
+    state.iframeOrigin = (
+      parsed.protocol === 'file:' || parsed.origin === 'null'
+    ) ? '*' : parsed.origin;
   } catch {
+    state.iframe.src = url;
     state.iframeOrigin = '*';
   }
 
@@ -140,6 +146,8 @@ function loadIframe(url) {
 
 function resetState() {
   state.ready = false;
+  clearTimeout(state.readyProbeTimer);
+  state.readyProbeTimer = null;
   state.materials = [];
   state.featureCatalogs = { inlay: [], overlay: [], sleeve: [] };
   state.materialRef = { base: '', variant: '', finish: '' };
@@ -165,6 +173,28 @@ function resetState() {
     'design-grooves-card', 'engraving-detail-card', 'rings-card',
     'variant-card', 'outside-card', 'sleeve-card',
   ].forEach((id) => { $(id).hidden = true; });
+}
+
+/* The plugin's `ready` event is intentionally one-shot. An iframe can finish
+ * booting quickly enough for that event to cross the boundary before a host
+ * listener is attached (or after a cached reload replaced the old window).
+ * Probe a harmless public method as a race-safe handshake; once it replies,
+ * the normal catalog and snapshot startup path can run. */
+async function probeReady(attempt = 0) {
+  if (state.ready) return;
+
+  try {
+    await query('getAvailableProfiles', [], 2500);
+    await onReady();
+  } catch (error) {
+    if (state.ready) return;
+    if (attempt >= 23) {
+      setStatus('error', 'Viewer did not expose the Wedding Band API');
+      logEvent('err', 'ready probe failed', { message: error.message });
+      return;
+    }
+    state.readyProbeTimer = setTimeout(() => probeReady(attempt + 1), 500);
+  }
 }
 
 function setStatus(kind, label) {
@@ -224,7 +254,14 @@ function query(method, args, timeoutMs) {
  * ══════════════════════════════════════════════════════════════════ */
 
 function handleIncomingMessage(event) {
-  if (event.source !== state.iframe.contentWindow) return;
+  const sourceMatches = event.source === state.iframe.contentWindow;
+  const originMatches = state.iframeOrigin !== '*' && event.origin === state.iframeOrigin;
+  const localFileMatches = (
+    state.iframeOrigin === '*'
+    && event.origin === 'null'
+    && state.iframe.src.startsWith('file:')
+  );
+  if (!sourceMatches && !originMatches && !localFileMatches) return;
   if (state.iframeOrigin !== '*' && event.origin !== state.iframeOrigin) return;
 
   const data = event.data;
@@ -396,6 +433,14 @@ async function refreshSnapshot() {
 }
 
 function applySnapshot(snap) {
+  if (snap.bandName) {
+    state.activeBand = snap.bandName;
+    $('band-value').textContent = capitalize(snap.bandName);
+    $$('#band-switch button').forEach((btn) => {
+      btn.classList.toggle('active', btn.dataset.band === snap.bandName);
+    });
+  }
+
   if (snap.profile) {
     $('profile-value').textContent = snap.profile.name || '—';
     $$('#profile-opts .opt').forEach((btn, index) => {
