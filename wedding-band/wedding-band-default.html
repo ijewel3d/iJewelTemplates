@@ -39,11 +39,6 @@
         fileId: "E3j8eClwR7iWMFNmGi5HoQ",
         instance: "drive",
       };
-      const params = new URLSearchParams(window.location.search);
-      const boolParam = (name, fallback) => {
-        const value = params.get(name);
-        return value == null ? fallback : value !== "false";
-      };
       let viewer, matPlugin;
 
       //initialize viewer and load model
@@ -54,12 +49,11 @@
         {
           showCard: false,
           showSwitchNode: false,
-          showUiButtons: boolParam("showUiButtons", true),
+          showUiButtons: true,
           showConfigurator: false,
           showZoomButtons: false,
           enableZoom: true,
-          hideWbbUi: boolParam("hideWbbUi", false),
-          runRotateCamera: boolParam("isAutoplay", false),
+          hideWbbUi: new URLSearchParams(window.location.search).get("hideWbbUi") === "true",
         },
       );
 
