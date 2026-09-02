@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ring Configurator Try-On Test</title>
+    <link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+
+<div id="layout">
+
+    <div id="viewer"></div>
+
+    <aside id="panel">
+        <h1>Configurator Try-On</h1>
+        <p class="sub">
+            Mini Viewer 0.6.18 &middot; self-hosted project with a top-level
+            <code>tryonConfig</code>.
+        </p>
+
+        <section>
+            <h2>Ring choices</h2>
+            <div id="ring-choices" class="muted">Waiting for the scene&hellip;</div>
+        </section>
+
+        <section>
+            <h2>Custom Try-On button</h2>
+            <button id="tryon-button" type="button" disabled>Try On</button>
+            <button id="restore-button" type="button" disabled>Cancel and restore</button>
+            <p class="hint">
+                The standard viewer button is also visible, because
+                <code>showUiButtons</code> is true and <code>hideTryOn</code> is false.
+            </p>
+        </section>
+
+        <section>
+            <h2>Checks</h2>
+            <ol id="checks"></ol>
+        </section>
+
+        <section>
+            <h2>Log</h2>
+            <pre id="log"></pre>
+        </section>
+    </aside>
+
+</div>
+
+<!-- Load WebGI first, then the Mini Viewer nowebgi build. -->
+<script src="https://releases.ijewel3d.com/libs/webgi-v0/bundle-0.22.0.js"></script>
+<script>
+    // Web VTO reads WebGi from this global.
+    window.webgi = window;
+</script>
+<script src="https://releases.ijewel3d.com/libs/mini-viewer/0.6.18/bundle.nowebgi.iife.js"></script>
+<script src="https://releases.ijewel3d.com/libs/web-vto/0.3.1/web-vto.js"></script>
+
+<script src="./script.js"></script>
+
+</body>
+</html>
