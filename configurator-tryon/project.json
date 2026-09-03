@@ -1,0 +1,1236 @@
+{
+  "name": "Ring Configurator Try-On Test",
+  "version": "v8",
+  "plugins": {
+    "BatchExport": {},
+    "RingConfigurator": {
+      "type": "RingConfigurator",
+      "components": [
+        {
+          "name": "Heads",
+          "title": "",
+          "selectedIndex": 0,
+          "visible": true,
+          "variations": [
+            {
+              "name": "HD-PL-RB-10",
+              "title": "HD-PL-RB-10",
+              "modelUrl": "https://drive-weur-1.ijewel3d.com/files/hd_pl_rb_10_85064e3205.glb?h=ijewel3d.com",
+              "icon": "https://drive-weur-1.ijewel3d.com/files/hd_pl_rb_10_3db5a8831d.png?h=ijewel3d.com",
+              "fileId": "Xn3ER-3hSUmjHrQSb1saFw",
+              "tags": [
+                "shape:round",
+                "size:1.0ct"
+              ]
+            },
+            {
+              "name": "HD-PL-RB-20",
+              "title": "HD-PL-RB-20",
+              "modelUrl": "https://drive-weur-1.ijewel3d.com/files/hd_pl_rb_20_064f138915.glb?h=ijewel3d.com",
+              "icon": "https://drive-weur-1.ijewel3d.com/files/hd_pl_rb_20_40e941454e.png?h=ijewel3d.com",
+              "fileId": "PTgumIAJSdWENHQcX39p2g",
+              "tags": [
+                "shape:round",
+                "size:2.0ct"
+              ]
+            },
+            {
+              "name": "HD-PL-RB-05",
+              "title": "HD-PL-RB-05",
+              "modelUrl": "https://drive-weur-1.ijewel3d.com/files/hd_pl_rb_05_668b498d87.glb?h=ijewel3d.com",
+              "icon": "https://drive-weur-1.ijewel3d.com/files/hd_pl_rb_05_71d4ad2cb7.png?h=ijewel3d.com",
+              "fileId": "FCBqQU0qRqy37VtIBNlBCw",
+              "tags": [
+                "shape:round",
+                "size:0.5ct"
+              ]
+            },
+            {
+              "name": "HD-PL-OV-20",
+              "title": "HD-PL-OV-20",
+              "modelUrl": "https://drive-weur-1.ijewel3d.com/files/hd_pl_ov_20_c3d736e799.glb?h=ijewel3d.com",
+              "icon": "https://drive-weur-1.ijewel3d.com/files/hd_pl_ov_20_e8275a9680.png?h=ijewel3d.com",
+              "fileId": "I1GOpHwbQRK6Ut-L-c_swQ",
+              "tags": [
+                "shape:oval",
+                "size:2.0ct"
+              ]
+            },
+            {
+              "name": "HD-PL-OV-10",
+              "title": "HD-PL-OV-10",
+              "modelUrl": "https://drive-weur-1.ijewel3d.com/files/hd_pl_ov_10_b74d43b7de.glb?h=ijewel3d.com",
+              "icon": "https://drive-weur-1.ijewel3d.com/files/hd_pl_ov_10_d87b42236b.png?h=ijewel3d.com",
+              "fileId": "PddeSlQEQFKzRv2aozTWrQ",
+              "tags": [
+                "shape:oval",
+                "size:1.0ct"
+              ]
+            },
+            {
+              "name": "HD-PL-OV-05",
+              "title": "HD-PL-OV-05",
+              "modelUrl": "https://drive-weur-1.ijewel3d.com/files/hd_pl_ov_05_df06d3f899.glb?h=ijewel3d.com",
+              "icon": "https://drive-weur-1.ijewel3d.com/files/hd_pl_ov_05_64dae8f8ce.png?h=ijewel3d.com",
+              "fileId": "L-lYOMtEQi-jkHYkg1XUQw",
+              "tags": [
+                "shape:oval",
+                "size:0.5ct"
+              ]
+            },
+            {
+              "name": "HD-HH-OV-10",
+              "title": "HD-HH-OV-10",
+              "modelUrl": "https://drive-weur-1.ijewel3d.com/files/hd_hh_ov_10_c9214406a8.glb?h=ijewel3d.com",
+              "icon": "https://drive-weur-1.ijewel3d.com/files/hd_hh_ov_10_05410c6348.png?h=ijewel3d.com",
+              "fileId": "H5wFYiEKR-y_-S7cF2Rf0w",
+              "tags": [
+                "shape:oval",
+                "size:1.0ct"
+              ]
+            },
+            {
+              "name": "HD-HH-RB-20",
+              "title": "HD-HH-RB-20",
+              "modelUrl": "https://drive-weur-1.ijewel3d.com/files/hd_hh_rb_20_1f5a4c72f5.glb?h=ijewel3d.com",
+              "icon": "https://drive-weur-1.ijewel3d.com/files/hd_hh_rb_20_e753420216.png?h=ijewel3d.com",
+              "fileId": "dFb5h5qZROKw9drPO3exuQ",
+              "tags": [
+                "shape:round",
+                "size:2.0ct"
+              ]
+            },
+            {
+              "name": "HD-HH-RB-10",
+              "title": "HD-HH-RB-10",
+              "modelUrl": "https://drive-weur-1.ijewel3d.com/files/hd_hh_rb_10_c528e4a744.glb?h=ijewel3d.com",
+              "icon": "https://drive-weur-1.ijewel3d.com/files/hd_hh_rb_10_d3ea31db99.png?h=ijewel3d.com",
+              "fileId": "FqtO6K8ITZa63CgWoevS9A",
+              "tags": [
+                "shape:round",
+                "size:1.0ct"
+              ]
+            },
+            {
+              "name": "HD-H-RB-10",
+              "title": "HD-H-RB-10",
+              "modelUrl": "https://drive-weur-1.ijewel3d.com/files/hd_h_rb_10_e3ecd1f341.glb?h=ijewel3d.com",
+              "icon": "https://drive-weur-1.ijewel3d.com/files/hd_h_rb_10_1d6f3568a5.png?h=ijewel3d.com",
+              "fileId": "d-HCxwTETJa5BGBBqdDJEg",
+              "tags": [
+                "shape:round",
+                "size:1.0ct"
+              ]
+            },
+            {
+              "name": "HD-HH-RB-05",
+              "title": "HD-HH-RB-05",
+              "modelUrl": "https://drive-weur-1.ijewel3d.com/files/hd_hh_rb_05_a6fe513d2c.glb?h=ijewel3d.com",
+              "icon": "https://drive-weur-1.ijewel3d.com/files/hd_hh_rb_05_3a67338261.png?h=ijewel3d.com",
+              "fileId": "ZRqbhkx_SY6A0YLvZiYlLw",
+              "tags": [
+                "shape:round",
+                "size:0.5ct"
+              ]
+            },
+            {
+              "name": "HD-H-OV-10",
+              "title": "HD-H-OV-10",
+              "modelUrl": "https://drive-weur-1.ijewel3d.com/files/hd_h_ov_10_59980a219d.glb?h=ijewel3d.com",
+              "icon": "https://drive-weur-1.ijewel3d.com/files/hd_h_ov_10_8fa2ba57e6.png?h=ijewel3d.com",
+              "fileId": "FA7ll3R6RFGMM3z0w3ancA",
+              "tags": [
+                "shape:oval",
+                "size:1.0ct"
+              ]
+            },
+            {
+              "name": "HD-BZ-RB-10",
+              "title": "HD-BZ-RB-10",
+              "modelUrl": "https://drive-weur-1.ijewel3d.com/files/hd_bz_rb_10_6e662bd93e.glb?h=ijewel3d.com",
+              "icon": "https://drive-weur-1.ijewel3d.com/files/hd_bz_rb_10_80516f0cbf.png?h=ijewel3d.com",
+              "fileId": "HYlMcwveSzWQ5fMGZ7RVPQ",
+              "tags": [
+                "shape:round",
+                "size:1.0ct"
+              ]
+            },
+            {
+              "name": "HD-BZ-OV-10",
+              "title": "HD-BZ-OV-10",
+              "modelUrl": "https://drive-weur-1.ijewel3d.com/files/hd_bz_ov_10_1d94d21b57.glb?h=ijewel3d.com",
+              "icon": "https://drive-weur-1.ijewel3d.com/files/hd_bz_ov_10_29accfe558.png?h=ijewel3d.com",
+              "fileId": "FoYB0oe2SnCcmj2RONiZRA",
+              "tags": [
+                "shape:oval",
+                "size:1.0ct"
+              ]
+            },
+            {
+              "name": "HD-HH-OV-20",
+              "title": "HD-HH-OV-20",
+              "modelUrl": "https://drive-weur-1.ijewel3d.com/files/hd_hh_ov_20_fac38f6cbc.glb?h=ijewel3d.com",
+              "icon": "https://drive-weur-1.ijewel3d.com/files/hd_hh_ov_20_4a2eb88ac0.png?h=ijewel3d.com",
+              "fileId": "MJ-cI1SHSgKpfhOSdOVr3g",
+              "tags": [
+                "shape:oval",
+                "size:2.0ct"
+              ]
+            },
+            {
+              "name": "HD-HH-OV-05",
+              "title": "HD-HH-OV-05",
+              "modelUrl": "https://drive-weur-1.ijewel3d.com/files/hd_hh_ov_05_05aa8d7f65.glb?h=ijewel3d.com",
+              "icon": "https://drive-weur-1.ijewel3d.com/files/hd_hh_ov_05_ac275c11ba.png?h=ijewel3d.com",
+              "fileId": "VvL4wuXwT8qRkTYSNCNylw",
+              "tags": [
+                "shape:oval",
+                "size:0.5ct"
+              ]
+            },
+            {
+              "name": "HD-H-RB-05",
+              "title": "HD-H-RB-05",
+              "modelUrl": "https://drive-weur-1.ijewel3d.com/files/hd_h_rb_05_46228153c2.glb?h=ijewel3d.com",
+              "icon": "https://drive-weur-1.ijewel3d.com/files/hd_h_rb_05_f207507f64.png?h=ijewel3d.com",
+              "fileId": "YlI6yCSGSe6V8H5sFSNvlQ",
+              "tags": [
+                "shape:round",
+                "size:0.5ct"
+              ]
+            },
+            {
+              "name": "HD-H-RB-20",
+              "title": "HD-H-RB-20",
+              "modelUrl": "https://drive-weur-1.ijewel3d.com/files/hd_h_rb_20_3644c43941.glb?h=ijewel3d.com",
+              "icon": "https://drive-weur-1.ijewel3d.com/files/hd_h_rb_20_35c2b38bf5.png?h=ijewel3d.com",
+              "fileId": "EavgsiwbRBG_hLb7mjMxIg",
+              "tags": [
+                "shape:round",
+                "size:2.0ct"
+              ]
+            },
+            {
+              "name": "HD-H-OV-05",
+              "title": "HD-H-OV-05",
+              "modelUrl": "https://drive-weur-1.ijewel3d.com/files/hd_h_ov_05_4b8f358b9a.glb?h=ijewel3d.com",
+              "icon": "https://drive-weur-1.ijewel3d.com/files/hd_h_ov_05_b6725a8453.png?h=ijewel3d.com",
+              "fileId": "cvj3NvtpSBy-43XuNrhAtA",
+              "tags": [
+                "shape:oval",
+                "size:0.5ct"
+              ]
+            },
+            {
+              "name": "HD-BZ-RB-20",
+              "title": "HD-BZ-RB-20",
+              "modelUrl": "https://drive-weur-1.ijewel3d.com/files/hd_bz_rb_20_5718f22fde.glb?h=ijewel3d.com",
+              "icon": "https://drive-weur-1.ijewel3d.com/files/hd_bz_rb_20_e2364552d4.png?h=ijewel3d.com",
+              "fileId": "Lfo0agr5Tvajk9k1-N5ERQ",
+              "tags": [
+                "shape:round",
+                "size:2.0ct"
+              ]
+            },
+            {
+              "name": "HD-H-OV-20",
+              "title": "HD-H-OV-20",
+              "modelUrl": "https://drive-weur-1.ijewel3d.com/files/hd_h_ov_20_4c71cc44e1.glb?h=ijewel3d.com",
+              "icon": "https://drive-weur-1.ijewel3d.com/files/hd_h_ov_20_a516065df8.png?h=ijewel3d.com",
+              "fileId": "B-98OUD9SbyOhnf3NW0DRQ",
+              "tags": [
+                "shape:oval",
+                "size:2.0ct"
+              ]
+            },
+            {
+              "name": "HD-BZ-RB-05",
+              "title": "HD-BZ-RB-05",
+              "modelUrl": "https://drive-weur-1.ijewel3d.com/files/hd_bz_rb_05_47a82be7e8.glb?h=ijewel3d.com",
+              "icon": "https://drive-weur-1.ijewel3d.com/files/hd_bz_rb_05_2a11f7722f.png?h=ijewel3d.com",
+              "fileId": "ecclyjAWRNCBOJcqP81qDw",
+              "tags": [
+                "shape:round",
+                "size:0.5ct"
+              ]
+            },
+            {
+              "name": "HD-BZ-OV-20",
+              "title": "HD-BZ-OV-20",
+              "modelUrl": "https://drive-weur-1.ijewel3d.com/files/hd_bz_ov_20_c3ebda2c56.glb?h=ijewel3d.com",
+              "icon": "https://drive-weur-1.ijewel3d.com/files/hd_bz_ov_20_4b1360b131.png?h=ijewel3d.com",
+              "fileId": "M562qESxREeI48z6pEbdwA",
+              "tags": [
+                "shape:oval",
+                "size:2.0ct"
+              ]
+            },
+            {
+              "name": "HD-BZ-OV-05",
+              "title": "HD-BZ-OV-05",
+              "modelUrl": "https://drive-weur-1.ijewel3d.com/files/hd_bz_ov_05_05c3c783a3.glb?h=ijewel3d.com",
+              "icon": "https://drive-weur-1.ijewel3d.com/files/hd_bz_ov_05_908f09aeac.png?h=ijewel3d.com",
+              "fileId": "Rdm1QFMtQt6L-53te2x4gw",
+              "tags": [
+                "shape:oval",
+                "size:0.5ct"
+              ]
+            }
+          ],
+          "fileId": "Z46yy5JKTpSPuaY7xDL41w"
+        },
+        {
+          "name": "Shanks",
+          "title": "",
+          "selectedIndex": 0,
+          "visible": true,
+          "variations": [
+            {
+              "name": "SH8-PL",
+              "title": "SH8-PL",
+              "modelUrl": "https://drive-weur-1.ijewel3d.com/files/sh8_pl_8d034b7e73.glb?h=ijewel3d.com",
+              "icon": "https://drive-weur-1.ijewel3d.com/files/sh8_pl_2530daacac.png?h=ijewel3d.com",
+              "fileId": "YrDZW1VfRGyguiuWWcuU7g",
+              "tags": []
+            },
+            {
+              "name": "SH7-PL",
+              "title": "SH7-PL",
+              "modelUrl": "https://drive-weur-1.ijewel3d.com/files/sh7_pl_3f99629594.glb?h=ijewel3d.com",
+              "icon": "https://drive-weur-1.ijewel3d.com/files/sh7_pl_7d8dc93a7d.png?h=ijewel3d.com",
+              "fileId": "Dv8q8uzTTxqR2hfbpiiTQg",
+              "tags": []
+            },
+            {
+              "name": "SH5-PL",
+              "title": "SH5-PL",
+              "modelUrl": "https://drive-weur-1.ijewel3d.com/files/sh5_pl_77705d800f.glb?h=ijewel3d.com",
+              "icon": "https://drive-weur-1.ijewel3d.com/files/sh5_pl_e47ce1c234.png?h=ijewel3d.com",
+              "fileId": "E2Je9LdqQfi5VgTn2ZDjuQ",
+              "tags": []
+            },
+            {
+              "name": "SH4-PV",
+              "title": "SH4-PV",
+              "modelUrl": "https://drive-weur-1.ijewel3d.com/files/sh4_pv_066d3e6dba.glb?h=ijewel3d.com",
+              "icon": "https://drive-weur-1.ijewel3d.com/files/sh4_pv_a1cb50c7ad.png?h=ijewel3d.com",
+              "fileId": "ef5T0_gZQZ6l5eqWzkMeGA",
+              "tags": []
+            },
+            {
+              "name": "SH4-PL",
+              "title": "SH4-PL",
+              "modelUrl": "https://drive-weur-1.ijewel3d.com/files/sh4_pl_d524713ffa.glb?h=ijewel3d.com",
+              "icon": "https://drive-weur-1.ijewel3d.com/files/sh4_pl_8799a67bab.png?h=ijewel3d.com",
+              "fileId": "BugAEqqoQGCVNjRfA1GMew",
+              "tags": []
+            },
+            {
+              "name": "SH1-PL",
+              "title": "SH1-PL",
+              "modelUrl": "https://drive-weur-1.ijewel3d.com/files/sh1_pl_c846ec3f8c.glb?h=ijewel3d.com",
+              "icon": "https://drive-weur-1.ijewel3d.com/files/sh1_pl_a434c55a02.png?h=ijewel3d.com",
+              "fileId": "b8bldXUQRHeW6cBReMI4qA",
+              "tags": []
+            },
+            {
+              "name": "SH1-PV",
+              "title": "SH1-PV",
+              "modelUrl": "https://drive-weur-1.ijewel3d.com/files/sh1_pv_4934d19234.glb?h=ijewel3d.com",
+              "icon": "https://drive-weur-1.ijewel3d.com/files/sh1_pv_9457163eb9.png?h=ijewel3d.com",
+              "fileId": "H4meEJmDQai9QV0U_gLUkA",
+              "tags": []
+            },
+            {
+              "name": "SH6-PL",
+              "title": "SH6-PL",
+              "modelUrl": "https://drive-weur-1.ijewel3d.com/files/sh6_pl_b8639d72a6.glb?h=ijewel3d.com",
+              "icon": "https://drive-weur-1.ijewel3d.com/files/sh6_pl_8a703da8bf.png?h=ijewel3d.com",
+              "fileId": "VI1Dxa1dRK2T-DVOJzQcUg",
+              "tags": []
+            }
+          ],
+          "fileId": "V3RnPCENQuyz_bza37_58Q"
+        }
+      ]
+    },
+    "SimpleBackgroundEnvUiPlugin2": {
+      "sceneEnvironmentRotation": 0,
+      "sceneEnvironmentIntensity": 2,
+      "sceneEnvironmentFixedDirection": true,
+      "tonemapBackground": false,
+      "tonemapGround": false,
+      "ssbevelEnabled": false,
+      "ssbevelIntensity": null,
+      "type": "SimpleBackgroundEnvUiPlugin2"
+    },
+    "materialConfiguratorPlugin": {
+      "applyOnLoad": true,
+      "variations": [
+        {
+          "uuid": "Metal 01",
+          "title": "Shank Metal",
+          "preview": "generate:sphere",
+          "materials": [
+            {
+              "uuid": "97722a28-c3f9-4f55-8c64-3f5b602c553e",
+              "resource": "materials"
+            },
+            {
+              "uuid": "9c4e496b-30b3-4595-855d-d23d0662f1ab",
+              "resource": "materials"
+            },
+            {
+              "uuid": "f07d56ed-e46b-49f9-b86d-94e81802d61d",
+              "resource": "materials"
+            }
+          ],
+          "regex": true,
+          "selectedIndex": 0
+        },
+        {
+          "uuid": "Gem 01",
+          "title": "Head Gem",
+          "preview": "generate:sphere",
+          "materials": [
+            {
+              "uuid": "f65c065e-c18f-406e-98af-48dc3692f3a9",
+              "resource": "materials"
+            },
+            {
+              "uuid": "0b29c90f-48d0-47b4-b21f-2762e88c13a2",
+              "resource": "materials"
+            },
+            {
+              "uuid": "d0b9bc55-8f73-4b7b-82ee-116f8cf05252",
+              "resource": "materials"
+            },
+            {
+              "uuid": "f66256e5-e549-415d-a5c4-de8b6593ae64",
+              "resource": "materials"
+            }
+          ],
+          "regex": true,
+          "selectedIndex": 3
+        },
+        {
+          "uuid": "Gem 02",
+          "title": "Shank Gem",
+          "preview": "generate:sphere",
+          "materials": [
+            {
+              "uuid": "c8a11014-f801-4860-8f2b-86dc9fdb3f6c",
+              "resource": "materials"
+            }
+          ],
+          "regex": true,
+          "selectedIndex": 0
+        }
+      ],
+      "type": "MaterialConfiguratorPlugin",
+      "resources": {
+        "geometries": {},
+        "materials": {
+          "97722a28-c3f9-4f55-8c64-3f5b602c553e": {
+            "metadata": {
+              "version": 4.6001,
+              "type": "Material",
+              "generator": "Material.toJSON"
+            },
+            "uuid": "97722a28-c3f9-4f55-8c64-3f5b602c553e",
+            "type": "MeshStandardMaterial2",
+            "name": "White Gold",
+            "color": 12698823,
+            "roughness": 0,
+            "metalness": 1,
+            "sheen": 0,
+            "sheenColor": 0,
+            "sheenRoughness": 1,
+            "emissive": 0,
+            "specularIntensity": 1,
+            "specularColor": 16777215,
+            "clearcoat": 0,
+            "clearcoatRoughness": 0,
+            "dispersion": 0,
+            "iridescence": 0,
+            "iridescenceIOR": 1.3,
+            "iridescenceThicknessRange": [
+              100,
+              400
+            ],
+            "anisotropy": 0,
+            "anisotropyRotation": 0,
+            "envMapRotation": [
+              0,
+              0,
+              0,
+              "XYZ"
+            ],
+            "envMapIntensity": 1,
+            "reflectivity": 0.49999999999999983,
+            "transmission": 0,
+            "thickness": 0,
+            "attenuationDistance": 0,
+            "attenuationColor": 16777215,
+            "side": 2,
+            "blendColor": 0,
+            "fog": false,
+            "userData": {
+              "gltfExtensions": {},
+              "cloneId": "0_1_1_1_1",
+              "_6b1395aa-194b-4458-bd49-22ec4592cfc2_version": 1,
+              "cloneCount": 0,
+              "rootPath": "https://packs.ijewel3d.com/files/1_metal_whitegold_polished_0db3fb834b.pmat",
+              "label": "White Gold",
+              "_f628b99d-01bb-42fe-ac3c-de846e624fe0_version": 4,
+              "_46536de0-7756-44b8-a2c3-8cca25dc68e4_version": 24,
+              "uuid": "97722a28-c3f9-4f55-8c64-3f5b602c553e"
+            }
+          },
+          "9c4e496b-30b3-4595-855d-d23d0662f1ab": {
+            "metadata": {
+              "version": 4.6001,
+              "type": "Material",
+              "generator": "Material.toJSON"
+            },
+            "uuid": "9c4e496b-30b3-4595-855d-d23d0662f1ab",
+            "type": "MeshStandardMaterial2",
+            "name": "Gold",
+            "color": 15314534,
+            "roughness": 0,
+            "metalness": 1,
+            "sheen": 0,
+            "sheenColor": 0,
+            "sheenRoughness": 1,
+            "emissive": 0,
+            "specularIntensity": 1,
+            "specularColor": 16777215,
+            "clearcoat": 0,
+            "clearcoatRoughness": 0,
+            "dispersion": 0,
+            "iridescence": 0,
+            "iridescenceIOR": 1.3,
+            "iridescenceThicknessRange": [
+              100,
+              400
+            ],
+            "anisotropy": 0,
+            "anisotropyRotation": 0,
+            "envMapRotation": [
+              0,
+              0,
+              0,
+              "XYZ"
+            ],
+            "envMapIntensity": 1,
+            "reflectivity": 0.49999999999999983,
+            "transmission": 0,
+            "thickness": 0,
+            "attenuationDistance": 0,
+            "attenuationColor": 16777215,
+            "side": 2,
+            "blendColor": 0,
+            "fog": false,
+            "userData": {
+              "cloneId": "0_1_1_1",
+              "rootPath": "https://packs.ijewel3d.com/files/1_metal_gold_polished_2689daba05.pmat",
+              "gltfExtensions": {},
+              "cloneCount": 0,
+              "label": "Gold",
+              "_f628b99d-01bb-42fe-ac3c-de846e624fe0_version": 4,
+              "_46536de0-7756-44b8-a2c3-8cca25dc68e4_version": 24,
+              "uuid": "9c4e496b-30b3-4595-855d-d23d0662f1ab"
+            }
+          },
+          "f07d56ed-e46b-49f9-b86d-94e81802d61d": {
+            "metadata": {
+              "version": 4.6001,
+              "type": "Material",
+              "generator": "Material.toJSON"
+            },
+            "uuid": "f07d56ed-e46b-49f9-b86d-94e81802d61d",
+            "type": "MeshStandardMaterial2",
+            "name": "Rose Gold",
+            "color": 15639693,
+            "roughness": 0,
+            "metalness": 1,
+            "sheen": 0,
+            "sheenColor": 0,
+            "sheenRoughness": 1,
+            "emissive": 0,
+            "specularIntensity": 1,
+            "specularColor": 16777215,
+            "clearcoat": 0,
+            "clearcoatRoughness": 0,
+            "dispersion": 0,
+            "iridescence": 0,
+            "iridescenceIOR": 1.3,
+            "iridescenceThicknessRange": [
+              100,
+              400
+            ],
+            "anisotropy": 0,
+            "anisotropyRotation": 0,
+            "envMapRotation": [
+              0,
+              0,
+              0,
+              "XYZ"
+            ],
+            "envMapIntensity": 1,
+            "reflectivity": 0.49999999999999983,
+            "transmission": 0,
+            "thickness": 0,
+            "attenuationDistance": 0,
+            "attenuationColor": 16777215,
+            "side": 2,
+            "blendColor": 0,
+            "fog": false,
+            "userData": {
+              "gltfExtensions": {},
+              "cloneId": "0_1_2_1_1",
+              "_6b1395aa-194b-4458-bd49-22ec4592cfc2_version": 1,
+              "cloneCount": 0,
+              "rootPath": "https://packs.ijewel3d.com/files/1_metal_rosegold_polished_a05ee2dd11.pmat",
+              "label": "Rose Gold",
+              "_f628b99d-01bb-42fe-ac3c-de846e624fe0_version": 4,
+              "_46536de0-7756-44b8-a2c3-8cca25dc68e4_version": 24,
+              "uuid": "f07d56ed-e46b-49f9-b86d-94e81802d61d"
+            }
+          },
+          "f65c065e-c18f-406e-98af-48dc3692f3a9": {
+            "metadata": {
+              "version": 4.6001,
+              "type": "DiamondMaterial",
+              "generator": "DiamondMaterial.toJSON"
+            },
+            "name": "Sapphire",
+            "uuid": "f65c065e-c18f-406e-98af-48dc3692f3a9",
+            "color": 6593988,
+            "envMapIntensity": 1,
+            "envMapIndex": 0,
+            "envMapRotationOffset": 0,
+            "envMapRotationOffsetX": 0,
+            "envMapRotationOffsetY": 0,
+            "envMapRotationOffsetZ": 0,
+            "dispersion": 0,
+            "squashFactor": 0.98,
+            "geometryFactor": 0.5,
+            "gammaFactor": 1,
+            "absorptionFactor": 1.6,
+            "reflectivity": 0.5,
+            "refractiveIndex": 1.7699999999999998,
+            "rayBounces": 5,
+            "diamondOrientedEnvMap": 0,
+            "boostFactors": {
+              "x": 1,
+              "y": 1,
+              "z": 1.2,
+              "isVector3": true
+            },
+            "transmission": 0,
+            "isDiamondMaterialParameters": true,
+            "userData": {
+              "separateEnvMapIntensity": true,
+              "rootPath": "https://packs.ijewel3d.com/files/1_gem_sapphire_2_0c9c1d5101.dmat?localhost",
+              "cloneId": "0_1_1",
+              "cloneCount": 0,
+              "label": "Sapphire",
+              "uuid": "f65c065e-c18f-406e-98af-48dc3692f3a9"
+            },
+            "type": "DiamondMaterial"
+          },
+          "0b29c90f-48d0-47b4-b21f-2762e88c13a2": {
+            "metadata": {
+              "version": 4.6001,
+              "type": "DiamondMaterial",
+              "generator": "DiamondMaterial.toJSON"
+            },
+            "name": "Gem 01 0 1Ruby",
+            "uuid": "0b29c90f-48d0-47b4-b21f-2762e88c13a2",
+            "color": 14762614,
+            "envMapIntensity": 1,
+            "envMapIndex": 0,
+            "envMapRotationOffset": 0,
+            "envMapRotationOffsetX": 0,
+            "envMapRotationOffsetY": 0,
+            "envMapRotationOffsetZ": 0,
+            "dispersion": 0,
+            "squashFactor": 0.98,
+            "geometryFactor": 0.5,
+            "gammaFactor": 1,
+            "absorptionFactor": 1.6,
+            "reflectivity": 0.5,
+            "refractiveIndex": 1.7699999999999998,
+            "rayBounces": 5,
+            "diamondOrientedEnvMap": 0,
+            "boostFactors": {
+              "x": 1.3,
+              "y": 0.15999999999999992,
+              "z": 0.9,
+              "isVector3": true
+            },
+            "transmission": 0,
+            "isDiamondMaterialParameters": true,
+            "userData": {
+              "separateEnvMapIntensity": true,
+              "rootPath": "https://packs.ijewel3d.com/files/1_gem_ruby_1_0229c0f56f.dmat?localhost",
+              "cloneId": "0_1_1",
+              "cloneCount": 0,
+              "label": "Gem 01 0 1Ruby",
+              "uuid": "0b29c90f-48d0-47b4-b21f-2762e88c13a2"
+            },
+            "type": "DiamondMaterial"
+          },
+          "d0b9bc55-8f73-4b7b-82ee-116f8cf05252": {
+            "metadata": {
+              "version": 4.6001,
+              "type": "DiamondMaterial",
+              "generator": "DiamondMaterial.toJSON"
+            },
+            "name": "Emerald",
+            "uuid": "d0b9bc55-8f73-4b7b-82ee-116f8cf05252",
+            "color": 1693079,
+            "envMapIntensity": 1,
+            "envMapIndex": 0,
+            "envMapRotationOffset": 0,
+            "envMapRotationOffsetX": 0,
+            "envMapRotationOffsetY": 0,
+            "envMapRotationOffsetZ": 0,
+            "dispersion": 7.182839392716467e-19,
+            "squashFactor": 0.98,
+            "geometryFactor": 0.5,
+            "gammaFactor": 1,
+            "absorptionFactor": 1.9000000000000001,
+            "reflectivity": 0.5,
+            "refractiveIndex": 1.58,
+            "rayBounces": 3,
+            "diamondOrientedEnvMap": 0,
+            "boostFactors": {
+              "x": -0.30000000000000004,
+              "y": 1,
+              "z": 1,
+              "isVector3": true
+            },
+            "transmission": 0,
+            "isDiamondMaterialParameters": true,
+            "userData": {
+              "separateEnvMapIntensity": true,
+              "rootPath": "https://packs.ijewel3d.com/files/1_gem_emerald_1_58128f46c0.dmat?localhost",
+              "cloneId": "0_1_2_1",
+              "_gemInclusions": {
+                "hasInclusions": true,
+                "blurRadius": 0.09,
+                "surfaceRoughness": 0.19646841843160542,
+                "clampFlag": false,
+                "useInclusion": false,
+                "surfaceScale": 1.3086721552171319,
+                "bumpScale": 0.01,
+                "inclusionScale": 0.4,
+                "normalScale": 0.4652281178042318,
+                "variableBlur": 0.2245832196787021,
+                "variableParam1": 1,
+                "variableParam2": 1.5899999999999996,
+                "variableParam3": 1.78,
+                "_incRoughnessMap": {
+                  "uuid": "da9b4dc1-6b4e-47e0-ac6e-2657cb9dce52",
+                  "resource": "textures"
+                },
+                "_inclusionMap": {
+                  "uuid": "6b87ee10-6e15-4709-876f-dadd7efb616b",
+                  "resource": "textures"
+                },
+                "_inclusionNormalMap": {
+                  "uuid": "578c4b31-80e7-4768-97d6-7c5264989d08",
+                  "resource": "textures"
+                },
+                "_normalMap": {
+                  "uuid": "f1a81813-6d8e-46f4-b7e5-5c3c68a7f07c",
+                  "resource": "textures"
+                },
+                "incRoughnessMap": {
+                  "index": 1
+                },
+                "inclusionMap": {
+                  "index": 2
+                },
+                "normalMap": {
+                  "index": 3
+                },
+                "inclusionNormalMap": {
+                  "index": 4
+                },
+                "_roughnessMap": {
+                  "uuid": "da9b4dc1-6b4e-47e0-ac6e-2657cb9dce52",
+                  "resource": "textures"
+                }
+              },
+              "cloneCount": 0,
+              "label": "Emerald",
+              "uuid": "d0b9bc55-8f73-4b7b-82ee-116f8cf05252"
+            },
+            "type": "DiamondMaterial"
+          },
+          "f66256e5-e549-415d-a5c4-de8b6593ae64": {
+            "metadata": {
+              "version": 4.6001,
+              "type": "DiamondMaterial",
+              "generator": "DiamondMaterial.toJSON"
+            },
+            "name": "Diamond",
+            "uuid": "f66256e5-e549-415d-a5c4-de8b6593ae64",
+            "color": 16580095,
+            "envMapIntensity": 2,
+            "envMapIndex": 0,
+            "envMapRotationOffset": 0,
+            "envMapRotationOffsetX": 0,
+            "envMapRotationOffsetY": 0,
+            "envMapRotationOffsetZ": 0,
+            "dispersion": 0,
+            "squashFactor": 0.98,
+            "geometryFactor": 0.5,
+            "gammaFactor": 1.2,
+            "absorptionFactor": 1,
+            "reflectivity": 0.5,
+            "refractiveIndex": 2.6,
+            "rayBounces": 8,
+            "diamondOrientedEnvMap": 0,
+            "boostFactors": {
+              "x": 1,
+              "y": 1,
+              "z": 1,
+              "isVector3": true
+            },
+            "transmission": 1,
+            "isDiamondMaterialParameters": true,
+            "userData": {
+              "separateEnvMapIntensity": true,
+              "rootPath": "https://packs.ijewel3d.com/files/1_gem_diamond_white_2_45a2728698.dmat?localhost",
+              "cloneId": "0_3_1_1_1",
+              "cloneCount": 0,
+              "label": "Diamond",
+              "uuid": "f66256e5-e549-415d-a5c4-de8b6593ae64"
+            },
+            "type": "DiamondMaterial"
+          },
+          "c8a11014-f801-4860-8f2b-86dc9fdb3f6c": {
+            "metadata": {
+              "version": 4.6001,
+              "type": "DiamondMaterial",
+              "generator": "DiamondMaterial.toJSON"
+            },
+            "name": "Gem 02_0_3_1_2_1",
+            "uuid": "c8a11014-f801-4860-8f2b-86dc9fdb3f6c",
+            "color": 16580095,
+            "envMapIntensity": 2,
+            "envMapIndex": 0,
+            "envMapRotationOffset": 0,
+            "envMapRotationOffsetX": 0,
+            "envMapRotationOffsetY": 0,
+            "envMapRotationOffsetZ": 0,
+            "dispersion": 0,
+            "squashFactor": 0.98,
+            "geometryFactor": 0.5,
+            "gammaFactor": 1.2,
+            "absorptionFactor": 1,
+            "reflectivity": 0.5,
+            "refractiveIndex": 2.6,
+            "rayBounces": 8,
+            "diamondOrientedEnvMap": 0,
+            "boostFactors": {
+              "x": 1,
+              "y": 1,
+              "z": 1,
+              "isVector3": true
+            },
+            "transmission": 0.5,
+            "isDiamondMaterialParameters": true,
+            "userData": {
+              "separateEnvMapIntensity": true,
+              "rootPath": "https://packs.ijewel3d.com/files/1_gem_diamond_white_2_45a2728698.dmat?localhost",
+              "cloneId": "0_3_1_2_1",
+              "cloneCount": 0,
+              "label": "Diamond",
+              "uuid": "c8a11014-f801-4860-8f2b-86dc9fdb3f6c"
+            },
+            "type": "DiamondMaterial"
+          }
+        },
+        "textures": {
+          "da9b4dc1-6b4e-47e0-ac6e-2657cb9dce52": {
+            "metadata": {
+              "version": 4.6,
+              "type": "Texture",
+              "generator": "Texture.toJSON"
+            },
+            "uuid": "da9b4dc1-6b4e-47e0-ac6e-2657cb9dce52",
+            "name": "",
+            "image": "849ec547-7d05-4cab-aaff-89595dee4fdd",
+            "mapping": 300,
+            "channel": 0,
+            "repeat": [
+              1,
+              1
+            ],
+            "offset": [
+              0,
+              0
+            ],
+            "center": [
+              0,
+              0
+            ],
+            "rotation": 0,
+            "wrap": [
+              1000,
+              1000
+            ],
+            "format": 1023,
+            "internalFormat": null,
+            "type": 1009,
+            "colorSpace": "srgb",
+            "encoding": 3001,
+            "minFilter": 1008,
+            "magFilter": 1006,
+            "anisotropy": 1,
+            "flipY": false,
+            "generateMipmaps": true,
+            "premultiplyAlpha": false,
+            "unpackAlignment": 4,
+            "userData": {
+              "rootPath": "https://packs.ijewel3d.com/files/inclusions_grunge_1_f2ef5f7026.jpg"
+            }
+          },
+          "6b87ee10-6e15-4709-876f-dadd7efb616b": {
+            "metadata": {
+              "version": 4.6,
+              "type": "Texture",
+              "generator": "Texture.toJSON"
+            },
+            "uuid": "6b87ee10-6e15-4709-876f-dadd7efb616b",
+            "name": "",
+            "image": "6bc6be80-3245-4d72-bb5e-b3ec8c820cd8",
+            "mapping": 300,
+            "channel": 0,
+            "repeat": [
+              1,
+              1
+            ],
+            "offset": [
+              0,
+              0
+            ],
+            "center": [
+              0,
+              0
+            ],
+            "rotation": 0,
+            "wrap": [
+              1000,
+              1000
+            ],
+            "format": 1023,
+            "internalFormat": null,
+            "type": 1009,
+            "colorSpace": "srgb",
+            "encoding": 3001,
+            "minFilter": 1008,
+            "magFilter": 1006,
+            "anisotropy": 1,
+            "flipY": false,
+            "generateMipmaps": true,
+            "premultiplyAlpha": false,
+            "unpackAlignment": 4,
+            "userData": {
+              "rootPath": "https://packs.ijewel3d.com/files/inclusions_grunge_5b_ca84ee3cbb.jpg"
+            }
+          },
+          "578c4b31-80e7-4768-97d6-7c5264989d08": {
+            "metadata": {
+              "version": 4.6,
+              "type": "Texture",
+              "generator": "Texture.toJSON"
+            },
+            "uuid": "578c4b31-80e7-4768-97d6-7c5264989d08",
+            "name": "",
+            "image": "e4b532a8-07f6-49a4-9280-9f05f03c87d9",
+            "mapping": 300,
+            "channel": 0,
+            "repeat": [
+              1,
+              1
+            ],
+            "offset": [
+              0,
+              0
+            ],
+            "center": [
+              0,
+              0
+            ],
+            "rotation": 0,
+            "wrap": [
+              1000,
+              1000
+            ],
+            "format": 1023,
+            "internalFormat": null,
+            "type": 1009,
+            "colorSpace": "srgb",
+            "encoding": 3001,
+            "minFilter": 1008,
+            "magFilter": 1006,
+            "anisotropy": 1,
+            "flipY": false,
+            "generateMipmaps": true,
+            "premultiplyAlpha": false,
+            "unpackAlignment": 4,
+            "userData": {
+              "rootPath": "https://packs.ijewel3d.com/files/inclusions_normal_2_f2525e0d8f.jpg"
+            }
+          },
+          "f1a81813-6d8e-46f4-b7e5-5c3c68a7f07c": {
+            "metadata": {
+              "version": 4.6,
+              "type": "Texture",
+              "generator": "Texture.toJSON"
+            },
+            "uuid": "f1a81813-6d8e-46f4-b7e5-5c3c68a7f07c",
+            "name": "",
+            "image": "c44b32a2-34b2-47c4-8c1c-6600e11409b5",
+            "mapping": 300,
+            "channel": 0,
+            "repeat": [
+              1,
+              1
+            ],
+            "offset": [
+              0,
+              0
+            ],
+            "center": [
+              0,
+              0
+            ],
+            "rotation": 0,
+            "wrap": [
+              1000,
+              1000
+            ],
+            "format": 1023,
+            "internalFormat": null,
+            "type": 1009,
+            "colorSpace": "srgb",
+            "encoding": 3001,
+            "minFilter": 1008,
+            "magFilter": 1006,
+            "anisotropy": 1,
+            "flipY": false,
+            "generateMipmaps": true,
+            "premultiplyAlpha": false,
+            "unpackAlignment": 4,
+            "userData": {
+              "rootPath": "https://packs.ijewel3d.com/files/inclusions_normal_1_01bc31fd63.jpg"
+            }
+          }
+        },
+        "images": {},
+        "shapes": {},
+        "skeletons": {},
+        "animations": {},
+        "extras": {}
+      }
+    }
+  },
+  "isDefault": true,
+  "sceneConfig": {
+    "Environment": {
+      "id": "WjRRXbdWRoiOlsyd1JgltQ",
+      "path": "https://packs.ijewel3d.com/files/env_metal_007_e586d66d86.exr",
+      "icon": "https://packs.ijewel3d.com/files/env_metal_007_6fdff9f933.png",
+      "name": "env-metal-007.exr",
+      "isStuller": true
+    },
+    "VJSON": {
+      "id": "ZzunPOqjSryZhJCUf2K-aQ",
+      "path": "https://drive-weur-1.ijewel3d.com/files/ss_05_1770979990399_b737578362.vjson?h=staging-drive.ijewel3d.com",
+      "name": "SS-05_1770979990399.vjson",
+      "icon": "https://drive-weur-1.ijewel3d.com/files/ss_05_1770979990399_96127983b8.png?h=staging-drive.ijewel3d.com",
+      "isCustom": true,
+      "meta": {
+        "name": "SS-05_1770979990399.vjson"
+      },
+      "config": {
+        "usePresetCamera": false,
+        "usePresetLoadingPlugin": false,
+        "usePresetInteractionPlugin": false,
+        "usePresetParallaxMappingPlugin": false,
+        "usePresetRendererUiPlugin": false,
+        "usePresetCameraViewPlugin": false,
+        "usePresetMaterialConfiguratorPlugin": true,
+        "usePresetSwitchNodePlugin": false
+      }
+    },
+    "type": "PresetLibraryPlugin"
+  },
+  "materialConfig": {
+    "mapping": [
+      {
+        "name": "Gem 02",
+        "path": "https://packs.ijewel3d.com/files/1_gem_diamond_white_1_4aa77fb087.dmat"
+      },
+      {
+        "name": "Gem 03",
+        "path": "https://packs.ijewel3d.com/files/1_gem_diamond_white_1_4aa77fb087.dmat"
+      },
+      {
+        "name": "Gem 04",
+        "path": "https://packs.ijewel3d.com/files/1_gem_diamond_white_1_4aa77fb087.dmat"
+      },
+      {
+        "name": "Gem 05",
+        "path": "https://packs.ijewel3d.com/files/1_gem_diamond_white_1_4aa77fb087.dmat"
+      },
+      {
+        "name": "Diamond",
+        "path": "https://packs.ijewel3d.com/files/1_gem_diamond_white_1_4aa77fb087.dmat"
+      },
+      {
+        "name": "Gem",
+        "path": "https://packs.ijewel3d.com/files/1_gem_diamond_white_1_4aa77fb087.dmat"
+      },
+      {
+        "name": "Metal 02",
+        "path": "https://packs.ijewel3d.com/files/1_metal_whitegold_polished_0db3fb834b.pmat"
+      },
+      {
+        "name": "Metal 03",
+        "path": "https://packs.ijewel3d.com/files/1_metal_whitegold_polished_0db3fb834b.pmat"
+      },
+      {
+        "name": "Metal 04",
+        "path": "https://packs.ijewel3d.com/files/1_metal_whitegold_polished_0db3fb834b.pmat"
+      },
+      {
+        "name": "Metal 05",
+        "path": "https://packs.ijewel3d.com/files/1_metal_whitegold_polished_0db3fb834b.pmat"
+      },
+      {
+        "name": "Head",
+        "path": "https://packs.ijewel3d.com/files/1_metal_whitegold_polished_0db3fb834b.pmat"
+      },
+      {
+        "name": "Metal",
+        "path": "https://packs.ijewel3d.com/files/1_metal_whitegold_polished_0db3fb834b.pmat"
+      },
+      {
+        "name": "Gem 01",
+        "path": "MaterialConfiguratorPlugin:3"
+      },
+      {
+        "name": "Metal 01",
+        "path": "MaterialConfiguratorPlugin:0"
+      }
+    ],
+    "type": "MaterialPresetPlugin"
+  },
+  "cameraConfig": {
+    "userData": {},
+    "camControls": {
+      "type": "OrbitControls",
+      "dollyZoom": false,
+      "zoomToCursor": false,
+      "enableDamping": true,
+      "dampingFactor": 0.08,
+      "autoRotate": false,
+      "autoRotateSpeed": 2,
+      "enableZoom": true,
+      "zoomSpeed": 0.15,
+      "maxZoomSpeed": 0.2,
+      "enableRotate": true,
+      "rotateSpeed": 2,
+      "enablePan": true,
+      "panSpeed": 1,
+      "autoPushTarget": false,
+      "autoPullTarget": false,
+      "minDistance": 0.35,
+      "maxDistance": 1000,
+      "minZoom": 0.01,
+      "maxZoom": 1000,
+      "minPolarAngle": 0,
+      "maxPolarAngle": 3.141592653589793,
+      "minAzimuthAngle": -1000000,
+      "maxAzimuthAngle": 1000000,
+      "clampMin": {
+        "x": -1000000,
+        "y": -1000000,
+        "z": -1000000,
+        "isVector3": true
+      },
+      "clampMax": {
+        "x": 1000000,
+        "y": 1000000,
+        "z": 1000000,
+        "isVector3": true
+      },
+      "screenSpacePanning": true,
+      "keyPanSpeed": 7
+    },
+    "camOptions": {
+      "type": "PerspectiveCamera",
+      "aspect": "auto",
+      "focus": 10,
+      "fov": 25,
+      "zoom": 1,
+      "frustumSize": 1,
+      "top": 1,
+      "bottom": -1,
+      "left": -1,
+      "right": 1,
+      "controlsMode": "orbit",
+      "controlsEnabled": true
+    },
+    "position": {
+      "x": -1.5827965035038492,
+      "y": 1.5483303530868098,
+      "z": 2.861761754526914,
+      "isVector3": true
+    },
+    "target": {
+      "x": 0.000012377477399710957,
+      "y": 0.0902312712899743,
+      "z": 9.71445146547012e-17,
+      "isVector3": true
+    }
+  },
+  "basePath": "https://packs.ijewel3d.com/files/",
+  "tryonConfig": {
+    "enabled": true,
+    "ssr": {
+      "enabled": true,
+      "intensity": 1.5,
+      "radius": 2,
+      "tolerance": 5
+    },
+    "ssao": {
+      "enabled": true,
+      "intensity": 0.2,
+      "radius": 1.83,
+      "falloff": 1.5,
+      "bias": 0.00001
+    },
+    "modelScaleFactor": 0.4491557794911239,
+    "modelPosition": {
+      "x": 0.000007567639205740639,
+      "y": -0.059937132604708204,
+      "z": 0.06870745666298776,
+      "isVector3": true
+    },
+    "modelRotation": {
+      "x": 1.734728476832182,
+      "y": -0.00046388462527491726,
+      "z": 0.000542038892130447,
+      "isVector3": true
+    }
+  }
+}
