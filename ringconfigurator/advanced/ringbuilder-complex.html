@@ -329,9 +329,9 @@
          mini-viewer is loaded later via `loadScript` from the
          orchestrator (the `nowebgi` variant — webgi is already on the
          page from the script tag above). -->
-    <script src="https://releases.ijewel3d.com/libs/webgi-v0/bundle-0.22.0.js" crossorigin="anonymous"></script>
+    <script src="https://releases.ijewel3d.com/libs/webgi-v0/bundle-0.22.0.js"></script>
     <script>window.webgi = window;</script>
-    <script src="https://releases.ijewel3d.com/libs/web-vto/0.1.11/web-vto.js" crossorigin="anonymous"></script>
+    <script src="https://releases.ijewel3d.com/libs/web-vto/0.1.11/web-vto.js"></script>
     <script>
         try { window.ij_vto && window.ij_vto.RingTryonPlugin && window.ij_vto.RingTryonPlugin.preload(); }
         catch (e) { console.warn('[tryon] preload failed', e); }
@@ -1848,14 +1848,17 @@
             const loadScript = (src) => new Promise((res, rej) => {
                 if (document.querySelector(`script[src="${src}"]`)) return res();
                 const s = document.createElement('script');
-                s.src = src; s.async = true; s.crossOrigin = 'anonymous';
+                s.src = src; s.async = true;
                 s.onload = res;
                 s.onerror = () => rej(new Error('failed to load ' + src));
                 document.body.appendChild(s);
             });
 
             (async () => {
-                if (typeof window.webgi === 'undefined') {
+                // Check a global webgi itself defines. `window.webgi` is aliased
+                // unconditionally by an inline script above, so testing it can
+                // never fail — it silently masked the bundle failing to load.
+                if (typeof window.ViewerApp === 'undefined') {
                     console.error('webgi bundle did not load — check <script src> in <head>');
                     return;
                 }
